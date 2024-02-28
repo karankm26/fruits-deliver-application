@@ -1,0 +1,10 @@
+.btn-select-image {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  text-align: center;
+  background: #f8f9fb;
+  border: 2px dashed #e4e5e7;
+  border-radius: 3px;
+  cursor: pointer;
+}

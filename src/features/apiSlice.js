@@ -39,6 +39,8 @@ import {
   allDepositsApi,
   depositStatusApi,
   userAllDetailsApi,
+  loginLogsDetailsApi,
+  updateEventStatusApi,
 } from "../api";
 
 export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
@@ -495,6 +497,29 @@ export const userAllDetails = createAsyncThunk(
   }
 );
 
+export const loginLogsDetails = createAsyncThunk(
+  "api/loginLogsDetails",
+  async (data, thunkAPI) => {
+    try {
+      const response = await loginLogsDetailsApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateEventStatus = createAsyncThunk(
+  "api/updateEventStatus",
+  async (data, thunkAPI) => {
+    try {
+      const response = await updateEventStatusApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 const apiSlice = createSlice({
   name: "api",
   initialState: {
@@ -674,6 +699,16 @@ const apiSlice = createSlice({
     userAllDetailsDataLoading: false,
     userAllDetailsDataError: null,
     userAllDetailsDataSuccess: null,
+
+    loginLogsDetailsData: [],
+    loginLogsDetailsDataLoading: false,
+    loginLogsDetailsDataError: null,
+    loginLogsDetailsDataSuccess: null,
+
+    updateEventStatusData: [],
+    updateEventStatusDataLoading: false,
+    updateEventStatusDataError: null,
+    updateEventStatusDataSuccess: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -1215,6 +1250,34 @@ const apiSlice = createSlice({
       .addCase(userAllDetails.rejected, (state, action) => {
         state.userAllDetailsDataLoading = false;
         state.userAllDetailsDataError = action.error.message;
+      });
+
+    builder
+      .addCase(loginLogsDetails.pending, (state) => {
+        state.loginLogsDetailsDataLoading = true;
+      })
+      .addCase(loginLogsDetails.fulfilled, (state, action) => {
+        state.loginLogsDetailsDataLoading = false;
+        state.loginLogsDetailsData = action.payload;
+        state.loginLogsDetailsDataSuccess = true;
+      })
+      .addCase(loginLogsDetails.rejected, (state, action) => {
+        state.loginLogsDetailsDataLoading = false;
+        state.loginLogsDetailsDataError = action.error.message;
+      });
+
+    builder
+      .addCase(updateEventStatus.pending, (state) => {
+        state.updateEventStatusDataLoading = true;
+      })
+      .addCase(updateEventStatus.fulfilled, (state, action) => {
+        state.updateEventStatusDataLoading = false;
+        state.updateEventStatusData = action.payload;
+        state.updateEventStatusDataSuccess = true;
+      })
+      .addCase(updateEventStatus.rejected, (state, action) => {
+        state.updateEventStatusDataLoading = false;
+        state.updateEventStatusDataError = action.error.message;
       });
   },
 });

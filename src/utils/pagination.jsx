@@ -11,14 +11,14 @@ const Pagination = (props) => {
       <nav aria-label="Page navigation example">
         <ul className="pagination">
           <li className="page-item">
-            <a
+            <button
               className={`page-link ${
                 props.current === 1 ? "disabled" : props.current > 1 ? "" : ""
               }`}
               onClick={() => handlePagination(props.current - 1)}
             >
               Previous
-            </a>
+            </button>
           </li>
           {props.total < 7 ? (
             <>
@@ -30,12 +30,12 @@ const Pagination = (props) => {
                       props.current === i + 1 ? "active" : ""
                     }`}
                   >
-                    <a
+                    <button
                       className="page-link"
                       onClick={() => handlePagination(i + 1)}
                     >
                       {i + 1}
-                    </a>
+                    </button>
                   </li>
                 </div>
               ))}
@@ -45,47 +45,50 @@ const Pagination = (props) => {
             props.current + 2 < props.total ? (
             <>
               <li className="page-item">
-                <a className="page-link" onClick={() => handlePagination(1)}>
+                <button
+                  className="page-link"
+                  onClick={() => handlePagination(1)}
+                >
                   1
-                </a>
+                </button>
               </li>
               <li className="page-item">
                 <a className="page-link disabled">...</a>
               </li>
               <li className="page-item">
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.current - 1)}
                 >
                   {props.current - 1}
-                </a>
+                </button>
               </li>
               <li className="page-item active">
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.current)}
                 >
                   {props.current}
-                </a>
+                </button>
               </li>
               <li className="page-item">
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.current + 1)}
                 >
                   {props.current + 1}
-                </a>
+                </button>
               </li>
               <li className="page-item">
                 <a className="page-link disabled">...</a>
               </li>
               <li className="page-item">
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.total)}
                 >
                   {props.total}
-                </a>
+                </button>
               </li>
             </>
           ) : props.current % 5 >= 0 &&
@@ -105,48 +108,48 @@ const Pagination = (props) => {
                   props.current === props.total - 3 ? "active" : ""
                 }`}
               >
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.total - 3)}
                 >
                   {props.total - 3}
-                </a>
+                </button>
               </li>
               <li
                 className={`page-item ${
                   props.current === props.total - 2 ? "active" : ""
                 }`}
               >
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.total - 2)}
                 >
                   {props.total - 2}
-                </a>
+                </button>
               </li>
               <li
                 className={`page-item ${
                   props.current === props.total - 1 ? "active" : ""
                 }`}
               >
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.total - 1)}
                 >
                   {props.total - 1}
-                </a>
+                </button>
               </li>
               <li
                 className={`page-item ${
                   props.current === props.total ? "active" : ""
                 }`}
               >
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.total)}
                 >
                   {props.total}
-                </a>
+                </button>
               </li>
             </>
           ) : (
@@ -159,12 +162,12 @@ const Pagination = (props) => {
                     }`}
                     key={i}
                   >
-                    <a
+                    <button
                       className="page-link"
                       onClick={() => handlePagination(i + 1)}
                     >
                       {i + 1}
-                    </a>
+                    </button>
                   </li>
                 </>
               ))}
@@ -172,17 +175,17 @@ const Pagination = (props) => {
                 <a className="page-link disabled">...</a>
               </li>
               <li className="page-item">
-                <a
+                <button
                   className="page-link"
                   onClick={() => handlePagination(props.total)}
                 >
                   {props.total}
-                </a>
+                </button>
               </li>
             </>
           )}
           <li className="page-item">
-            <a
+            <button
               className={`page-link ${
                 props.current === props.total
                   ? "disabled"
@@ -193,7 +196,7 @@ const Pagination = (props) => {
               onClick={() => handlePagination(props.current + 1)}
             >
               Next
-            </a>
+            </button>
           </li>
         </ul>
       </nav>

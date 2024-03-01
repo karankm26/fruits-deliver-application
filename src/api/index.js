@@ -567,6 +567,30 @@ const userAllDetailsApi = async (id) => {
   return response;
 };
 
+const loginLogsDetailsApi = async () => {
+  const response = await axios
+    .get(`${apiUrl}/login-logs/log/details`)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+  return response;
+};
+
+const updateEventStatusApi = async (data) => {
+  const response = await axios
+    .put(`${apiUrl}/events/statusUpdate/${data.id}`, data.body)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+  return response;
+};
+
 export {
   registerAdmin,
   loginAdmin,
@@ -608,4 +632,6 @@ export {
   allDepositsApi,
   depositStatusApi,
   userAllDetailsApi,
+  loginLogsDetailsApi,
+  updateEventStatusApi,
 };

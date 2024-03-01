@@ -7,6 +7,7 @@ import {
   UpdateEvents,
   fetchEvents,
   fetchUsers,
+  updateEventStatus,
   updateUser,
 } from "../../features/apiSlice";
 import Pagination from "../../utils/pagination";
@@ -15,9 +16,9 @@ import { Link } from "react-router-dom";
 export default function AllEvents() {
   const dispatch = useDispatch();
   const {
-    eventUpdateDataLoading,
-    eventUpdateDataSuccess,
-    eventsData: { events },
+    updateEventStatusDataLoading,
+    updateEventStatusDataSuccess,
+    eventsData: { events, total },
   } = useSelector((state) => state.api);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
@@ -26,7 +27,7 @@ export default function AllEvents() {
     currentPage: 1,
   });
   const { totalPages, currentPage } = paginate;
-  const count = events ? events.length : 0;
+  const count = total ?? 0;
 
   console.log(events);
   useEffect(() => {
@@ -36,8 +37,8 @@ export default function AllEvents() {
     search,
     limit,
     currentPage,
-    eventUpdateDataLoading,
-    eventUpdateDataSuccess,
+    updateEventStatusDataLoading,
+    updateEventStatusDataSuccess,
   ]);
 
   useEffect(() => {
@@ -56,11 +57,11 @@ export default function AllEvents() {
   };
 
   const handleChangeStatus = (type, id) => {
-    dispatch(UpdateEvents({ id, body: { status: type } }));
+    dispatch(updateEventStatus({ id, body: { status: type } }));
   };
   return (
     <Layout>
-      <Loader isLoading={eventUpdateDataLoading} />
+      <Loader isLoading={updateEventStatusDataLoading} />
       <div className="row">
         <div className="col-12">
           <div className="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -159,7 +160,10 @@ export default function AllEvents() {
                           <td>{(currentPage - 1) * limit + 1 + index}</td>
                           <td className="d-flex align-items-center">
                             <div>
-                              <img className="table-image me-2" src={item?.image} />
+                              <img
+                                className="table-image me-2"
+                                src={item?.image}
+                              />
                             </div>
                             <div>{item?.event_name}</div>
                           </td>

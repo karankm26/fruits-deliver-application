@@ -736,6 +736,7 @@ const apiSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       });
+
     // builder
     //   .addCase(login.pending, (state) => {
     //     state.loginDataLoading = true;
@@ -749,9 +750,11 @@ const apiSlice = createSlice({
     //     state.loginDataLoading = false;
     //     state.loginDataError = action.error.message;
     //   });
+
     builder
       .addCase(update.pending, (state) => {
         state.profileUpdateLoading = true;
+        state.profileUpdateSuccess = false;
       })
       .addCase(update.fulfilled, (state, action) => {
         state.profileUpdateLoading = false;
@@ -1129,6 +1132,7 @@ const apiSlice = createSlice({
     builder
       .addCase(CreateEvents.pending, (state) => {
         state.eventCreateDataLoading = true;
+        state.eventCreateDataSuccess = false;
       })
       .addCase(CreateEvents.fulfilled, (state, action) => {
         state.eventCreateDataLoading = false;
@@ -1143,6 +1147,7 @@ const apiSlice = createSlice({
     builder
       .addCase(UpdateEvents.pending, (state) => {
         state.eventUpdateDataLoading = true;
+        state.eventUpdateDataSuccess = false;
       })
       .addCase(UpdateEvents.fulfilled, (state, action) => {
         state.eventUpdateDataLoading = false;
@@ -1269,6 +1274,7 @@ const apiSlice = createSlice({
     builder
       .addCase(updateEventStatus.pending, (state) => {
         state.updateEventStatusDataLoading = true;
+        state.updateEventStatusDataSuccess = false;
       })
       .addCase(updateEventStatus.fulfilled, (state, action) => {
         state.updateEventStatusDataLoading = false;

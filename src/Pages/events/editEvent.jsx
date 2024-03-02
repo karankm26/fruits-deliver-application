@@ -10,7 +10,11 @@ import Editor from "../../utils/editor";
 import { IconButton } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { styled } from "@mui/material/styles";
-import { UpdateEvents, fetchEventById } from "../../features/apiSlice";
+import {
+  UpdateEvents,
+  fetchEventById,
+  fetchEvents,
+} from "../../features/apiSlice";
 import { useFormik } from "formik";
 import { eventSchema } from "../../schema/eventFormSchema";
 import { useNavigate, useParams } from "react-router-dom";
@@ -89,6 +93,10 @@ export default function EditEvent() {
   useEffect(() => {
     if (id) dispatch(fetchEventById(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    dispatch(fetchEvents({ search: "", limit: 10, currentPage: 1 }));
+  }, [dispatch, eventUpdateDataSuccess]);
 
   useEffect(() => {
     if (eventByIdData) {

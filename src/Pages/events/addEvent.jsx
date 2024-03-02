@@ -11,10 +11,11 @@ import { IconButton } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { styled } from "@mui/material/styles";
 import Context from "../../components/Context";
-import { CreateEvents } from "../../features/apiSlice";
+import { CreateEvents, fetchEvents } from "../../features/apiSlice";
 import { useFormik } from "formik";
 import { eventSchema } from "../../schema/eventFormSchema";
 import { useNavigate } from "react-router-dom";
+import { getOrdinal } from "../../utils/getOrdinal";
 
 const emptyData = {
   event_name: "",
@@ -83,6 +84,10 @@ export default function AddEvent() {
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    dispatch(fetchEvents({ search: "", limit: 10, currentPage: 1 }));
+  }, [dispatch, eventCreateDataSuccess]);
+
   const handleSubmit = (value) => {
     const { playerDetails, ...restOfValue } = value;
     const filteredData = playerDetails.reduce(
@@ -142,10 +147,11 @@ export default function AddEvent() {
     updatedInputs[index] = {
       ...updatedInputs[index],
       [name]: value,
+      place: (index + 1).toString(),
     };
     formik.setValues({ ...formik.values, payoutDetails: updatedInputs });
   };
-
+  console.log(formik.values.payoutDetails);
   const addPayout = () => {
     formik.setValues((prevValues) => ({
       ...prevValues,
@@ -1162,9 +1168,9 @@ export default function AddEvent() {
                     <thead>
                       <tr>
                         <th style={{ width: 60 }} className="text-center">
-                          S.No
+                          Position
                         </th>
-                        <th className="text-center">Place</th>
+                        {/* <th className="text-center">Place</th> */}
                         <th className="text-center">% of Prize Pool</th>
 
                         <th></th>
@@ -1174,15 +1180,25 @@ export default function AddEvent() {
                       {formik?.values?.payoutDetails?.length &&
                         formik?.values?.payoutDetails.map((payout, index) => (
                           <tr>
-                            <td className="text-center">{index + 1}</td>
-                            <td>
+                            <td className="text-center">
+                              {getOrdinal(index + 1)}
+                            </td>
+                            {/* <td>
                               <input
                                 type="number"
                                 className="form-control form-control-sm"
                                 name="place"
                                 value={payout.place}
-                                onChange={(e) =>
-                                  handleChangePayoutDetails(e, index)
+                                onChange={() =>
+                                  handleChangePayoutDetails(
+                                    {
+                                      target: {
+                                        name: "place",
+                                        value: index + 1,
+                                      },
+                                    },
+                                    index
+                                  )
                                 }
                                 onBlur={formik.handleBlur}
                               />
@@ -1196,7 +1212,7 @@ export default function AddEvent() {
                               >
                                 {formik.errors.payoutDetails?.[index]?.place}
                               </div>
-                            </td>
+                            </td> */}
                             <td>
                               <input
                                 type="number"

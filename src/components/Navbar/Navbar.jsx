@@ -1138,11 +1138,11 @@ export default function Navbar() {
                   <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1" />{" "}
                   <span className="align-middle">Profile</span>
                 </Link>
-                <a className="dropdown-item" href="apps-chat.html">
+                {/* <a className="dropdown-item" href="apps-chat.html">
                   <i className="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1" />{" "}
                   <span className="align-middle">Messages</span>
-                </a>
-                <a className="dropdown-item" href="apps-tasks-kanban.html">
+                </a> */}
+                {/* <a className="dropdown-item" href="apps-tasks-kanban.html">
                   <i className="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1" />{" "}
                   <span className="align-middle">Taskboard</span>
                 </a>
@@ -1156,18 +1156,15 @@ export default function Navbar() {
                   <span className="align-middle">
                     Balance : <b>$5971.67</b>
                   </span>
-                </a>
-                <Link to={"profile-edit"} className="dropdown-item">
-                  <span className="badge bg-success-subtle text-success mt-1 float-end">
-                    New
-                  </span>
+                </a> */}
+                <Link to={"/profile-edit"} className="dropdown-item">
                   <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1" />{" "}
                   <span className="align-middle">Settings</span>
                 </Link>
-                <a className="dropdown-item" href="auth-lockscreen-basic.html">
+                {/* <a className="dropdown-item" href="auth-lockscreen-basic.html">
                   <i className="mdi mdi-lock text-muted fs-16 align-middle me-1" />{" "}
                   <span className="align-middle">Lock screen</span>
-                </a>
+                </a> */}
                 <button className="dropdown-item" onClick={handleLogout}>
                   <i className="mdi mdi-logout text-muted fs-16 align-middle me-1" />{" "}
                   <span className="align-middle" data-key="t-logout">

@@ -53,8 +53,6 @@ export default function UserView() {
     }
   }, [userData]);
 
-  console.log(selected);
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -138,7 +136,7 @@ export default function UserView() {
       );
     }
   };
-  console.log(userAllDetailsData);
+
   return (
     <Layout>
       <Loader isLoading={userUpdateDataLoading || balanceUpdateDataLoading} />
@@ -158,9 +156,9 @@ export default function UserView() {
         </div>
       </div>
       <div className="row project-wrapper">
-        <div className="col-xxl-8">
+        <div className="col-xxl-12">
           <div className="row">
-            <div className="col-xl-4">
+            <div className="col-lg-4">
               <div className="card card-animate">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -176,7 +174,7 @@ export default function UserView() {
                       <div className="d-flex align-items-center mb-3">
                         <h4 className="fs-4 flex-grow-1 mb-0">
                           <span className="counter-value" data-target={825}>
-                            $ {selected?.balance}
+                            $ {selected?.balance?.toLocaleString()}
                           </span>
                         </h4>
                         <span className="badge bg-danger-subtle text-danger fs-12">
@@ -184,15 +182,13 @@ export default function UserView() {
                           5.02 %
                         </span>
                       </div>
-                      <p className="text-muted text-truncate mb-0">
-                        Projects this month
-                      </p>
+                      <p className="text-muted text-truncate mb-0"></p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-xl-4">
+            <div className="col-lg-4">
               <div className="card card-animate">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -219,13 +215,13 @@ export default function UserView() {
                           3.58 %
                         </span>
                       </div>
-                      <p className="text-muted mb-0">Leads this month</p>
+                      <p className="text-muted mb-0"></p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-xl-4">
+            <div className="col-lg-4">
               <div className="card card-animate">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -250,15 +246,13 @@ export default function UserView() {
                           10.35 %
                         </span>
                       </div>
-                      <p className="text-muted text-truncate mb-0">
-                        Work this month
-                      </p>
+                      <p className="text-muted text-truncate mb-0"></p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-xl-4">
+            <div className="col-lg-4">
               <div className="card card-animate">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -283,15 +277,13 @@ export default function UserView() {
                           10.35 %
                         </span>
                       </div>
-                      <p className="text-muted text-truncate mb-0">
-                        Work this month
-                      </p>
+                      <p className="text-muted text-truncate mb-0"></p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>{" "}
-            <div className="col-xl-4">
+            <div className="col-lg-4">
               <div className="card card-animate">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -316,15 +308,13 @@ export default function UserView() {
                           10.35 %
                         </span>
                       </div>
-                      <p className="text-muted text-truncate mb-0">
-                        Work this month
-                      </p>
+                      <p className="text-muted text-truncate mb-0"></p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-xl-4">
+            <div className="col-lg-4">
               <div className="card card-animate">
                 <div className="card-body">
                   <div className="d-flex align-items-center">
@@ -341,15 +331,13 @@ export default function UserView() {
                         Total Win Amount
                       </p>
                       <div className="d-flex align-items-center mb-3">
-                        <h4 className="fs-4 flex-grow-1 mb-0">$ 3344</h4>
+                        <h4 className="fs-4 flex-grow-1 mb-0">$ 0</h4>
                         <span className="badge bg-danger-subtle text-danger fs-12">
                           <i className="ri-arrow-down-s-line fs-13 align-middle me-1" />
                           10.35 %
                         </span>
                       </div>
-                      <p className="text-muted text-truncate mb-0">
-                        Work this month
-                      </p>
+                      <p className="text-muted text-truncate mb-0"></p>
                     </div>
                   </div>
                 </div>
@@ -764,6 +752,7 @@ export default function UserView() {
           <Button
             onClick={handleSentUserNotification}
             className="btn btn-primary"
+            disabled={userNotificationDataLoading}
           >
             {userNotificationDataLoading ? (
               <div

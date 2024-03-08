@@ -10,6 +10,10 @@ const emptyData = {
   lastName: "",
   email: "",
   password: "",
+  manage_events: {
+    events: false,
+    add_event: false,
+  },
   manage_reports: {
     transaction_log: false,
     login_history: false,
@@ -80,7 +84,6 @@ export default function EditStaff() {
         }
       }
     }
-
     setSelected(updatedData);
   };
 
@@ -116,6 +119,7 @@ export default function EditStaff() {
     }
   };
 
+  console.log(selected);
   return (
     <Layout>
       <Loader isLoading={staffUpdateDataLoading || staffByIdDataLoading} />
@@ -346,6 +350,88 @@ export default function EditStaff() {
                       </label>
                     </div>
                   </div>
+                </div>{" "}
+                <div className="row gy-4 pt-3">
+                  <div className="col-xxl-3 col-md-12">
+                    <div className="form-check form-switch" dir="ltr">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="events"
+                        checked={
+                          selected?.manage_events &&
+                          Object?.values(selected?.manage_events)?.every(
+                            (value) => value
+                          )
+                        }
+                        name="manage_users"
+                        onChange={(e) =>
+                          setSelected({
+                            ...selected,
+                            manage_events: {
+                              ...selected.manage_events,
+                              events: e.target.checked,
+                              add_event: e.target.checked,
+                            },
+                          })
+                        }
+                      />
+                      <label className="form-check-label" htmlFor="events">
+                        Manage Events
+                      </label>
+                    </div>
+                  </div>
+                  <div className="px-5 pt-3 row">
+                    <div className="col-xxl-3 col-md-3">
+                      <div className="form-check form-switch mb-3" dir="ltr">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="events"
+                          checked={selected?.manage_events?.events}
+                          name="events"
+                          onChange={(e) =>
+                            setSelected({
+                              ...selected,
+                              manage_events: {
+                                ...selected.manage_events,
+                                events: e.target.checked,
+                              },
+                            })
+                          }
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="transaction_log"
+                        >
+                          Events
+                        </label>
+                      </div>
+                    </div>
+                    <div className="col-xxl-3 col-md-3">
+                      <div className="form-check form-switch mb-3" dir="ltr">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="add_event"
+                          checked={selected?.manage_events?.add_event}
+                          name="add_event"
+                          onChange={(e) =>
+                            setSelected({
+                              ...selected,
+                              manage_events: {
+                                ...selected.manage_events,
+                                add_event: e.target.checked,
+                              },
+                            })
+                          }
+                        />
+                        <label className="form-check-label" htmlFor="add_event">
+                          Add Event
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="row gy-4 pt-3">
                   <div className="col-xxl-3 col-md-12">
@@ -457,7 +543,7 @@ export default function EditStaff() {
                         </label>
                       </div>
                     </div>
-                    <div className="col-xxl-3 col-md-3">
+                    {/* <div className="col-xxl-3 col-md-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
@@ -482,7 +568,7 @@ export default function EditStaff() {
                           Transaction Log
                         </label>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="row gy-4  pt-3">

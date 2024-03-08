@@ -195,8 +195,8 @@ export default function StaffList() {
                     role="status"
                     aria-live="polite"
                   >
-                    Showing {(currentPage - 1) * limit + 1} to
-                    {count > currentPage * limit ? currentPage * limit : count}
+                    Showing {(currentPage - 1) * limit + 1} to{" "}
+                    {count > currentPage * limit ? currentPage * limit : count}{" "}
                     of {count} entries
                   </div>
                 </div>

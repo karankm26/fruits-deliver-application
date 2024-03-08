@@ -18,6 +18,7 @@ import {
 import { useFormik } from "formik";
 import { eventSchema } from "../../schema/eventFormSchema";
 import { useNavigate, useParams } from "react-router-dom";
+import { getOrdinal } from "../../utils/getOrdinal";
 
 const emptyData = {
   event_name: "",
@@ -79,6 +80,7 @@ export default function EditEvent() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [editorHtml, setEditorHtml] = useState("");
+  const [refundPlayer, setRefundPlayer] = useState([]);
   const dispatch = useDispatch();
   const {
     eventUpdateDataLoading,
@@ -133,7 +135,7 @@ export default function EditEvent() {
       ...filteredData,
       number_of_players: playerDetails.length,
       places_paid: formik.values.payoutDetails.length,
-      // roleId: adminData?.id,
+      refundPlayer,
     };
     // console.log(dataWrapper, "dataWrapperdataWrapper");
     dispatch(UpdateEvents({ body: dataWrapper, id }));
@@ -156,7 +158,6 @@ export default function EditEvent() {
       handleSubmit(value);
     },
   });
-  console.log(formik.values);
 
   const handleBase64File = (file) => {
     return new Promise((resolve, reject) => {
@@ -195,6 +196,7 @@ export default function EditEvent() {
     updatedInputs[index] = {
       ...updatedInputs[index],
       [name]: value,
+      place: (index + 1).toString(),
     };
     formik.setValues({ ...formik.values, payoutDetails: updatedInputs });
   };
@@ -245,7 +247,8 @@ export default function EditEvent() {
     }));
   };
 
-  const removePlayer = (index) => {
+  const removePlayer = (index, playerId) => {
+    if (playerId) setRefundPlayer((prev) => [...prev, playerId]);
     formik.setValues((prevValues) => ({
       ...prevValues,
       playerDetails: [
@@ -277,7 +280,6 @@ export default function EditEvent() {
             })
           );
           setReConvertLinkToBase64Image(reConvertLinkToBase64);
-          // console.log("..............", reConvertLinkToBase64);
         } catch (error) {
           console.error("Error fetching images:", error);
         }
@@ -287,9 +289,9 @@ export default function EditEvent() {
     fetchImage();
   }, [formik?.values?.playerDetails]);
 
-  console.log(formik.errors);
-  console.log(formik.touched);
-  console.log(formik.values);
+  // console.log(formik.errors);
+  // console.log(formik.touched);
+  // console.log(formik.values);
 
   return (
     <Layout>
@@ -819,9 +821,10 @@ export default function EditEvent() {
                                 formik={formik}
                                 value={players?.image_path}
                               />
-                              {/* <div
-                                className={`invalid-feedback ${
-                                  formik.touched?.image_path &&
+                              <div
+                                className={`invalid-feedback text-center ${
+                                  formik.touched?.playerDetails?.[index]
+                                    ?.image_path &&
                                   formik.errors.playerDetails?.[index]
                                     ?.image_path &&
                                   "d-block"
@@ -831,7 +834,7 @@ export default function EditEvent() {
                                   formik.errors.playerDetails?.[index]
                                     ?.image_path
                                 }
-                              </div> */}
+                              </div>
                             </td>
                             {index !== 0 ? (
                               <td className="p-0 m-0 td-table px-1">
@@ -839,7 +842,9 @@ export default function EditEvent() {
                                   className="btn btn-sm btn-danger"
                                   style={{ background: "#dc3545" }}
                                   type="button"
-                                  onClick={() => removePlayer(index)}
+                                  onClick={() =>
+                                    removePlayer(index, players?.id)
+                                  }
                                 >
                                   <i className="ri-subtract-line" />
                                 </button>
@@ -1197,9 +1202,9 @@ export default function EditEvent() {
                     <thead>
                       <tr>
                         <th style={{ width: 60 }} className="text-center">
-                          S.No
+                          Position
                         </th>
-                        <th className="text-center">Place</th>
+                        {/* <th className="text-center">Place</th> */}
                         <th className="text-center">% of Prize Pool</th>
 
                         <th></th>
@@ -1209,8 +1214,10 @@ export default function EditEvent() {
                       {formik?.values?.payoutDetails?.length &&
                         formik?.values?.payoutDetails.map((payout, index) => (
                           <tr key={index}>
-                            <td className="text-center">{index + 1}</td>
-                            <td>
+                            <td className="text-center">
+                              {getOrdinal(index + 1)}
+                            </td>
+                            {/* <td>
                               <input
                                 type="number"
                                 className="form-control form-control-sm"
@@ -1231,7 +1238,7 @@ export default function EditEvent() {
                               >
                                 {formik.errors.payoutDetails?.[index]?.place}
                               </div>
-                            </td>
+                            </td> */}
                             <td>
                               <input
                                 type="number"

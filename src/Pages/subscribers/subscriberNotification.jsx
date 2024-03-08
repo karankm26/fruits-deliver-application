@@ -60,7 +60,7 @@ export default function SubscriberNotification() {
             <div className="card-body">
               <div className="live-preview">
                 <div className="row gy-3">
-                  <div className="col-xxl-3 col-md-12">
+                  <div className=" col-md-12">
                     <div>
                       <label htmlFor="basiInput" className="form-label">
                         Subject
@@ -75,7 +75,7 @@ export default function SubscriberNotification() {
                       />
                     </div>
                   </div>
-                  <div className="col-xxl-3 col-md-12">
+                  <div className=" col-md-12">
                     <div>
                       <label htmlFor="basiInput" className="form-label">
                         Message
@@ -88,7 +88,7 @@ export default function SubscriberNotification() {
                   </div>
                 </div>
                 <div className="row gy-3 pt-2">
-                  <div className="col-xxl-3 col-md-12">
+                  <div className=" col-md-12">
                     <button
                       onClick={handleSubscriberNotificationsSendToAll}
                       className="btn btn-primary"

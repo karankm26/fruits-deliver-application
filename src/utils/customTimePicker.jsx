@@ -81,6 +81,16 @@ export default function CustomTimePicker({ value, formik }) {
             slotProps={{
               textField: { id: "start_time", onBlur: formik.handleBlur },
             }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#ced4da",
+                },
+                "& fieldset": {
+                  borderColor: "#ced4da",
+                },
+              },
+            }}
           />
         </DemoItem>
       </DemoContainer>

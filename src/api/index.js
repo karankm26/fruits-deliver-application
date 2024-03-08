@@ -1,5 +1,6 @@
 import axios from "axios";
 import { snack } from "../utils/snack";
+import { history } from "../history";
 const apiUrl = import.meta.env.VITE_API_URL + "/api";
 const countryApiUrl = import.meta.env.VITE_COUNTRIES_API_URL;
 
@@ -19,8 +20,6 @@ const headers = {
   },
 };
 
-console.log(headers);
-
 const registerAdmin = async (body) => {
   const response = await axios
     .post(`${apiUrl}/admin/register`, body)
@@ -37,8 +36,20 @@ const loginAdmin = async (body) => {
   const response = await axios
     .post(`${apiUrl}/admin/authenticate`, body)
     .then((res) => {
-      snack.success("Login Successfully");
-      return res.data;
+      // snack.success("Login Successfully");
+      console.log("////////////////////", res);
+      if (res.data.data.twofa_status) {
+        history.navigate("/session/two-factor", {
+          state: {
+            id: res?.data?.data?.id,
+            email: res?.data?.data?.email,
+            token: res?.data?.data?.token,
+            data: res?.data?.data,
+          },
+        });
+      } else {
+        return res.data;
+      }
     })
     .catch((err) => {
       snack.error(err?.response?.data?.message);
@@ -61,7 +72,11 @@ const getAdmin = async (id) => {
 
 const updateAdmin = async (data) => {
   const response = await axios
-    .put(`${apiUrl}/admin/${data.id}`, data.body)
+    .put(`${apiUrl}/admin/${data.id}`, data.body, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
     .then((res) => {
       return res.data;
     })
@@ -73,11 +88,13 @@ const updateAdmin = async (data) => {
 
 const passwordChangeAdmin = async (data) => {
   const response = await axios
-    .put(`${apiUrl}/admin/change-pass/${data.id}`, data.body)
+    .post(`${apiUrl}/admin/change-password`, data)
     .then((res) => {
+      snack.success("Password Changed Successfully");
       return res.data;
     })
     .catch((err) => {
+      snack.error(err?.response?.data?.message);
       throw new Error(err);
     });
   return response;
@@ -155,7 +172,6 @@ const userUpdateApi = async (data) => {
       return res.data;
     })
     .catch((err) => {
-      console.log(err);
       snack.error(err);
       throw new Error(err);
     });
@@ -163,7 +179,7 @@ const userUpdateApi = async (data) => {
 };
 
 const allUserNotificationApi = async (data) => {
-  console.log("hello3");
+  console.log(data);
   const response = await axios
     .post(`${apiUrl}/user_mail/all`, data)
     .then((res) => {
@@ -178,7 +194,6 @@ const allUserNotificationApi = async (data) => {
 };
 
 const userNotificationApi = async (data) => {
-  console.log("hello3");
   const response = await axios
     .post(`${apiUrl}/user_mail/user`, data)
     .then((res) => {
@@ -194,7 +209,10 @@ const userNotificationApi = async (data) => {
 
 const fetchUserNotificationApi = async (data) => {
   const response = await axios
-    .get(`${apiUrl}/user_mail`, data)
+    .get(
+      `${apiUrl}/user_mail?search=${data.search}&page=${data.currentPage}&pageSize=${data.limit}`,
+      data
+    )
     .then((res) => {
       return res.data;
     })
@@ -260,7 +278,10 @@ const userWithdraw = async (data) => {
 
 const allWithdrawals = async (data) => {
   const response = await axios
-    .get(`${apiUrl}/withdrawals`, data)
+    .get(
+      `${apiUrl}/withdrawals?search=${data.search}&page=${data.currentPage}&pageSize=${data.limit}`,
+      data
+    )
     .then((res) => {
       return res.data;
     })
@@ -310,7 +331,10 @@ const depositStatusApi = async (data) => {
 
 const allDepositsApi = async (data) => {
   const response = await axios
-    .get(`${apiUrl}/deposits`, data)
+    .get(
+      `${apiUrl}/deposits?search=${data.search}&page=${data.currentPage}&pageSize=${data.limit}`,
+      data
+    )
     .then((res) => {
       return res.data;
     })
@@ -408,8 +432,25 @@ const staffLoginApi = async (data) => {
   const response = await axios
     .post(`${apiUrl}/sub-admin/authenticate`, data)
     .then((res) => {
-      snack.success("Login Successfully");
-      return res.data;
+      if (res.data.data.twofa_status) {
+        history.navigate("/session/two-factor", {
+          state: {
+            id: res?.data?.data?.id,
+            email: res?.data?.data?.email,
+            token: res?.data?.data?.token,
+            data: res?.data?.data,
+          },
+        });
+      } else {
+        history.navigate("/session/two-factor-required", {
+          state: {
+            id: res?.data?.data?.id,
+            email: res?.data?.data?.email,
+            token: res?.data?.data?.token,
+            data: res?.data?.data,
+          },
+        });
+      }
     })
     .catch((err) => {
       snack.error(err?.response?.data?.message);
@@ -591,6 +632,38 @@ const updateEventStatusApi = async (data) => {
   return response;
 };
 
+const register2FAApi = async (body) => {
+  const response = await axios
+    .post(`${apiUrl}/two-factor/register`, body)
+    .then((res) => {
+      snack.success("Two Factor Activated Successfully");
+      return res.data;
+    })
+    .catch((err) => {
+      snack.error(err?.response?.data?.message);
+      throw new Error(err);
+    });
+  return response;
+};
+
+const verify2FAApi = async (data) => {
+  const response = await axios
+    .post(`${apiUrl}/two-factor/verify`, data?.twoFatorData)
+    .then((res) => {
+      snack.success("Login Successfully");
+      return {
+        twoFaData: res.data,
+        loginData: data.loginData,
+        token: data.token,
+      };
+    })
+    .catch((err) => {
+      snack.error(err?.response?.data?.error);
+      throw new Error(err);
+    });
+  return response;
+};
+
 export {
   registerAdmin,
   loginAdmin,
@@ -634,4 +707,6 @@ export {
   userAllDetailsApi,
   loginLogsDetailsApi,
   updateEventStatusApi,
+  register2FAApi,
+  verify2FAApi,
 };

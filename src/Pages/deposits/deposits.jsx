@@ -19,15 +19,23 @@ export default function Deposits() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
 
-  useEffect(() => {
-    dispatch(allDeposits({ search, limit, currentPage, type: "" }));
-  }, [dispatch, search, limit, userUpdateDataSuccess, userUpdateDataLoading]);
-
   const [paginate, setPaginate] = useState({
     totalPages: 1,
     currentPage: 1,
   });
   const { totalPages, currentPage } = paginate;
+
+  useEffect(() => {
+    dispatch(allDeposits({ search, limit, currentPage, type: "" }));
+  }, [
+    dispatch,
+    search,
+    limit,
+    currentPage,
+    userUpdateDataSuccess,
+    userUpdateDataLoading,
+  ]);
+
   useEffect(() => {
     if (count) {
       setPaginate({ ...paginate, totalPages: Math.ceil(count / limit) });
@@ -145,7 +153,7 @@ export default function Deposits() {
                   {rows?.length
                     ? rows.map((item, index) => (
                         <tr key={index}>
-                          <td>{index + 1}</td>
+                          <td>{(currentPage - 1) * limit + 1 + index}</td>
                           <td>
                             {item?.User?.fname} {item?.User?.lname}
                           </td>

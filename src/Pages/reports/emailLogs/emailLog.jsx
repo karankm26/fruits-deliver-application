@@ -18,13 +18,13 @@ export default function EmailLogs() {
   const { totalPages, currentPage } = paginate;
   const {
     fetchUserNotificationDataLoading,
-    fetchUserNotificationData: { UserNotification },
+    fetchUserNotificationData: { UserNotification, total },
   } = useSelector((state) => state.api);
-  const count = UserNotification ? UserNotification.length : 0;
+  const count = total ?? 0;
 
   useEffect(() => {
     dispatch(fetchUserNotification({ search, limit, currentPage }));
-  }, [dispatch, search, limit]);
+  }, [dispatch, search, limit, currentPage]);
 
   useEffect(() => {
     if (count) {
@@ -43,7 +43,7 @@ export default function EmailLogs() {
 
   return (
     <Layout>
-      <Loader isLoading={fetchUserNotificationDataLoading} />
+      {/* <Loader isLoading={fetchUserNotificationDataLoading} /> */}
       <div className="row">
         <div className="col-12">
           <div className="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -136,7 +136,7 @@ export default function EmailLogs() {
                   {UserNotification?.length
                     ? UserNotification.map((item, index) => (
                         <tr key={index}>
-                          <td>{index + 1}</td>
+                          <td>{(currentPage - 1) * limit + 1 + index}</td>
                           <td>{item?.to}</td>
                           <td>{item?.subject}</td>
                           <td>

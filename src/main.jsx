@@ -8,6 +8,7 @@ import "./assets/js/layout.js";
 // import "./assets/css/custom.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "./assets/css/app.min.css";
+import "./App.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

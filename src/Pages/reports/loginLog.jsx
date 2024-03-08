@@ -17,15 +17,15 @@ export default function LoginLogs() {
   });
   const { totalPages, currentPage } = paginate;
   const {
-    loginLogsData: { UserLoginLogs },
+    loginLogsData: { UserLoginLogs, total },
     loginLogsDataLoading,
   } = useSelector((state) => state.api);
 
-  const count = UserLoginLogs ? UserLoginLogs?.length : 0;
+  const count = total ?? 0;
 
   useEffect(() => {
     dispatch(loginLogs({ search, limit, currentPage }));
-  }, [dispatch, search, limit]);
+  }, [dispatch, search, limit, currentPage]);
 
   useEffect(() => {
     if (count) {
@@ -41,11 +41,11 @@ export default function LoginLogs() {
   const handlePagination = (current) => {
     setPaginate({ ...paginate, currentPage: current });
   };
-  console.log(UserLoginLogs);
+  // console.log(UserLoginLogs);
 
   return (
     <Layout>
-      <Loader isLoading={loginLogsDataLoading} />
+      {/* <Loader isLoading={loginLogsDataLoading} /> */}
       <div className="row">
         <div className="col-12">
           <div className="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -141,7 +141,7 @@ export default function LoginLogs() {
                   {UserLoginLogs?.length
                     ? UserLoginLogs.map((item, index) => (
                         <tr key={index}>
-                          <td>{index + 1}</td>
+                          <td>{(currentPage - 1) * limit + 1 + index}</td>
                           <td>
                             {item?.User?.fname} {item?.User?.lname}
                           </td>

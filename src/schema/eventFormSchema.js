@@ -76,14 +76,23 @@ const eventSchema = Yup.object().shape({
       name: Yup.string().required("Player Name is required"),
       bio: Yup.string().required("Player Bio is required"),
       twitch_link: Yup.string().required("Player Twitch Link is required"),
-      // image_path: Yup.string().required("Player Image is required"),
+      image_path: Yup.string().required("Player Image is required"),
     })
   ),
+  // payoutDetails: Yup.array().of(
+  //   Yup.object().shape({
+  //     place: Yup.string().required("Place is required"),
+  //     percentage: Yup.string().required("Percentage is required"),
+  //   })
+  // ),
+
   payoutDetails: Yup.array().of(
-    Yup.object().shape({
-      place: Yup.string().required("Place is required"),
-      percentage: Yup.string().required("Percentage is required"),
-    })
+    Yup.array().of(
+      Yup.object().shape({
+        place: Yup.string().required("Place is required"),
+        percentage: Yup.string().required("Percentage is required"),
+      })
+    )
   ),
   //   playerDetails: Yup.array().of(
   //     Yup.object().shape({

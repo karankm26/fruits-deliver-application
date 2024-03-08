@@ -18,15 +18,23 @@ export default function AllWithdrawals() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
 
-  useEffect(() => {
-    dispatch(withdrawals({ search, limit, currentPage, type: "" }));
-  }, [dispatch, search, limit, userUpdateDataSuccess, userUpdateDataLoading]);
-
   const [paginate, setPaginate] = useState({
     totalPages: 1,
     currentPage: 1,
   });
   const { totalPages, currentPage } = paginate;
+
+  useEffect(() => {
+    dispatch(withdrawals({ search, limit, currentPage, type: "" }));
+  }, [
+    dispatch,
+    search,
+    limit,
+    currentPage,
+    userUpdateDataSuccess,
+    userUpdateDataLoading,
+  ]);
+
   useEffect(() => {
     if (count) {
       setPaginate({ ...paginate, totalPages: Math.ceil(count / limit) });

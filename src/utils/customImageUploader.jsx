@@ -61,7 +61,7 @@ const CustomImgeUploader = ({
           >
             Drag & Drop your files or
             <br />
-            <span className="filepond--label-action">Browse</span>
+            <button className="filepond--label-action">Browse</button>
           </div>
           <div
             hidden={!images.length}

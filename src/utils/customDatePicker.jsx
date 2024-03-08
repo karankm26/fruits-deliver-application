@@ -72,6 +72,16 @@ export default function CustomDatePicker({ handleChange, value, formik }) {
             slotProps={{
               textField: { id: "event_date", onBlur: formik.handleBlur },
             }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#ced4da",
+                },
+                "& fieldset": {
+                  borderColor: "#ced4da",
+                },
+              },
+            }}
           />
         </DemoItem>
       </DemoContainer>

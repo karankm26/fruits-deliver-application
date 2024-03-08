@@ -17,17 +17,17 @@ export default function TransactionLog() {
   });
   const { totalPages, currentPage } = paginate;
   const {
-    transactionsData: { rows },
+    transactionsData: { rows, count },
     userDataLoading,
     transactionsData,
-    count,
+    transactionsDataSuccess,
   } = useSelector((state) => state.api);
 
   console.log(transactionsData);
 
   useEffect(() => {
     dispatch(fetchTransactions({ search, limit, type: "", currentPage }));
-  }, [dispatch, search, limit]);
+  }, [dispatch, search, limit, currentPage]);
 
   useEffect(() => {
     if (count) {
@@ -37,12 +37,14 @@ export default function TransactionLog() {
 
   const defineLimit = (p) => {
     setLimit(p);
-    setPaginate({ ...paginate, currentPage: 1 });
+    setPaginate({ ...paginate, currentPage: current });
   };
 
   const handlePagination = (current) => {
     setPaginate({ ...paginate, currentPage: current });
   };
+
+  console.log(paginate);
 
   return (
     <Layout>
@@ -142,7 +144,7 @@ export default function TransactionLog() {
                   {rows?.length
                     ? rows.map((item, index) => (
                         <tr key={index}>
-                          <td>{index + 1}</td>
+                          <td>{(currentPage - 1) * limit + 1 + index}</td>
                           <td>
                             <div>
                               {item?.User?.fname} {item?.User?.lname}

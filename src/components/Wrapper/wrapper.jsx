@@ -16,7 +16,7 @@ export default function Wrapper() {
     } else {
       dispatch(fetchStaffById(loginData?.id));
     }
-  }, [loginData?.role, loginData?.id]);
+  }, [dispatch, loginData?.role, loginData?.id]);
 
   const adminData = loginData?.role === "admin" ? data : staffByIdData;
 

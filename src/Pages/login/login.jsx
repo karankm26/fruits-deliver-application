@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginSchema, loginStaffSchema } from "../../schema";
 import { useDispatch, useSelector } from "react-redux";
 // import { login } from "../../features/apiSlice";
 import { useFormik } from "formik";
 import { loginAsync, loginStaffAsync } from "../../features/loginSlice";
 import Loader from "../../utils/loader";
+import { history } from "../../history";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  history.navigate = useNavigate();
+  history.location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const { loginToken, loginData, loginDataSuccess, loginDataLoading } =
     useSelector((state) => state.login);
@@ -44,8 +47,6 @@ export default function Login() {
   return (
     <div className="auth-page-wrapper pt-4">
       <Loader isLoading={loginDataLoading} />
-
-      {/* <SnackBar message="message" type="success" show={true} /> */}
       <div className="auth-one-bg-position auth-one-bg" id="auth-particles">
         <div className="bg-overlay" />
         <div className="shape">

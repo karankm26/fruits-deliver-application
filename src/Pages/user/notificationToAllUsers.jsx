@@ -25,7 +25,7 @@ export default function NotificationToAllUsers() {
       })
     );
   };
-
+  console.log(editorHtml);
   return (
     <Layout>
       <div className="row">
@@ -69,7 +69,7 @@ export default function NotificationToAllUsers() {
                         type="text"
                         className="form-control"
                         id="basiInput"
-                        onChange={setSubject}
+                        onChange={(e) => setSubject(e.target.value)}
                       />
                     </div>
                   </div>
@@ -91,6 +91,7 @@ export default function NotificationToAllUsers() {
                       // onClick={handleAllUserNotification}
                       type="submit"
                       className="btn btn-primary"
+                      disabled={allUserNotificationDataLoading}
                     >
                       {allUserNotificationDataLoading ? (
                         <div

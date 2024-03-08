@@ -284,7 +284,10 @@ export default function Sidebar() {
                   </ul>
                 </div>
               </li>
-              <li className="nav-item" hidden={adminData?.role === "sub-admin"}>
+              <li
+                className="nav-item"
+                hidden={!isPermission("manage_events", "all")}
+              >
                 <a
                   className={`nav-link menu-link ${
                     (path === `/add-event` || path === `/events`) && `active`
@@ -306,7 +309,10 @@ export default function Sidebar() {
                   id="sidebar-events"
                 >
                   <ul className="nav nav-sm flex-column">
-                    <li className="nav-item">
+                    <li
+                      className="nav-item"
+                      hidden={!isPermission("manage_events", "add_event")}
+                    >
                       <Link
                         to={"/add-event"}
                         className={`nav-link ${
@@ -317,7 +323,10 @@ export default function Sidebar() {
                         Add Event
                       </Link>
                     </li>
-                    <li className="nav-item">
+                    <li
+                      className="nav-item"
+                      hidden={!isPermission("manage_events", "events")}
+                    >
                       <Link
                         to={"/events"}
                         className={`nav-link ${path === `/events` && `active`}`}

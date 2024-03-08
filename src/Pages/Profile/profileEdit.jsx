@@ -1,33 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAdmin, passwordChange, update } from "../../features/apiSlice";
+import {
+  fetchAdmin,
+  fetchStaffById,
+  passwordChange,
+  register2FA,
+  staffUpdate,
+  update,
+} from "../../features/apiSlice";
 import Loader from "../../utils/loader";
 import Layout from "../../components/Layout";
+import Context from "../../components/Context";
+import { snack } from "../../utils/snack";
 
 export default function ProfileEdit() {
   const userId = localStorage.getItem("id");
-  const { data, status, error } = useSelector((state) => state.api);
-  const [details, setDetails] = useState(data);
-  const [password, setPassword] = useState({});
-  const [selectedImage, setSelectedImage] = useState("");
+  const ref = useRef();
+  const adminData = useContext(Context);
+  const [details, setDetails] = useState(adminData);
+  const [showPassword, setShowPassword] = useState(false);
 
+  const [password, setPassword] = useState({
+    confirmNewPassword: "",
+    newPassword: "",
+    currentPassword: "",
+  });
+  const [selectedImage, setSelectedImage] = useState("");
   const dispatch = useDispatch();
   const {
     profileUpdate,
     profileUpdateLoading,
     profileUpdateError,
     profileUpdateSuccess,
+    register2FADataLoading,
+    register2FADataSuccess,
+    staffUpdateDataSuccess,
+    staffUpdateDataLoading,
   } = useSelector((state) => state.api);
-  console.log(details);
-  useEffect(() => {
-    if (userId) {
-      dispatch(fetchAdmin(userId));
-    }
-  }, [dispatch, userId]);
+  const { loginData } = useSelector((state) => state.login);
+
+  console.log(adminData);
 
   useEffect(() => {
-    if (data) setDetails(data);
-  }, [data]);
+    if (loginData?.role === "admin") {
+      dispatch(fetchAdmin(loginData?.id));
+    } else {
+      dispatch(fetchStaffById(loginData?.id));
+    }
+  }, [
+    dispatch,
+    loginData?.role,
+    loginData?.id,
+    register2FADataSuccess,
+    profileUpdateSuccess,
+    staffUpdateDataSuccess,
+  ]);
+
+  useEffect(() => {
+    if (adminData) setDetails(adminData);
+  }, [adminData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,9 +77,22 @@ export default function ProfileEdit() {
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
-    dispatch(passwordChange({ id: userId, body: password }));
+    if (password.confirmNewPassword === password.newPassword) {
+      if (adminData?.role === "admin") {
+        dispatch(
+          passwordChange({
+            password: password.currentPassword,
+            newPassword: password.newPassword,
+          })
+        );
+      } else {
+        dispatch(passwordChange({ password }));
+      }
+    } else {
+      snack.error("new password and confirm password must match");
+    }
   };
-
+  console.log(password);
   const excludedFields = [
     "createdAt",
     "updatedAt",
@@ -58,16 +102,175 @@ export default function ProfileEdit() {
     "password",
   ];
 
-  const filledFields = Object.entries(data).filter(
+  const filledFields = Object.entries(adminData).filter(
     ([key, value]) =>
       !excludedFields.includes(key) && value !== null && value !== ""
   ).length;
-  const totalFields = Object.keys(data).length - excludedFields.length;
+  const totalFields = Object.keys(adminData).length - excludedFields.length;
   const filledPercentage = (filledFields / totalFields) * 100;
+
+  const handleRegister2FA = () => {
+    dispatch(
+      register2FA({
+        email: adminData?.email,
+        role: adminData?.role === "admin" ? "admin" : "subadmin",
+      })
+    );
+  };
+  const handleDisable2FA = () => {
+    const data = { id: adminData.id, body: { twofa_status: 0 } };
+    if (adminData?.role === "admin") {
+      dispatch(update(data));
+    } else {
+      dispatch(staffUpdate(data));
+    }
+  };
+
+  // useEffect(() => {
+  //   if (adminData?.twofa_data?.data_url) {
+  //     if (ref.current) {
+  //       const canvas = ref.current;
+  //       const ctx = canvas.getContext("2d");
+  //       const image = new Image();
+  //       image.src = adminData?.twofa_data?.data_url;
+  //       const overlay = new Image();
+  //       overlay.src = "/assets/img/logo-light.png";
+  //       image.onload = function () {
+  //         canvas.width = image.width;
+  //         canvas.height = image.height;
+  //         ctx.drawImage(image, 0, 0);
+  //         overlay.onload = function () {
+  //           const overlayWidth = 60;
+  //           const overlayHeight = 60;
+  //           const centerX = canvas.width / 2 - overlayWidth / 2;
+  //           const centerY = canvas.height / 2 - overlayHeight / 2;
+  //           ctx.fillStyle = "black";
+  //           ctx.beginPath();
+  //           ctx.moveTo(centerX + 5, centerY);
+  //           ctx.lineTo(centerX + overlayWidth - 5, centerY);
+  //           ctx.quadraticCurveTo(
+  //             centerX + overlayWidth,
+  //             centerY,
+  //             centerX + overlayWidth,
+  //             centerY + 5
+  //           );
+  //           ctx.lineTo(centerX + overlayWidth, centerY + overlayHeight - 5);
+  //           ctx.quadraticCurveTo(
+  //             centerX + overlayWidth,
+  //             centerY + overlayHeight,
+  //             centerX + overlayWidth - 5,
+  //             centerY + overlayHeight
+  //           );
+  //           ctx.lineTo(centerX + 5, centerY + overlayHeight);
+  //           ctx.quadraticCurveTo(
+  //             centerX,
+  //             centerY + overlayHeight,
+  //             centerX,
+  //             centerY + overlayHeight - 5
+  //           );
+  //           ctx.lineTo(centerX, centerY + 5);
+  //           ctx.quadraticCurveTo(centerX, centerY, centerX + 5, centerY);
+  //           ctx.closePath();
+  //           ctx.fill();
+  //           ctx.drawImage(
+  //             overlay,
+  //             centerX,
+  //             centerY,
+  //             overlayWidth,
+  //             overlayHeight
+  //           );
+  //         };
+  //       };
+  //     }
+  //   }
+  // }, [adminData?.twofa_data?.data_url]);
+
+  useEffect(() => {
+    const theme = document
+      .getElementById("data-theme-template")
+      .getAttribute("data-bs-theme");
+    console.log(theme);
+  }, []);
+
+  useEffect(() => {
+    const modeType = localStorage.getItem("mode");
+    console.log(
+      `/assets/img/logo-${modeType === "true" ? `dark` : `light`}.png`
+    );
+    if (adminData?.twofa_data?.data_url) {
+      if (ref.current) {
+        const canvas = ref.current;
+        const ctx = canvas.getContext("2d");
+        const image = new Image();
+        image.src = adminData?.twofa_data?.data_url;
+        const overlay = new Image();
+        overlay.src = `/assets/img/logo-${
+          modeType === "true" ? `light` : `dark`
+        }.png`;
+        image.onload = function () {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          // Apply filter here before drawing the main image
+          ctx.filter = "brightness(0%)"; // Example: applying brightness filter
+          ctx.drawImage(image, 0, 0);
+          // Reset filter after drawing the main image
+          ctx.filter = "none";
+          overlay.onload = function () {
+            const overlayWidth = 60;
+            const overlayHeight = 60;
+            const centerX = canvas.width / 2 - overlayWidth / 2;
+            const centerY = canvas.height / 2 - overlayHeight / 2;
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.moveTo(centerX + 5, centerY);
+            ctx.lineTo(centerX + overlayWidth - 5, centerY);
+            ctx.quadraticCurveTo(
+              centerX + overlayWidth,
+              centerY,
+              centerX + overlayWidth,
+              centerY + 5
+            );
+            ctx.lineTo(centerX + overlayWidth, centerY + overlayHeight - 5);
+            ctx.quadraticCurveTo(
+              centerX + overlayWidth,
+              centerY + overlayHeight,
+              centerX + overlayWidth - 5,
+              centerY + overlayHeight
+            );
+            ctx.lineTo(centerX + 5, centerY + overlayHeight);
+            ctx.quadraticCurveTo(
+              centerX,
+              centerY + overlayHeight,
+              centerX,
+              centerY + overlayHeight - 5
+            );
+            ctx.lineTo(centerX, centerY + 5);
+            ctx.quadraticCurveTo(centerX, centerY, centerX + 5, centerY);
+            ctx.closePath();
+            ctx.fill();
+            // Draw the overlay image
+            ctx.drawImage(
+              overlay,
+              centerX,
+              centerY,
+              overlayWidth,
+              overlayHeight
+            );
+          };
+        };
+      }
+    }
+  }, [adminData?.twofa_data?.data_url]);
 
   return (
     <>
-      {profileUpdateLoading && <Loader />}
+      <Loader
+        isLoading={
+          register2FADataLoading ||
+          profileUpdateLoading ||
+          staffUpdateDataLoading
+        }
+      />
       <Layout>
         <div className="position-relative mx-n4 mt-n4">
           <div className="profile-wid-bg profile-setting-img">
@@ -88,7 +291,7 @@ export default function ProfileEdit() {
                     htmlFor="profile-foreground-img-file-input"
                     className="profile-photo-edit btn btn-light"
                   >
-                    <i className="ri-image-edit-line align-bottom me-1" />{" "}
+                    <i className="ri-image-edit-line align-bottom me-1" />
                     Change Cover
                   </label>
                 </div>
@@ -97,7 +300,7 @@ export default function ProfileEdit() {
           </div>
         </div>
         <div className="row">
-          <div className="col-xxl-3">
+          <div className="col-xxl-12">
             <div className="card mt-n5">
               <div className="card-body p-4">
                 <div className="text-center">
@@ -132,9 +335,9 @@ export default function ProfileEdit() {
                     </div>
                   </div>
                   <h5 className="fs-16 mb-1">
-                    {data?.firstName} {data?.lastName}
+                    {adminData?.firstName} {adminData?.lastName}
                   </h5>
-                  <p className="text-muted mb-0">{data?.role}</p>
+                  <p className="text-muted mb-0">{adminData?.role}</p>
                 </div>
               </div>
             </div>
@@ -169,7 +372,7 @@ export default function ProfileEdit() {
                 </div>
               </div>
             </div>
-            <div className="card">
+            {/* <div className="card">
               <div className="card-body">
                 <div className="d-flex align-items-center mb-4">
                   <div className="flex-grow-1">
@@ -303,10 +506,10 @@ export default function ProfileEdit() {
                   </div>
                 </form>
               </div>
-            </div>
+            </div> */}
           </div>
 
-          <div className="col-xxl-9">
+          <div className="col-xxl-12">
             <div className="card mt-xxl-n5">
               <div className="card-header">
                 <ul
@@ -331,6 +534,16 @@ export default function ProfileEdit() {
                       role="tab"
                     >
                       <i className="far fa-user" /> Change Password
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a
+                      className="nav-link"
+                      data-bs-toggle="tab"
+                      href="#2fa"
+                      role="tab"
+                    >
+                      <i className="far fa-user" /> 2FA
                     </a>
                   </li>
                 </ul>
@@ -386,25 +599,6 @@ export default function ProfileEdit() {
 
                         <div className="col-lg-6">
                           <div className="mb-3">
-                            <label
-                              htmlFor="phonenumberInput"
-                              className="form-label"
-                            >
-                              Phone Number
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="phonenumberInput"
-                              placeholder="Enter your phone number"
-                              name="phone"
-                              onChange={handleChange}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="col-lg-6">
-                          <div className="mb-3">
                             <label htmlFor="emailInput" className="form-label">
                               Email Address
                             </label>
@@ -419,82 +613,6 @@ export default function ProfileEdit() {
                             />
                           </div>
                         </div>
-
-                        <div className="col-lg-12">
-                          <div className="mb-3">
-                            <label
-                              htmlFor="JoiningdatInput"
-                              className="form-label"
-                            >
-                              About Me
-                            </label>
-                            <textarea
-                              type="text"
-                              className="form-control"
-                              data-provider="flatpickr"
-                              placeholder="About Me"
-                              name="about_me"
-                              value={details?.about_me}
-                              onChange={handleChange}
-                            />
-                          </div>
-                        </div>
-
-                        {/* <div className="col-lg-4">
-                                    <div className="mb-3">
-                                      <label
-                                        htmlFor="cityInput"
-                                        className="form-label"
-                                      >
-                                        City
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        id="cityInput"
-                                        placeholder="City"
-                                        defaultValue="California"
-                                      />
-                                    </div>
-                                  </div> */}
-
-                        {/* <div className="col-lg-4">
-                                    <div className="mb-3">
-                                      <label
-                                        htmlFor="countryInput"
-                                        className="form-label"
-                                      >
-                                        Country
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        id="countryInput"
-                                        placeholder="Country"
-                                        defaultValue="United States"
-                                      />
-                                    </div>
-                                  </div> */}
-
-                        {/* <div className="col-lg-4">
-                                    <div className="mb-3">
-                                      <label
-                                        htmlFor="zipcodeInput"
-                                        className="form-label"
-                                      >
-                                        Zip Code
-                                      </label>
-                                      <input
-                                        type="text"
-                                        className="form-control"
-                                        minLength={5}
-                                        maxLength={6}
-                                        id="zipcodeInput"
-                                        placeholder="Enter zipcode"
-                                        defaultValue={90011}
-                                      />
-                                    </div>
-                                  </div> */}
 
                         <div className="col-lg-12">
                           <div className="hstack gap-2 justify-content-end">
@@ -517,7 +635,7 @@ export default function ProfileEdit() {
                     <form onSubmit={handlePasswordChange}>
                       <div className="row g-2">
                         <div className="col-lg-4">
-                          <div>
+                          <div className="position-relative auth-pass-inputgroup mb-3">
                             <label
                               htmlFor="oldpasswordInput"
                               className="form-label"
@@ -525,7 +643,7 @@ export default function ProfileEdit() {
                               Old Password*
                             </label>
                             <input
-                              type="password"
+                              type={showPassword ? "password" : "text"}
                               className="form-control"
                               id="oldpasswordInput"
                               placeholder="Enter current password"
@@ -536,9 +654,21 @@ export default function ProfileEdit() {
                                 })
                               }
                             />
+                            <button
+                              className="btn btn-link position-absolute end-0 text-decoration-none text-muted password-addon password-eye "
+                              type="button"
+                              id="password-addon"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              <i
+                                className={`ri-eye-${
+                                  showPassword ? `` : `off-`
+                                }fill align-middle`}
+                              />
+                            </button>
                           </div>
                         </div>
-
+                        0
                         <div className="col-lg-4">
                           <div>
                             <label
@@ -548,7 +678,7 @@ export default function ProfileEdit() {
                               New Password*
                             </label>
                             <input
-                              type="password"
+                              type={showPassword ? "password" : "text"}
                               className="form-control"
                               id="newpasswordInput"
                               placeholder="Enter new password"
@@ -559,9 +689,20 @@ export default function ProfileEdit() {
                                 })
                               }
                             />
+                            <button
+                              className="btn btn-link position-absolute end-0 text-decoration-none text-muted password-addon password-eye "
+                              type="button"
+                              id="password-addon"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              <i
+                                className={`ri-eye-${
+                                  showPassword ? `` : `off-`
+                                }fill align-middle`}
+                              />
+                            </button>
                           </div>
                         </div>
-
                         <div className="col-lg-4">
                           <div>
                             <label
@@ -571,7 +712,7 @@ export default function ProfileEdit() {
                               Confirm Password*
                             </label>
                             <input
-                              type="password"
+                              type={showPassword ? "password" : "text"}
                               className="form-control"
                               id="confirmpasswordInput"
                               placeholder="Confirm password"
@@ -582,10 +723,21 @@ export default function ProfileEdit() {
                                 })
                               }
                             />
+                            <button
+                              className="btn btn-link position-absolute end-0 text-decoration-none text-muted password-addon password-eye "
+                              type="button"
+                              id="password-addon"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              <i
+                                className={`ri-eye-${
+                                  showPassword ? `` : `off-`
+                                }fill align-middle`}
+                              />
+                            </button>
                           </div>
                         </div>
-
-                        <div className="col-lg-12">
+                        {/* <div className="col-lg-12">
                           <div className="mb-3">
                             <a
                               href="javascript:void(0);"
@@ -594,12 +746,86 @@ export default function ProfileEdit() {
                               Forgot Password ?
                             </a>
                           </div>
-                        </div>
-
+                        </div> */}
                         <div className="col-lg-12">
                           <div className="text-end">
                             <button type="submit" className="btn btn-success">
                               Change Password
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div className="tab-pane" id="2fa" role="tabpanel">
+                    <form onSubmit={handlePasswordChange}>
+                      <div
+                        className="row g-2"
+                        hidden={!adminData?.twofa_status}
+                      >
+                        <div className="col-lg-12">
+                          <h4 className="text-center">
+                            Two Factor Authentication
+                          </h4>
+                          <div className="text-center">
+                            Scan the QR code using your authenticator web or
+                            enter code manually
+                          </div>
+                          <div className="text-center">
+                            <img
+                              src={adminData?.twofa_data?.data_url}
+                              style={{ filter: "brightness(0%)" }}
+                            />
+                            {/* <canvas
+                              ref={ref}
+                              // style={{ filter: "brightness(0%)" }}
+                            ></canvas> */}
+                          </div>
+                          <div className="text-center">
+                            <p>
+                              {adminData?.twofa_data?.userSecretKey}
+                              <i
+                                className="ri-clipboard-line"
+                                style={{ cursor: "pointer" }}
+                                onClick={() =>
+                                  navigator.clipboard.writeText(
+                                    adminData?.twofa_data?.userSecretKey
+                                  )
+                                }
+                              />
+                            </p>
+                          </div>
+                        </div>
+                        <div
+                          className="col-lg-12"
+                          hidden={adminData?.role === "sub-admin"}
+                        >
+                          <div className="text-center">
+                            <button
+                              type="button"
+                              className="btn btn-primary"
+                              onClick={handleDisable2FA}
+                            >
+                              Disable
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row g-2" hidden={adminData?.twofa_status}>
+                        <div className="col-lg-10 col-md-10">
+                          <h4 className="text-lg-start text-md-start text-center">
+                            Two Factor Authentication
+                          </h4>
+                        </div>
+                        <div className="col-lg-2 col-md-2">
+                          <div className="text-lg-end text-md-end text-center">
+                            <button
+                              type="button"
+                              className="btn btn-primary"
+                              onClick={handleRegister2FA}
+                            >
+                              Enable
                             </button>
                           </div>
                         </div>

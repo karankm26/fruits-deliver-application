@@ -41,6 +41,7 @@ import {
   userAllDetailsApi,
   loginLogsDetailsApi,
   updateEventStatusApi,
+  register2FAApi,
 } from "../api";
 
 export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
@@ -297,7 +298,6 @@ export const staffUpdate = createAsyncThunk(
   "api/staffUpdate",
   async (data, thunkAPI) => {
     try {
-      console.log("ffffffffffffffffffff");
       const response = await staffUpdateApi(data);
       return response.data;
     } catch (error) {
@@ -520,6 +520,18 @@ export const updateEventStatus = createAsyncThunk(
     }
   }
 );
+
+export const register2FA = createAsyncThunk(
+  "api/register2FA",
+  async (data, thunkAPI) => {
+    try {
+      const response = await register2FAApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 const apiSlice = createSlice({
   name: "api",
   initialState: {
@@ -709,6 +721,11 @@ const apiSlice = createSlice({
     updateEventStatusDataLoading: false,
     updateEventStatusDataError: null,
     updateEventStatusDataSuccess: null,
+
+    register2FAData: [],
+    register2FADataLoading: false,
+    register2FADataError: null,
+    register2FADataSuccess: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -1006,6 +1023,7 @@ const apiSlice = createSlice({
     builder
       .addCase(staffUpdate.pending, (state) => {
         state.staffUpdateDataLoading = true;
+        state.staffUpdateDataSuccess = false;
       })
       .addCase(staffUpdate.fulfilled, (state, action) => {
         state.staffUpdateDataLoading = false;
@@ -1090,6 +1108,7 @@ const apiSlice = createSlice({
     builder
       .addCase(fetchTransactions.pending, (state) => {
         state.transactionsDataLoading = true;
+        state.transactionsDataSuccess = false;
       })
       .addCase(fetchTransactions.fulfilled, (state, action) => {
         state.transactionsDataLoading = false;
@@ -1284,6 +1303,21 @@ const apiSlice = createSlice({
       .addCase(updateEventStatus.rejected, (state, action) => {
         state.updateEventStatusDataLoading = false;
         state.updateEventStatusDataError = action.error.message;
+      });
+
+    builder
+      .addCase(register2FA.pending, (state) => {
+        state.register2FADataLoading = true;
+        state.register2FADataSuccess = false;
+      })
+      .addCase(register2FA.fulfilled, (state, action) => {
+        state.register2FADataLoading = false;
+        state.register2FAData = action.payload;
+        state.register2FADataSuccess = true;
+      })
+      .addCase(register2FA.rejected, (state, action) => {
+        state.register2FADataLoading = false;
+        state.register2FADataError = action.error.message;
       });
   },
 });

@@ -41,6 +41,8 @@ import EmailLogsView from "./Pages/reports/emailLogs/emailLogView.jsx";
 import EmailLogs from "./Pages/reports/emailLogs/emailLog.jsx";
 import WithdrawalsView from "./Pages/withdrawals/withdrawalsView.jsx";
 import DepositsView from "./Pages/deposits/depositsView.jsx";
+import TwoFactorError from "./Pages/2fa/twoFactorError.jsx";
+import TwoFactor from "./Pages/2fa/twoFactor.jsx";
 
 export default function RoutePath() {
   const adminData = useContext(Context);
@@ -382,6 +384,11 @@ export default function RoutePath() {
             />
           </Route>
           <Route path="/login" element={<Login />} />
+          <Route
+            path="/session/two-factor-required"
+            element={<TwoFactorError />}
+          />
+          <Route path="/session/two-factor" element={<TwoFactor />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="*" element={<Error />} />
         </Routes>

@@ -394,9 +394,9 @@ export default function Dashboard() {
                                     {item?.count}
                                   </span>
                                 </h4>
-                                <a href className="text-decoration-underline">
+                                {/* <a href className="text-decoration-underline">
                                   View net earnings
-                                </a>
+                                </a> */}
                               </div>
                               <div className="avatar-sm flex-shrink-0">
                                 <span

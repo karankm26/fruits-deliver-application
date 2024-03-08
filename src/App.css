@@ -8,3 +8,6 @@
   border-radius: 3px;
   cursor: pointer;
 }
+.password-eye {
+  top: 27px !important;
+}

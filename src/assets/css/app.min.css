@@ -19516,3 +19516,13 @@ span.flatpickr-weekday {
 .css-t3ipsp-control {
   box-shadow: none !important;
 }
+
+.rmsc .dropdown-container {
+  background-color: var(--vz-input-bg-custom) !important;
+  color: var(--vz-body-color) !important;
+  border: var(--vz-border-width) solid var(--vz-input-border-custom) !important;
+}
+.dropdown-content {
+  background-color: var(--vz-input-bg-custom) !important;
+  color: var(--vz-body-color) !important;
+}

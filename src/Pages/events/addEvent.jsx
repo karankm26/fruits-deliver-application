@@ -16,11 +16,12 @@ import { useFormik } from "formik";
 import { eventSchema } from "../../schema/eventFormSchema";
 import { useNavigate } from "react-router-dom";
 import { getOrdinal } from "../../utils/getOrdinal";
+import { snack } from "../../utils/snack";
 
 const emptyData = {
   event_name: "",
   event_slogan: "",
-  font_color: "",
+  font_color: "#000000",
   event_date: null,
   start_time: null,
   time_zone: "",
@@ -61,6 +62,7 @@ const emptyData = {
     },
   ],
 };
+
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -141,36 +143,6 @@ export default function AddEvent() {
     });
   };
 
-  const handleChangePayoutDetails = async (e, index) => {
-    const { name, value } = e.target;
-    const updatedInputs = [...formik.values.payoutDetails];
-    updatedInputs[index] = {
-      ...updatedInputs[index],
-      [name]: value,
-      place: (index + 1).toString(),
-    };
-    formik.setValues({ ...formik.values, payoutDetails: updatedInputs });
-  };
-  const addPayout = () => {
-    formik.setValues((prevValues) => ({
-      ...prevValues,
-      payoutDetails: [
-        ...prevValues.payoutDetails,
-        { place: "", percentage: "" },
-      ],
-    }));
-  };
-
-  const removePayout = (index) => {
-    formik.setValues((prevValues) => ({
-      ...prevValues,
-      payoutDetails: [
-        ...prevValues.payoutDetails.slice(0, index),
-        ...prevValues.payoutDetails.slice(index + 1),
-      ],
-    }));
-  };
-
   const handleChangePlayerDetails = (e, index) => {
     const { name, value, files } = e.target;
     const updatedInputs = [...formik.values.playerDetails];
@@ -239,7 +211,7 @@ export default function AddEvent() {
         { length: newRounds },
         (_, roundIndex) => {
           const existingRound = formik.values.payoutDetails[roundIndex] || [
-            { place: "", percentage: "" },
+            { place: "", percentage: "", fromPrizePool: "", addedFunds: "" },
           ];
           return existingRound.map((detail) => ({ ...detail }));
         }
@@ -257,9 +229,19 @@ export default function AddEvent() {
     formik.setFieldValue("payoutDetails", newPayoutDetails);
   };
 
-  const handleAddField = (roundIndex) => {
+  const handleAddField = (roundIndex, round) => {
+    const playerLength = formik.values.playerDetails.length;
+    if (playerLength <= round) {
+      snack.error("Not enough players");
+      return;
+    }
     const newPayoutDetails = [...formik.values.payoutDetails];
-    newPayoutDetails[roundIndex].push({ place: "", percentage: "" });
+    newPayoutDetails[roundIndex].push({
+      place: "",
+      percentage: "",
+      fromPrizePool: formik.values.payoutDetails[roundIndex][0].fromPrizePool,
+      addedFunds: formik.values.payoutDetails[roundIndex][0].addedFunds,
+    });
     formik.setFieldValue("payoutDetails", newPayoutDetails);
   };
 
@@ -268,19 +250,34 @@ export default function AddEvent() {
     newPayoutDetails[roundIndex].splice(fieldIndex, 1);
     formik.setFieldValue("payoutDetails", newPayoutDetails);
   };
-  console.log(formik.values.payoutDetails);
 
-  const payoutDetails = [
-    [
-      { palce: "", percentage: "", value: 1, value2: 2 },
-      { palce: "", percentage: "", value: 1, value2: 2 },
-    ],
-    [
-      { palce: "", percentage: "" },
-      { palce: "", percentage: "" },
-    ],
-  ];
-  console.log(payoutDetails);
+  const handleInputFundsChange = (
+    e,
+    roundIndex,
+    fieldName,
+    excludeFieldName
+  ) => {
+    const newPayoutDetails = [...formik.values.payoutDetails];
+    const value = e.target.value;
+
+    newPayoutDetails[roundIndex] = newPayoutDetails[roundIndex].map((item) => {
+      return { ...item, [fieldName]: value, [excludeFieldName]: "" };
+    });
+
+    formik.setFieldValue("payoutDetails", newPayoutDetails);
+  };
+
+  useEffect(() => {
+    const payOuts = formik.values.payoutDetails;
+    const playerLength = formik.values.playerDetails.length;
+    payOuts.map((payout) => {
+      while (payout.length > playerLength) {
+        payout.pop();
+      }
+      return payout;
+    });
+  }, [formik.values.playerDetails.length, formik.values.payoutDetails]);
+
   return (
     <Layout>
       <Loader isLoading={eventCreateDataLoading || isLoading} />
@@ -327,7 +324,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-4">
                   <div>
                     <label htmlFor="event_name" className="form-label">
-                      Event Name
+                      Event Name<span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -353,7 +350,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-6">
                   <div>
                     <label htmlFor="event_slogan" className="form-label">
-                      Event Slogan
+                      Event Slogan<span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -405,7 +402,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-3">
                   <div>
                     <label htmlFor="event_date" className="form-label">
-                      Event Date
+                      Event Date<span className="text-danger">*</span>
                     </label>
                     <CustomDatePicker
                       value={formik?.values?.event_date}
@@ -425,7 +422,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-3">
                   <div>
                     <label htmlFor="start_time" className="form-label">
-                      Start Time
+                      Start Time<span className="text-danger">*</span>
                     </label>
                     <CustomTimePicker
                       value={formik?.values?.start_time}
@@ -445,7 +442,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-3">
                   <div>
                     <label htmlFor="time_zone" className="form-label">
-                      Time Zone
+                      Time Zone<span className="text-danger">*</span>
                     </label>
 
                     <TimezoneSelect
@@ -478,7 +475,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-3">
                   <div>
                     <label htmlFor="location" className="form-label">
-                      Event Location
+                      Event Location<span className="text-danger">*</span>
                     </label>
 
                     <input
@@ -504,7 +501,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-3">
                   <div>
                     <label htmlFor="sponsor" className="form-label">
-                      Event Sponsor
+                      Event Sponsor<span className="text-danger">*</span>
                     </label>
                     <input
                       // value={selected.sponsor}
@@ -531,7 +528,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-3">
                   <div>
                     <label htmlFor="event_type" className="form-label">
-                      Event Type
+                      Event Type<span className="text-danger">*</span>
                     </label>
                     <input
                       // value={selected.event_type}
@@ -558,7 +555,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-3">
                   <div>
                     <label htmlFor="event_type" className="form-label">
-                      Event Genre
+                      Event Genre<span className="text-danger">*</span>
                     </label>
                     <input
                       // value={selected.event_type}
@@ -584,7 +581,7 @@ export default function AddEvent() {
                 </div>
                 <div className="col-xxl-3 col-lg-3">
                   <label htmlFor="event_round" className="form-label">
-                    Rounds/Event Count
+                    Rounds/Event Count<span className="text-danger">*</span>
                   </label>
                   <div>
                     <div className="input-step step-primary full-width">
@@ -643,7 +640,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-6">
                   <div>
                     <label htmlFor="event_ticket" className="form-label">
-                      Event Ticket
+                      Event Ticket<span className="text-danger">*</span>
                     </label>
                     <input
                       // value={selected.event_ticket}
@@ -670,7 +667,7 @@ export default function AddEvent() {
                 <div className="col-xxl-3 col-lg-6">
                   <div>
                     <label htmlFor="ticket_url" className="form-label">
-                      Ticket URL
+                      Ticket URL<span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
@@ -1336,187 +1333,213 @@ export default function AddEvent() {
 
           <div className="card">
             <div className="card-body">
-              {formik.values.payoutDetails.length
-                ? formik.values.payoutDetails.map((round, roundIndex) => (
-                    <>
-                      {roundIndex !== 0 && (
-                        <div className="card-header p-0 mt-3" />
-                      )}
-                      <h5 className="card-title  mt-4">
-                        Round {roundIndex + 1} Prize Pool Payouts{" "}
-                        <span className="text-danger">*</span>
-                      </h5>
-                      <div className="row gy-3 mt-2">
-                        <div className=" col-lg-6">
-                          {/* <label htmlFor="basiInput" className="form-label">
-                            Prize Pool Payouts
-                            <span className="text-danger">*</span>
-                          </label> */}
-                          <table
-                            id="example"
-                            className="table table-bordered dt-responsive nowrap table-striped align-middle"
-                            style={{ width: "100%" }}
-                          >
-                            <thead>
-                              <tr>
-                                <th
-                                  style={{ width: 60 }}
-                                  className="text-center"
-                                >
-                                  Position
-                                </th>
-                                {/* <th className="text-center">Place</th> */}
-                                <th className="text-center">
-                                  Percentage of Prize Pool
-                                </th>
+              {formik.values.payoutDetails.length ? (
+                formik.values.payoutDetails.map((round, roundIndex) => (
+                  <>
+                    {roundIndex !== 0 && (
+                      <div className="card-header p-0 mt-3" />
+                    )}
+                    <h5 className="card-title  mt-4">
+                      Round {roundIndex + 1} Prize Pool Payouts{" "}
+                      <span className="text-danger">*</span>
+                    </h5>
+                    <div className="row gy-3 mt-2">
+                      <div className=" col-lg-6">
+                        <table
+                          id="example"
+                          className="table table-bordered dt-responsive nowrap table-striped align-middle"
+                          style={{ width: "100%" }}
+                        >
+                          <thead>
+                            <tr>
+                              <th style={{ width: 60 }} className="text-center">
+                                Position
+                              </th>
+                              <th className="text-center">
+                                Percentage of Prize Pool
+                              </th>
 
-                                <th></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {round.length &&
-                                round.map((payout, payoutIndex) => (
-                                  <tr>
-                                    <td className="text-center">
-                                      {getOrdinal(payoutIndex + 1)}
-                                    </td>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {round.length &&
+                              round.map((payout, payoutIndex) => (
+                                <tr key={payoutIndex}>
+                                  <td className="text-center">
+                                    {getOrdinal(payoutIndex + 1)}
+                                  </td>
 
-                                    <td>
-                                      <input
-                                        type="number"
-                                        className="form-control form-control-sm"
-                                        name="percentage"
-                                        value={payout?.percentage}
-                                        onChange={(e) =>
-                                          handleInputChange(
-                                            e,
+                                  <td>
+                                    <input
+                                      type="number"
+                                      className="form-control form-control-sm"
+                                      name="percentage"
+                                      value={payout?.percentage}
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          e,
+                                          roundIndex,
+                                          payoutIndex,
+                                          "percentage"
+                                        )
+                                      }
+                                      // onBlur={formik.handleBlur}
+                                    />
+                                    <div
+                                      className={`invalid-feedback ${
+                                        formik.errors?.payoutDetails?.[
+                                          roundIndex
+                                        ]?.[payoutIndex]?.percentage &&
+                                        formik.touched.payoutDetails?.[
+                                          roundIndex
+                                        ]?.[payoutIndex]?.percentage &&
+                                        "d-block"
+                                      }`}
+                                    >
+                                      {
+                                        formik?.errors?.payoutDetails?.[
+                                          roundIndex
+                                        ]?.[payoutIndex]?.percentage
+                                      }
+                                    </div>
+                                  </td>
+
+                                  {payoutIndex !== 0 ? (
+                                    <td className="p-0 m-0 td-table px-1">
+                                      <button
+                                        className="btn btn-sm btn-danger"
+                                        style={{ background: "#dc3545" }}
+                                        type="button"
+                                        onClick={() =>
+                                          handleRemoveField(
                                             roundIndex,
-                                            payoutIndex,
-                                            "percentage"
+                                            payoutIndex
                                           )
                                         }
-                                        // onBlur={formik.handleBlur}
-                                      />
-                                      <div
-                                        className={`invalid-feedback ${
-                                          formik.errors?.payoutDetails?.[
-                                            roundIndex
-                                          ]?.[payoutIndex]?.percentage &&
-                                          formik.touched.payoutDetails?.[
-                                            roundIndex
-                                          ]?.[payoutIndex]?.percentage &&
-                                          "d-block"
-                                        }`}
                                       >
-                                        {
-                                          formik?.errors?.payoutDetails?.[
-                                            roundIndex
-                                          ]?.[payoutIndex]?.percentage
-                                        }
-                                      </div>
+                                        <i className="ri-subtract-line" />
+                                      </button>
                                     </td>
-
-                                    {payoutIndex !== 0 ? (
-                                      <td className="p-0 m-0 td-table px-1">
-                                        <button
-                                          className="btn btn-sm btn-danger"
-                                          style={{ background: "#dc3545" }}
-                                          type="button"
-                                          onClick={() =>
-                                            handleRemoveField(
-                                              roundIndex,
-                                              payoutIndex
-                                            )
-                                          }
-                                        >
-                                          <i className="ri-subtract-line" />
-                                        </button>
-                                      </td>
-                                    ) : (
-                                      <td></td>
-                                    )}
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
-                          <div className="d-flex justify-content-end">
-                            <button
-                              className="btn btn-sm btn-primary"
-                              type="button"
-                              onClick={() => handleAddField(roundIndex)}
-                            >
-                              <i className="ri-add-line" />
-                            </button>
-                          </div>
+                                  ) : (
+                                    <td></td>
+                                  )}
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                        <div className="d-flex justify-content-end">
+                          <button
+                            className="btn btn-sm btn-primary"
+                            type="button"
+                            onClick={() =>
+                              handleAddField(roundIndex, round.length)
+                            }
+                          >
+                            <i className="ri-add-line" />
+                          </button>
                         </div>
-                        <div className="col-lg-6">
-                          <div className="row">
-                            <div className="col-6">
-                              {" "}
-                              <div className="form-check mb-3">
-                                <input
-                                  className="form-check-input"
-                                  type="radio"
-                                  id="bounty_detail"
-                                  name="bounty_detail"
-                                  checked={
-                                    formik.values.bounty_detail === "pko_bounty"
-                                  }
-                                  onChange={(e) => {
-                                    formik.handleChange({
-                                      target: {
-                                        name: e.target.name,
-                                        value: e.target.checked
-                                          ? "pko_bounty"
-                                          : null,
-                                      },
-                                    });
-                                  }}
-                                />
-                                <label
-                                  className="form-check-label"
-                                  htmlFor="formCheck6"
-                                >
-                                  PKO Bounty
-                                </label>
-                              </div>
+                      </div>
+                      <div className="col-lg-6">
+                        <div className="row">
+                          <div className="col-6">
+                            {" "}
+                            <div className="form-check mb-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                id="bounty_detail"
+                                name="bounty_detail"
+                                checked={
+                                  formik.values.bounty_detail === "pko_bounty"
+                                }
+                                onChange={(e) => {
+                                  formik.handleChange({
+                                    target: {
+                                      name: e.target.name,
+                                      value: e.target.checked
+                                        ? "pko_bounty"
+                                        : null,
+                                    },
+                                  });
+                                }}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="formCheck6"
+                              >
+                                From Prize Pool
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                placeholder="% of Prize Pool"
+                                value={round[0].fromPrizePool}
+                                onChange={(e) =>
+                                  handleInputFundsChange(
+                                    e,
+                                    roundIndex,
+                                    "fromPrizePool",
+                                    "addedFunds"
+                                  )
+                                }
+                              />
                             </div>
-                            <div className="col-6">
-                              {" "}
-                              <div className="form-check mb-3">
-                                <input
-                                  className="form-check-input"
-                                  type="radio"
-                                  id="bounty_detail"
-                                  name="bounty_detail"
-                                  checked={
-                                    formik.values.bounty_detail === "pko_bounty"
-                                  }
-                                  onChange={(e) => {
-                                    formik.handleChange({
-                                      target: {
-                                        name: e.target.name,
-                                        value: e.target.checked
-                                          ? "pko_bounty"
-                                          : null,
-                                      },
-                                    });
-                                  }}
-                                />
-                                <label
-                                  className="form-check-label"
-                                  htmlFor="formCheck6"
-                                >
-                                  PKO Bounty
-                                </label>
-                              </div>
+                          </div>
+                          <div className="col-6">
+                            {" "}
+                            <div className="form-check mb-3">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                id="bounty_detail"
+                                name="bounty_detail"
+                                checked={
+                                  formik.values.bounty_detail === "pko_bounty"
+                                }
+                                onChange={(e) => {
+                                  formik.handleChange({
+                                    target: {
+                                      name: e.target.name,
+                                      value: e.target.checked
+                                        ? "pko_bounty"
+                                        : null,
+                                    },
+                                  });
+                                }}
+                              />
+                              <label
+                                className="form-check-label"
+                                htmlFor="formCheck6"
+                              >
+                                Added Funds
+                              </label>{" "}
+                              <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                placeholder="Fixed Price"
+                                value={round[0].addedFunds}
+                                onChange={(e) =>
+                                  handleInputFundsChange(
+                                    e,
+                                    roundIndex,
+                                    "addedFunds",
+                                    "fromPrizePool"
+                                  )
+                                }
+                              />
                             </div>
                           </div>
                         </div>
                       </div>
-                    </>
-                  ))
-                : "Select Event Round First"}
+                    </div>
+                  </>
+                ))
+              ) : (
+                <>
+                  Select Event Round First<span className="text-danger">*</span>
+                </>
+              )}
             </div>
           </div>
           <div className="card">

@@ -27,4 +27,25 @@ const loginStaffSchema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
 });
 
-export { loginSchema, registrationSchema ,loginStaffSchema};
+const subscriptionSchema = Yup.object().shape({
+  title: Yup.string().required("Title is required"),
+  price: Yup.string().required("Price is required"),
+  duration: Yup.string().required("Duration is required"),
+  features: Yup.array()
+    .of(
+      Yup.object().shape({
+        label: Yup.string().required("Player Name is required"),
+        value: Yup.string().required("Player Bio is required"),
+      })
+    )
+    .min(1, "At least one feature must be filled"),
+
+  planType: Yup.string().required("Plan Type is required"),
+});
+
+export {
+  loginSchema,
+  registrationSchema,
+  loginStaffSchema,
+  subscriptionSchema,
+};

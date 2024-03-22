@@ -42,6 +42,11 @@ import {
   loginLogsDetailsApi,
   updateEventStatusApi,
   register2FAApi,
+  addSubscriptionApi,
+  allSubscriptionApi,
+  updateSubscriptionApi,
+  subscriptionByIdApi,
+  allUsersSubscriptionsApi,
 } from "../api";
 
 export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
@@ -532,6 +537,66 @@ export const register2FA = createAsyncThunk(
     }
   }
 );
+
+export const addSubscription = createAsyncThunk(
+  "api/addSubscription",
+  async (data, thunkAPI) => {
+    try {
+      const response = await addSubscriptionApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateSubscription = createAsyncThunk(
+  "api/updateSubscription",
+  async (data, thunkAPI) => {
+    try {
+      const response = await updateSubscriptionApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const allSubscription = createAsyncThunk(
+  "api/allSubscription",
+  async (_, thunkAPI) => {
+    try {
+      const response = await allSubscriptionApi();
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const subscriptionById = createAsyncThunk(
+  "api/subscriptionById",
+  async (id, thunkAPI) => {
+    try {
+      const response = await subscriptionByIdApi(id);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const allUsersSubscriptions = createAsyncThunk(
+  "api/allUsersSubscriptions",
+  async (data, thunkAPI) => {
+    try {
+      const response = await allUsersSubscriptionsApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 const apiSlice = createSlice({
   name: "api",
   initialState: {
@@ -726,6 +791,31 @@ const apiSlice = createSlice({
     register2FADataLoading: false,
     register2FADataError: null,
     register2FADataSuccess: null,
+
+    addSubscriptionData: {},
+    addSubscriptionDataLoading: false,
+    addSubscriptionDataError: null,
+    addSubscriptionDataSuccess: null,
+
+    updateSubscriptionData: {},
+    updateSubscriptionDataLoading: false,
+    updateSubscriptionDataError: null,
+    updateSubscriptionDataSuccess: null,
+
+    allSubscriptionData: [],
+    allSubscriptionDataLoading: false,
+    allSubscriptionDataError: null,
+    allSubscriptionDataSuccess: null,
+
+    subscriptionByIdData: [],
+    subscriptionByIdDataLoading: false,
+    subscriptionByIdDataError: null,
+    subscriptionByIdDataSuccess: null,
+
+    allUsersSubscriptionsData: [],
+    allUsersSubscriptionsDataLoading: false,
+    allUsersSubscriptionsDataError: null,
+    allUsersSubscriptionsDataSuccess: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -1318,6 +1408,81 @@ const apiSlice = createSlice({
       .addCase(register2FA.rejected, (state, action) => {
         state.register2FADataLoading = false;
         state.register2FADataError = action.error.message;
+      });
+
+    builder
+      .addCase(addSubscription.pending, (state) => {
+        state.addSubscriptionDataLoading = true;
+        state.addSubscriptionDataSuccess = false;
+      })
+      .addCase(addSubscription.fulfilled, (state, action) => {
+        state.addSubscriptionDataLoading = false;
+        state.addSubscriptionData = action.payload;
+        state.addSubscriptionDataSuccess = true;
+      })
+      .addCase(addSubscription.rejected, (state, action) => {
+        state.addSubscriptionDataLoading = false;
+        state.addSubscriptionDataError = action.error.message;
+      });
+
+    builder
+      .addCase(allSubscription.pending, (state) => {
+        state.allSubscriptionDataLoading = true;
+        state.allSubscriptionDataSuccess = false;
+      })
+      .addCase(allSubscription.fulfilled, (state, action) => {
+        state.allSubscriptionDataLoading = false;
+        state.allSubscriptionData = action.payload;
+        state.allSubscriptionDataSuccess = true;
+      })
+      .addCase(allSubscription.rejected, (state, action) => {
+        state.allSubscriptionDataLoading = false;
+        state.allSubscriptionDataError = action.error.message;
+      });
+
+    builder
+      .addCase(updateSubscription.pending, (state) => {
+        state.updateSubscriptionDataLoading = true;
+        state.updateSubscriptionDataSuccess = false;
+      })
+      .addCase(updateSubscription.fulfilled, (state, action) => {
+        state.updateSubscriptionDataLoading = false;
+        state.updateSubscriptionData = action.payload;
+        state.updateSubscriptionDataSuccess = true;
+      })
+      .addCase(updateSubscription.rejected, (state, action) => {
+        state.updateSubscriptionDataLoading = false;
+        state.updateSubscriptionDataError = action.error.message;
+      });
+
+    builder
+      .addCase(subscriptionById.pending, (state) => {
+        state.subscriptionByIdDataLoading = true;
+        state.subscriptionByIdDataSuccess = false;
+      })
+      .addCase(subscriptionById.fulfilled, (state, action) => {
+        state.subscriptionByIdDataLoading = false;
+        state.subscriptionByIdData = action.payload;
+        state.subscriptionByIdDataSuccess = true;
+      })
+      .addCase(subscriptionById.rejected, (state, action) => {
+        state.subscriptionByIdDataLoading = false;
+        state.subscriptionByIdDataError = action.error.message;
+      });
+
+    builder
+      .addCase(allUsersSubscriptions.pending, (state) => {
+        state.allUsersSubscriptionsDataLoading = true;
+        state.allUsersSubscriptionsDataSuccess = false;
+      })
+      .addCase(allUsersSubscriptions.fulfilled, (state, action) => {
+        state.allUsersSubscriptionsDataLoading = false;
+        state.allUsersSubscriptionsData = action.payload;
+        state.allUsersSubscriptionsDataSuccess = true;
+      })
+      .addCase(allUsersSubscriptions.rejected, (state, action) => {
+        state.allUsersSubscriptionsDataLoading = false;
+        state.allUsersSubscriptionsDataError = action.error.message;
       });
   },
 });

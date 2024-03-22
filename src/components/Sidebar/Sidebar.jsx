@@ -304,7 +304,10 @@ export default function Sidebar() {
 
                 <div
                   className={`collapse menu-dropdown ${
-                    (path === `/add-event` || path === `/events`) && `show`
+                    (path === `/add-event` ||
+                      path === `/events` ||
+                      path === `/event-winnings`) &&
+                    `show`
                   }`}
                   id="sidebar-events"
                 >
@@ -333,6 +336,20 @@ export default function Sidebar() {
                         data-key="t-events"
                       >
                         All Events
+                      </Link>
+                    </li>
+                    <li
+                      className="nav-item"
+                      hidden={!isPermission("manage_events", "events")}
+                    >
+                      <Link
+                        to={"/event-winnings"}
+                        className={`nav-link ${
+                          path === `/event-winnings` && `active`
+                        }`}
+                        data-key="t-events"
+                      >
+                        Set Event Winnings
                       </Link>
                     </li>
                   </ul>
@@ -533,6 +550,72 @@ export default function Sidebar() {
                         Approved Withdrawals
                       </Link>
                     </li> */}
+                  </ul>
+                </div>
+              </li>
+              <li
+                className="nav-item"
+                hidden={!isPermission("manage_subscribers")}
+              >
+                <a
+                  className={`nav-link menu-link ${
+                    (path === `/subscribers-list` ||
+                      path === `/subscribers-notifications`) &&
+                    `active`
+                  }`}
+                  role="button"
+                  href="#sidebar-subscription"
+                  aria-expanded="false"
+                  aria-controls="sidebar-subscription"
+                  data-bs-toggle="collapse"
+                >
+                  <i className="ri-arrow-up-circle-line" />
+                  <span data-key="t-subscription">Manage Subscriptions</span>
+                </a>
+
+                <div
+                  className={`collapse menu-dropdown ${
+                    (path === `/subscriptions-plans` ||
+                      path === `/add-subscriptions` ||
+                      path === `/user-subscriptions`) &&
+                    `show`
+                  }`}
+                  id="sidebar-subscription"
+                >
+                  <ul className="nav nav-sm flex-column">
+                    <li className="nav-item">
+                      <Link
+                        to={"/add-subscriptions"}
+                        className={`nav-link ${
+                          path === `/add-subscriptions` && `active`
+                        }`}
+                        data-key="t-subscription-add"
+                      >
+                        Add Subscription Plan
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        to={"/subscriptions-plans"}
+                        className={`nav-link ${
+                          path === `/subscriptions-plans` && `active`
+                        }`}
+                        data-key="t-subscription-plan"
+                      >
+                        Subscriptions Plans
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        to={"/user-subscriptions"}
+                        className={`nav-link ${
+                          path === `/user-subscriptions` && `active`
+                        }`}
+                        data-key="t-user-subscription"
+                      >
+                        User Subscriptions
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               </li>

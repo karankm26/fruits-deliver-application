@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAdmin,
@@ -6,11 +6,7 @@ import {
   loginLogsDetails,
 } from "../../features/apiSlice";
 import Layout from "../../components/Layout";
-import * as echarts from "echarts";
 import ReactEcharts from "echarts-for-react";
-
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -26,24 +22,11 @@ export default function Dashboard() {
   const userDetail = userDetailsData?.[0];
 
   useEffect(() => {
-    dispatch(fetchAdmin(userId));
+    if (userId) dispatch(fetchAdmin(userId));
     dispatch(fetchUserDetails());
     dispatch(loginLogsDetails());
-  }, [dispatch]);
+  }, [dispatch, userId]);
 
-  const [greeting, setGreeting] = useState("");
-
-  useEffect(() => {
-    const currentHour = new Date().getHours();
-    if (currentHour >= 5 && currentHour < 12) {
-      setGreeting("Good Morning");
-    } else if (currentHour >= 12 && currentHour < 17) {
-      setGreeting("Good Afternoon");
-    } else {
-      setGreeting("Good Evening");
-    }
-  }, []);
-  console.log(loginLogsDetailsData);
   const dashboardContent = [
     {
       id: 1,
@@ -135,16 +118,6 @@ export default function Dashboard() {
     //   icon: " ri-safe-2-line",
     //   color: "danger",
     // },
-  ];
-
-  // console.log(userDetailsData);
-
-  const data = [
-    { value: 335, name: "A" },
-    { value: 310, name: "B" },
-    { value: 234, name: "C" },
-    { value: 135, name: "D" },
-    { value: 154, name: "E" },
   ];
 
   const optionOs = {
@@ -328,8 +301,6 @@ export default function Dashboard() {
     ],
   };
 
-  console.log(userDetail);
-
   return (
     <Layout>
       <div>
@@ -356,8 +327,8 @@ export default function Dashboard() {
               <div className="row">
                 <div className="row">
                   {dashboardContent.length > 0 &&
-                    dashboardContent.map((item) => (
-                      <div className="col-xl-3 col-md-6">
+                    dashboardContent.map((item, index) => (
+                      <div className="col-xl-3 col-md-6" key={index}>
                         {/* card */}
                         <div className="card card-animate">
                           <div className="card-body">
@@ -441,6 +412,7 @@ export default function Dashboard() {
                       <ReactEcharts
                         option={userDetails}
                         className="apex-charts"
+                        // theme={"dark"}
                       />
                     </div>
                   </div>

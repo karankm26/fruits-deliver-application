@@ -11,10 +11,12 @@ export default function Wrapper() {
   // const { id, role } = loginData;
 
   useEffect(() => {
-    if (loginData?.role === "admin") {
-      dispatch(fetchAdmin(loginData?.id));
-    } else {
-      dispatch(fetchStaffById(loginData?.id));
+    if (loginData?.id) {
+      if (loginData?.role === "admin") {
+        dispatch(fetchAdmin(loginData?.id));
+      } else {
+        dispatch(fetchStaffById(loginData?.id));
+      }
     }
   }, [dispatch, loginData?.role, loginData?.id]);
 

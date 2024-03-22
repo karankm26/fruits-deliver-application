@@ -36,8 +36,6 @@ const loginAdmin = async (body) => {
   const response = await axios
     .post(`${apiUrl}/admin/authenticate`, body)
     .then((res) => {
-      // snack.success("Login Successfully");
-      console.log("////////////////////", res);
       if (res.data.data.twofa_status) {
         history.navigate("/session/two-factor", {
           state: {
@@ -663,6 +661,71 @@ const verify2FAApi = async (data) => {
     });
   return response;
 };
+const addSubscriptionApi = async (data) => {
+  const response = await axios
+    .post(`${apiUrl}/subscriptionForm/store`, data)
+    .then((res) => {
+      snack.success("Subscription Plan Added Successfully!");
+      return res.data;
+    })
+    .catch((err) => {
+      snack.error(err?.response?.data?.error);
+      throw new Error(err);
+    });
+  return response;
+};
+
+const updateSubscriptionApi = async (data) => {
+  const response = await axios
+    .put(`${apiUrl}/subscriptionForm/store/update/${data.id}`, data.body)
+    .then((res) => {
+      snack.success("Subscription Plan Updated Successfully!");
+      return res.data;
+    })
+    .catch((err) => {
+      snack.error(err?.response?.data?.error);
+      throw new Error(err);
+    });
+  return response;
+};
+
+const allSubscriptionApi = async () => {
+  const response = await axios
+    .get(`${apiUrl}/subscriptionForm`)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+  return response;
+};
+
+const subscriptionByIdApi = async (id) => {
+  const response = await axios
+    .get(`${apiUrl}/subscriptionForm/${id}`)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+  return response;
+};
+
+const allUsersSubscriptionsApi = async (data) => {
+  const response = await axios
+    .get(
+      `${apiUrl}/subscriptionUser?search=${data.search}&page=${data.currentPage}&pageSize=${data.limit}`
+    )
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+  return response;
+};
 
 export {
   registerAdmin,
@@ -709,4 +772,9 @@ export {
   updateEventStatusApi,
   register2FAApi,
   verify2FAApi,
+  addSubscriptionApi,
+  allSubscriptionApi,
+  updateSubscriptionApi,
+  subscriptionByIdApi,
+  allUsersSubscriptionsApi,
 };

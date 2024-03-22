@@ -42,10 +42,12 @@ export default function ProfileEdit() {
   console.log(adminData);
 
   useEffect(() => {
-    if (loginData?.role === "admin") {
-      dispatch(fetchAdmin(loginData?.id));
-    } else {
-      dispatch(fetchStaffById(loginData?.id));
+    if (loginData?.id) {
+      if (loginData?.role === "admin") {
+        dispatch(fetchAdmin(loginData?.id));
+      } else {
+        dispatch(fetchStaffById(loginData?.id));
+      }
     }
   }, [
     dispatch,

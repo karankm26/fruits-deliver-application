@@ -43,6 +43,11 @@ import WithdrawalsView from "./Pages/withdrawals/withdrawalsView.jsx";
 import DepositsView from "./Pages/deposits/depositsView.jsx";
 import TwoFactorError from "./Pages/2fa/twoFactorError.jsx";
 import TwoFactor from "./Pages/2fa/twoFactor.jsx";
+import SubscriptionsPlan from "./Pages/subscriptions/SubscriptionsPlan.jsx";
+import AddSubscriptions from "./Pages/subscriptions/addSubscriptions.jsx";
+import EditSubscriptions from "./Pages/subscriptions/editSubscriptions.jsx";
+import UserSubscriptionList from "./Pages/subscriptions/userSubscriberList.jsx";
+import AddEventWinning from "./Pages/events/addEventWinning.jsx";
 
 export default function RoutePath() {
   const adminData = useContext(Context);
@@ -382,6 +387,57 @@ export default function RoutePath() {
                 </Permission>
               }
             />
+
+            <Route
+              path="/subscriptions-plans"
+              element={
+                <Permission permission={true}>
+                  <SubscriptionsPlan />
+                </Permission>
+              }
+            />
+
+            <Route
+              path="/add-subscriptions"
+              element={
+                <Permission permission={true}>
+                  <AddSubscriptions />
+                </Permission>
+              }
+            />
+            <Route
+              path="/edit-subscriptions/:id"
+              element={
+                <Permission permission={true}>
+                  <EditSubscriptions />
+                </Permission>
+              }
+            />
+            <Route
+              path="/user-subscriptions"
+              element={
+                <Permission permission={true}>
+                  <UserSubscriptionList />
+                </Permission>
+              }
+            />
+
+            <Route
+              path="/event-winnings"
+              element={
+                <Permission permission={true}>
+                  <AddEventWinning />
+                </Permission>
+              }
+            />
+            {/* <Route
+              path="/user-subscriptions/:id"
+              element={
+                <Permission permission={true}>
+                  <EditSubscriptions />
+                </Permission>
+              }
+            /> */}
           </Route>
           <Route path="/login" element={<Login />} />
           <Route

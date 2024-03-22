@@ -91,6 +91,8 @@ const eventSchema = Yup.object().shape({
       Yup.object().shape({
         place: Yup.string().required("Place is required"),
         percentage: Yup.string().required("Percentage is required"),
+        fromPrizePool: Yup.string().required("From Prize Pool is required"),
+        addedFunds: Yup.string().required("Added Funds is required"),
       })
     )
   ),

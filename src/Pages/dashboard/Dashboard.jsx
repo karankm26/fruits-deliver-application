@@ -143,11 +143,11 @@ export default function Dashboard() {
         radius: ["45%", "80%"],
         avoidLabelOverlap: false,
         bottom: "40",
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
+        // itemStyle: {
+        //   borderRadius: 10,
+        //   borderColor: "#fff",
+        //   borderWidth: 2,
+        // },
         label: {
           show: false,
           position: "center",
@@ -190,11 +190,11 @@ export default function Dashboard() {
         radius: ["45%", "80%"],
         avoidLabelOverlap: false,
         bottom: "40",
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
+        // itemStyle: {
+        //   borderRadius: 10,
+        //   borderColor: "#fff",
+        //   borderWidth: 2,
+        // },
         label: {
           show: false,
           position: "center",

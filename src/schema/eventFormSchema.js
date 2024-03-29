@@ -85,17 +85,26 @@ const eventSchema = Yup.object().shape({
   //     percentage: Yup.string().required("Percentage is required"),
   //   })
   // ),
-
   payoutDetails: Yup.array().of(
     Yup.array().of(
-      Yup.object().shape({
-        place: Yup.string().required("Place is required"),
-        percentage: Yup.string().required("Percentage is required"),
-        fromPrizePool: Yup.string().required("From Prize Pool is required"),
-        addedFunds: Yup.string().required("Added Funds is required"),
-      })
+      Yup.object()
+        .shape({
+          place: Yup.string().required("Place is required"),
+          percentage: Yup.string().required("Percentage is required"),
+          fromPrizePool: Yup.string(),
+          addedFunds: Yup.string(),
+        })
+        .test(
+          "oneOfFields",
+          "Either From Prize Pool or Added Funds is required",
+          function (value) {
+            const { fromPrizePool, addedFunds } = value;
+            return !fromPrizePool !== !addedFunds;
+          }
+        )
     )
   ),
+
   //   playerDetails: Yup.array().of(
   //     Yup.object().shape({
   //       name: Yup.string().required("Player Name is required"),

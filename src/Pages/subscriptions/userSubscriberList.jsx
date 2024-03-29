@@ -32,7 +32,7 @@ export default function UserSubscriptionList() {
   const handlePagination = (current) => {
     setPaginate({ ...paginate, currentPage: current });
   };
-
+  console.log(allUsersSubscriptionsData);
   return (
     <Layout>
       <div className="row">
@@ -126,6 +126,7 @@ export default function UserSubscriptionList() {
                     <th>Plan Price</th>
                     <th>Plan Type/Duration</th>
                     <th>Purchase Date</th>
+                    <th>Expire Date</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -142,13 +143,18 @@ export default function UserSubscriptionList() {
                               <p className="m-0 p-0">{item?.User?.email}</p>
                             </td>
                             <td>{item?.title}</td>
-                            <td>${item?.price}</td>
+                            <td>$ {item?.price}</td>
                             <td>
                               {item?.planType}/{item?.duration}
                             </td>
                             <td>
                               {moment(item?.createdAt).format(
-                                "MMM Do YYYY, h:mm:ss a"
+                                "DD/MM/YYYY, h:mm A"
+                              )}
+                            </td>
+                            <td>
+                              {moment(item?.subscriptionEndDate).format(
+                                "DD/MM/YYYY"
                               )}
                             </td>
 

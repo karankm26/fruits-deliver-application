@@ -106,13 +106,14 @@ export default function Editor({ setEditorHtml, editorHtml, value, formik }) {
       [{ font: [] }],
       [{ align: ["right", "center", "justify"] }],
       [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image"],
+      ["link", "image", "video"],
       [
         {
           color: colors,
         },
       ],
       [{ background: colors }],
+      ["code-block"],
     ],
   };
 

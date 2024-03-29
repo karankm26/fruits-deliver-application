@@ -19522,7 +19522,11 @@ span.flatpickr-weekday {
   color: var(--vz-body-color) !important;
   border: var(--vz-border-width) solid var(--vz-input-border-custom) !important;
 }
+
 .dropdown-content {
   background-color: var(--vz-input-bg-custom) !important;
+  color: var(--vz-body-color) !important;
+}
+.css-slyssw{
   color: var(--vz-body-color) !important;
 }

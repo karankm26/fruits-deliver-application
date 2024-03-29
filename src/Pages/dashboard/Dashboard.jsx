@@ -209,7 +209,6 @@ export default function Dashboard() {
         labelLine: {
           show: false,
         },
-
         data: loginLogsDetailsData?.browser,
       },
     ],

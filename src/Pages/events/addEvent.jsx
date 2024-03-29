@@ -11,7 +11,11 @@ import { IconButton } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { styled } from "@mui/material/styles";
 import Context from "../../components/Context";
-import { CreateEvents, fetchEvents } from "../../features/apiSlice";
+import {
+  CreateEvents,
+  activeSubscriptionUsers,
+  fetchEvents,
+} from "../../features/apiSlice";
 import { useFormik } from "formik";
 import { eventSchema } from "../../schema/eventFormSchema";
 import { useNavigate } from "react-router-dom";
@@ -59,6 +63,7 @@ const emptyData = {
       bio: "",
       twitch_link: "",
       image_path: "",
+      email: "",
     },
   ],
 };
@@ -80,14 +85,20 @@ export default function AddEvent() {
   const [editorHtml, setEditorHtml] = useState("");
   const adminData = useContext(Context);
   const dispatch = useDispatch();
-  const { eventCreateDataLoading, eventCreateDataSuccess } = useSelector(
-    (state) => state.api
-  );
+  const {
+    eventCreateDataLoading,
+    eventCreateDataSuccess,
+    activeSubscriptionUsersData,
+  } = useSelector((state) => state.api);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [subscribedPlayer, setSubscribedPlayer] = useState([]);
   useEffect(() => {
     dispatch(fetchEvents({ search: "", limit: 10, currentPage: 1 }));
+  }, [dispatch, eventCreateDataSuccess]);
+
+  useEffect(() => {
+    dispatch(activeSubscriptionUsers());
   }, [dispatch, eventCreateDataSuccess]);
 
   const handleSubmit = (value) => {
@@ -100,6 +111,7 @@ export default function AddEvent() {
         acc.base64_images.push(item.image_path);
         acc.players_id.push(index + 1);
         acc.players_stack.push(0);
+        acc.email.push(item.email);
         return acc;
       },
       {
@@ -109,6 +121,7 @@ export default function AddEvent() {
         base64_images: [],
         players_stack: [],
         players_id: [],
+        email: [],
       }
     );
     const dataWrapper = {
@@ -143,17 +156,60 @@ export default function AddEvent() {
     });
   };
 
-  const handleChangePlayerDetails = (e, index) => {
-    const { name, value, files } = e.target;
-    const updatedInputs = [...formik.values.playerDetails];
-    const isImage = value ? value : files;
-    updatedInputs[index] = {
-      ...updatedInputs[index],
-      [name]: isImage,
-    };
-    formik.setValues({ ...formik.values, playerDetails: updatedInputs });
-  };
+  function toDataURL(url) {
+    return new Promise((resolve, reject) => {
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        var reader = new FileReader();
+        reader.onloadend = () => {
+          resolve(reader.result);
+        };
+        reader.onerror = (error) => {
+          reject(error);
+        };
+        reader.readAsDataURL(xhr.response);
+      };
+      xhr.open("GET", url);
+      xhr.responseType = "blob";
+      xhr.send();
+    });
+  }
 
+  // const handleChangePlayerDetails = (e, index) => {
+  //   const { name, value, files } = e.target;
+  //   const updatedInputs = [...formik.values.playerDetails];
+  //   const isImage = value ? value : files;
+  //   updatedInputs[index] = {
+  //     ...updatedInputs[index],
+  //     [name]: isImage,
+  //   };
+  //   formik.setValues({ ...formik.values, playerDetails: updatedInputs });
+  // };
+
+  const handleChangePlayerDetails = async (e, index) => {
+    const { value } = e.target;
+    if (value) {
+      const updatedInputs = [...formik.values.playerDetails];
+      const findUser = activeSubscriptionUsersData.Users.find(
+        (user) => user.id === +value
+      );
+
+      const imageConvert = await toDataURL(findUser.image);
+
+      updatedInputs[index] = {
+        ...updatedInputs[index],
+        bio: findUser.bio,
+        twitch_link: findUser.twitch_link,
+        image_path: imageConvert,
+        name: findUser.fname + " " + findUser.lname,
+        email: findUser.email,
+      };
+      formik.setValues({ ...formik.values, playerDetails: updatedInputs });
+      // setSubscribedPlayer((prev) => [...prev, findUser.email]);
+    }
+  };
+  console.log("/////////////", formik.values);
+  console.log("errorserrors", formik.errors);
   const addPlayer = () => {
     formik.setValues((prevValues) => ({
       ...prevValues,
@@ -164,12 +220,13 @@ export default function AddEvent() {
           bio: "",
           twitch_link: "",
           image_path: "",
+          email: "",
         },
       ],
     }));
   };
 
-  const removePlayer = (index) => {
+  const removePlayer = (index, email) => {
     formik.setValues((prevValues) => ({
       ...prevValues,
       playerDetails: [
@@ -177,6 +234,7 @@ export default function AddEvent() {
         ...prevValues.playerDetails.slice(index + 1),
       ],
     }));
+    // setSubscribedPlayer(subscribedPlayer.filter((e) => e !== email));
   };
 
   useEffect(() => {
@@ -219,6 +277,17 @@ export default function AddEvent() {
       formik.setFieldValue("payoutDetails", updatedPayoutDetails);
     }
   }, [formik.values.event_round]);
+
+  useEffect(() => {
+    if (activeSubscriptionUsersData?.Users?.length) {
+      const alreadyInPlayer = activeSubscriptionUsersData.Users.filter((item) =>
+        formik.values.playerDetails.some((item2) => item2.email === item.email)
+      );
+      setSubscribedPlayer(alreadyInPlayer);
+    }
+  }, [activeSubscriptionUsersData, formik.values.playerDetails]);
+
+  // console.log("subscribedPlayersubscribedPlayer", subscribedPlayer);
 
   const handleInputChange = (e, roundIndex, fieldIndex, fieldName) => {
     const newPayoutDetails = [...formik.values.payoutDetails];
@@ -277,6 +346,14 @@ export default function AddEvent() {
       return payout;
     });
   }, [formik.values.playerDetails.length, formik.values.payoutDetails]);
+  // console.log(activeSubscriptionUsersData);
+
+  // useEffect(() => {
+  //   if (subscribedPlayer.length) {
+  //     const filtered = subscribedPlayer.filter((e) => e !== email);
+  //     setSubscribedPlayer(filtered);
+  //   }
+  // }, [formik.values.playerDetails]);
 
   return (
     <Layout>
@@ -885,11 +962,11 @@ export default function AddEvent() {
                     </thead>
                     <tbody>
                       {formik?.values?.playerDetails?.length &&
-                        formik?.values?.playerDetails.map((players, index) => (
+                        formik.values.playerDetails.map((players, index) => (
                           <tr key={index}>
                             <td className="text-center">{index + 1}</td>
                             <td>
-                              <input
+                              {/* <input
                                 value={players.name}
                                 type="text"
                                 className="form-control form-control-sm"
@@ -899,7 +976,38 @@ export default function AddEvent() {
                                   handleChangePlayerDetails(e, index)
                                 }
                                 onBlur={formik.handleBlur}
-                              />
+                              /> */}
+                              <select
+                                className="form-select form-select-sm"
+                                name="name"
+                                id="name"
+                                value={formik?.values[index]?.name}
+                                onChange={(e) =>
+                                  handleChangePlayerDetails(e, index)
+                                }
+                              >
+                                <option value={""}
+                                >Select</option>
+                                {activeSubscriptionUsersData?.Users?.length ? (
+                                  activeSubscriptionUsersData?.Users?.map(
+                                    (item) => (
+                                      <option
+                                        value={item.id}
+                                        hidden={
+                                          subscribedPlayer.length &&
+                                          subscribedPlayer.find(
+                                            (i) => i.email === item.email
+                                          )
+                                        }
+                                      >
+                                        {item?.fname} {item?.lname}
+                                      </option>
+                                    )
+                                  )
+                                ) : (
+                                  <option disabled>No Player Found</option>
+                                )}
+                              </select>
                               <div
                                 className={`invalid-feedback ${
                                   formik.touched?.playerDetails?.[index]
@@ -917,10 +1025,11 @@ export default function AddEvent() {
                                 type="text"
                                 className="form-control form-control-sm"
                                 name="bio"
-                                onChange={(e) =>
-                                  handleChangePlayerDetails(e, index)
-                                }
-                                onBlur={formik.handleBlur}
+                                // onChange={(e) =>
+                                //   handleChangePlayerDetails(e, index)
+                                // }
+                                // onBlur={formik.handleBlur}
+                                readOnly
                               />
                               <div
                                 className={`invalid-feedback ${
@@ -938,10 +1047,11 @@ export default function AddEvent() {
                                 type="text"
                                 className="form-control form-control-sm"
                                 name="twitch_link"
-                                onChange={(e) =>
-                                  handleChangePlayerDetails(e, index)
-                                }
-                                onBlur={formik.handleBlur}
+                                // onChange={(e) =>
+                                //   handleChangePlayerDetails(e, index)
+                                // }
+                                // onBlur={formik.handleBlur}
+                                readOnly
                               />
                               <div
                                 className={`invalid-feedback ${
@@ -959,7 +1069,7 @@ export default function AddEvent() {
                               </div>
                             </td>
                             <td>
-                              <CustomImgeUploader
+                              {/* <CustomImgeUploader
                                 handleChangePlayerDetails={
                                   handleChangePlayerDetails
                                 }
@@ -979,7 +1089,16 @@ export default function AddEvent() {
                                   formik.errors.playerDetails?.[index]
                                     ?.image_path
                                 }
-                              </div>
+                              </div> */}
+                              <img
+                                src={
+                                  players?.image_path ??
+                                  "https://placehold.co/200x200"
+                                }
+                                alt={players.name}
+                                width="100px"
+                                className="rounded upload-image"
+                              />
                             </td>
                             {index !== 0 ? (
                               <td className="p-0 m-0 td-table px-1">
@@ -987,7 +1106,9 @@ export default function AddEvent() {
                                   className="btn btn-sm btn-danger"
                                   style={{ background: "#dc3545" }}
                                   type="button"
-                                  onClick={() => removePlayer(index)}
+                                  onClick={() =>
+                                    removePlayer(index, players.email)
+                                  }
                                 >
                                   <i className="ri-subtract-line" />
                                 </button>

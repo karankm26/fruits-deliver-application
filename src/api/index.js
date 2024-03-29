@@ -677,7 +677,7 @@ const addSubscriptionApi = async (data) => {
 
 const updateSubscriptionApi = async (data) => {
   const response = await axios
-    .put(`${apiUrl}/subscriptionForm/store/update/${data.id}`, data.body)
+    .put(`${apiUrl}/subscriptionForm/update/${data.id}`, data.body)
     .then((res) => {
       snack.success("Subscription Plan Updated Successfully!");
       return res.data;
@@ -718,6 +718,18 @@ const allUsersSubscriptionsApi = async (data) => {
     .get(
       `${apiUrl}/subscriptionUser?search=${data.search}&page=${data.currentPage}&pageSize=${data.limit}`
     )
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+  return response;
+};
+
+const activeSubscriptionUsersApi = async (data) => {
+  const response = await axios
+    .get(`${apiUrl}/subscriptionUser?returnUser=true`)
     .then((res) => {
       return res.data;
     })
@@ -777,4 +789,5 @@ export {
   updateSubscriptionApi,
   subscriptionByIdApi,
   allUsersSubscriptionsApi,
+  activeSubscriptionUsersApi,
 };

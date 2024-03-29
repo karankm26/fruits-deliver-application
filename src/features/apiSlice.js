@@ -47,6 +47,7 @@ import {
   updateSubscriptionApi,
   subscriptionByIdApi,
   allUsersSubscriptionsApi,
+  activeSubscriptionUsersApi,
 } from "../api";
 
 export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
@@ -597,6 +598,18 @@ export const allUsersSubscriptions = createAsyncThunk(
     }
   }
 );
+
+export const activeSubscriptionUsers = createAsyncThunk(
+  "api/activeSubscriptionUsers",
+  async (data, thunkAPI) => {
+    try {
+      const response = await activeSubscriptionUsersApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 const apiSlice = createSlice({
   name: "api",
   initialState: {
@@ -816,6 +829,11 @@ const apiSlice = createSlice({
     allUsersSubscriptionsDataLoading: false,
     allUsersSubscriptionsDataError: null,
     allUsersSubscriptionsDataSuccess: null,
+
+    activeSubscriptionUsersData: [],
+    activeSubscriptionUsersDataLoading: false,
+    activeSubscriptionUsersDataError: null,
+    activeSubscriptionUsersDataSuccess: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -1483,6 +1501,21 @@ const apiSlice = createSlice({
       .addCase(allUsersSubscriptions.rejected, (state, action) => {
         state.allUsersSubscriptionsDataLoading = false;
         state.allUsersSubscriptionsDataError = action.error.message;
+      });
+
+    builder
+      .addCase(activeSubscriptionUsers.pending, (state) => {
+        state.activeSubscriptionUsersDataLoading = true;
+        state.activeSubscriptionUsersDataSuccess = false;
+      })
+      .addCase(activeSubscriptionUsers.fulfilled, (state, action) => {
+        state.activeSubscriptionUsersDataLoading = false;
+        state.activeSubscriptionUsersData = action.payload;
+        state.activeSubscriptionUsersDataSuccess = true;
+      })
+      .addCase(activeSubscriptionUsers.rejected, (state, action) => {
+        state.activeSubscriptionUsersDataLoading = false;
+        state.activeSubscriptionUsersDataError = action.error.message;
       });
   },
 });

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import { addSubscription, subscriptionById } from "../../features/apiSlice";
+import {
+  addSubscription,
+  subscriptionById,
+  updateSubscription,
+} from "../../features/apiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../utils/loader";
 import { useFormik } from "formik";
@@ -19,6 +23,8 @@ export default function EditSubscriptions() {
     addSubscriptionData,
     addSubscriptionDataSuccess,
     updateSubscriptionData,
+    updateSubscriptionDataSuccess,
+    updateSubscriptionDataLoading,
     subscriptionByIdData,
     subscriptionByIdDataLoading,
   } = useSelector((state) => state.api);
@@ -33,7 +39,7 @@ export default function EditSubscriptions() {
     },
     validationSchema: subscriptionSchema,
     onSubmit: () => {
-      dispatch(addSubscription(formik.values));
+      dispatch(updateSubscription({ id, body: formik.values }));
       setSuccess(true);
     },
   });
@@ -66,10 +72,10 @@ export default function EditSubscriptions() {
   console.log(subscriptionByIdData);
 
   useEffect(() => {
-    if (addSubscriptionDataSuccess && success) {
+    if (updateSubscriptionDataSuccess && success) {
       navigate("/subscriptions-plans");
     }
-  }, [addSubscriptionDataSuccess, success]);
+  }, [updateSubscriptionDataSuccess, success]);
 
   return (
     <Layout>
@@ -248,7 +254,7 @@ export default function EditSubscriptions() {
                       className="btn btn-primary"
                       type="submit"
                     >
-                      {addSubscriptionDataLoading ? (
+                      {updateSubscriptionDataLoading ? (
                         <div
                           className="spinner-border spinner-border-sm text-light"
                           role="status"

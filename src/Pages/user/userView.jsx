@@ -89,7 +89,18 @@ export default function UserView() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateUser({ id, body: selected }));
+    const body = {
+      fname: selected.fname,
+      lname: selected.lname,
+      email: selected.email,
+      mobileNo: selected.mobileNo,
+      twitch_link: selected.twitch_link,
+      bio: selected.bio,
+      country: selected.country,
+      twofa_status: selected.twofa_status,
+      sms_verify: selected.sms_verify,
+    };
+    dispatch(updateUser({ id, body }));
   };
 
   const handleBalanceSubmit = (e) => {
@@ -447,6 +458,36 @@ export default function UserView() {
                         className="form-control"
                         id="basiInput"
                         name="mobileNo"
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className=" col-md-4">
+                    <div>
+                      <label htmlFor="basiInput" className="form-label">
+                        Twitch Link
+                      </label>
+                      <input
+                        value={selected.twitch_link}
+                        type="text"
+                        className="form-control"
+                        id="basiInput"
+                        name="twitch_link"
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  <div className=" col-md-4">
+                    <div>
+                      <label htmlFor="basiInput" className="form-label">
+                        Bio
+                      </label>
+                      <input
+                        value={selected.bio}
+                        type="text"
+                        className="form-control"
+                        id="basiInput"
+                        name="bio"
                         onChange={handleChange}
                       />
                     </div>

@@ -7,8 +7,7 @@ import {
   updateSupportTicketMessageById,
 } from "../../features/apiSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { MessageBox, MessageList } from "react-chat-elements";
-import "react-chat-elements/dist/main.css";
+
 import ScrollToBottom from "react-scroll-to-bottom";
 import ImageLightbox from "../../utils/ImageLightbox";
 import moment from "moment";

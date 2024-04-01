@@ -1,6 +1,6 @@
 import axios from "axios";
-import { snack } from "../utils/snack";
-import { history } from "../history";
+import {snack} from "../utils/snack";
+import {history} from "../history";
 const apiUrl = import.meta.env.VITE_API_URL + "/api";
 const countryApiUrl = import.meta.env.VITE_COUNTRIES_API_URL;
 
@@ -538,6 +538,7 @@ const getEvents = async (data) => {
 };
 
 const getEventById = async (id) => {
+  console.log(id);
   const response = await axios
     .get(`${apiUrl}/events/${id}`)
     .then((res) => {

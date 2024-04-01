@@ -58,8 +58,9 @@ const emptyData = {
 
 export default function AddEventWinning() {
   const navigate = useNavigate();
-  const [rounds, setRounds] = useState(0);
-  const [selectEvent, setSelectEvent] = useState({});
+  const [rounds, setRounds] = useState([]);
+  const [selectEvent, setSelectEvent] = useState("");
+  const [players, setPlayers] = useState([]);
   const adminData = useContext(Context);
   const dispatch = useDispatch();
   const {
@@ -110,21 +111,21 @@ export default function AddEventWinning() {
     },
   });
 
-  useEffect(() => {
-    if (rounds && formik.values.payoutDetails) {
-      const newRounds = parseInt(rounds);
-      const updatedPayoutDetails = Array.from(
-        { length: newRounds },
-        (_, roundIndex) => {
-          const existingRound = formik.values.payoutDetails[roundIndex] || [
-            { place: "", percentage: "", fromPrizePool: "", addedFunds: "" },
-          ];
-          return existingRound.map((detail) => ({ ...detail }));
-        }
-      );
-      formik.setFieldValue("payoutDetails", updatedPayoutDetails);
-    }
-  }, [rounds]);
+  // useEffect(() => {
+  //   if (rounds && formik.values.payoutDetails) {
+  //     const newRounds = parseInt(rounds);
+  //     const updatedPayoutDetails = Array.from(
+  //       { length: newRounds },
+  //       (_, roundIndex) => {
+  //         const existingRound = formik.values.payoutDetails[roundIndex] || [
+  //           { place: "", percentage: "", fromPrizePool: "", addedFunds: "" },
+  //         ];
+  //         return existingRound.map((detail) => ({ ...detail }));
+  //       }
+  //     );
+  //     formik.setFieldValue("payoutDetails", updatedPayoutDetails);
+  //   }
+  // }, [rounds]);
 
   useEffect(() => {
     const payOuts = formik.values.payoutDetails;
@@ -141,15 +142,21 @@ export default function AddEventWinning() {
     dispatch(fetchEvents({ search: "", limit: 10, currentPage: 1 }));
   }, [dispatch]);
 
-  console.log(events);
-  console.log(rounds);
+  // console.log(events);
+  // console.log(rounds);
 
   useEffect(() => {
     if (events && selectEvent) {
       const findEvent = events.find((event) => event.id === +selectEvent);
-      setRounds(findEvent?.event_round);
+      setRounds(findEvent.payoutDetails);
+      setPlayers(findEvent.players_details);
+    } else {
+      setRounds([]);
     }
   }, [events, selectEvent]);
+
+  console.log(rounds);
+  console.log(players);
 
   return (
     <Layout>
@@ -197,8 +204,8 @@ export default function AddEventWinning() {
 
           <div className="card">
             <div className="card-body">
-              {formik.values.payoutDetails.length ? (
-                formik.values.payoutDetails.map((round, roundIndex) => (
+              {rounds.length ? (
+                rounds.map((round, roundIndex) => (
                   <>
                     {roundIndex !== 0 && (
                       <div className="card-header p-0 mt-3" />
@@ -221,6 +228,7 @@ export default function AddEventWinning() {
                               <th className="text-center">Player Name</th>
                             </tr>
                           </thead>
+                          {console.log("roundround", round)}
                           <tbody>
                             {round.length &&
                               round.map((payout, payoutIndex) => (
@@ -230,10 +238,15 @@ export default function AddEventWinning() {
                                   </td>
 
                                   <td>
-                                    <select className="form-select">
+                                    <select className="form-select form-select-sm">
                                       <option selected value={""}>
                                         Select Player
                                       </option>
+                                      {players.map((item) => (
+                                        <option value={item.id}>
+                                          {item.name}
+                                        </option>
+                                      ))}
                                     </select>
                                   </td>
                                 </tr>

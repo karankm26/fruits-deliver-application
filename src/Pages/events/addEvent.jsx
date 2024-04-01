@@ -112,6 +112,7 @@ export default function AddEvent() {
         acc.players_id.push(index + 1);
         acc.players_stack.push(0);
         acc.email.push(item.email);
+        acc.player_status.push(1);
         return acc;
       },
       {
@@ -122,6 +123,7 @@ export default function AddEvent() {
         players_stack: [],
         players_id: [],
         email: [],
+        player_status: [],
       }
     );
     const dataWrapper = {
@@ -130,11 +132,12 @@ export default function AddEvent() {
       number_of_players: playerDetails.length,
       places_paid: formik.values.payoutDetails.length,
       roleId: adminData?.id,
+      role,
     };
     dispatch(CreateEvents(dataWrapper));
     setSuccess(true);
   };
-
+  console.log(adminData);
   const formik = useFormik({
     initialValues: { ...emptyData },
     validationSchema: eventSchema,
@@ -188,28 +191,31 @@ export default function AddEvent() {
 
   const handleChangePlayerDetails = async (e, index) => {
     const { value } = e.target;
-    if (value) {
-      const updatedInputs = [...formik.values.playerDetails];
-      const findUser = activeSubscriptionUsersData.Users.find(
-        (user) => user.id === +value
-      );
-
-      const imageConvert = await toDataURL(findUser.image);
-
-      updatedInputs[index] = {
-        ...updatedInputs[index],
-        bio: findUser.bio,
-        twitch_link: findUser.twitch_link,
-        image_path: imageConvert,
-        name: findUser.fname + " " + findUser.lname,
-        email: findUser.email,
-      };
-      formik.setValues({ ...formik.values, playerDetails: updatedInputs });
-      // setSubscribedPlayer((prev) => [...prev, findUser.email]);
-    }
+    const updatedInputs = [...formik.values.playerDetails];
+    const findUser = activeSubscriptionUsersData.Users.find(
+      (user) => user.fname + " " + user.lname === value
+    );
+    const imageConvert = findUser && (await toDataURL(findUser.image));
+    updatedInputs[index] = {
+      ...updatedInputs[index],
+      bio: findUser?.bio ?? "",
+      twitch_link: findUser?.twitch_link ?? "",
+      image_path: imageConvert ?? "",
+      name: findUser?.fname + " " + findUser?.lname ?? "",
+      email: findUser?.email ?? "",
+    };
+    formik.setValues({ ...formik.values, playerDetails: updatedInputs });
   };
-  console.log("/////////////", formik.values);
-  console.log("errorserrors", formik.errors);
+
+  useEffect(() => {
+    if (activeSubscriptionUsersData?.Users?.length) {
+      const alreadyInPlayer = activeSubscriptionUsersData.Users.filter((item) =>
+        formik.values.playerDetails.some((item2) => item2.email === item.email)
+      );
+      setSubscribedPlayer(alreadyInPlayer);
+    }
+  }, [activeSubscriptionUsersData, formik.values.playerDetails]);
+
   const addPlayer = () => {
     formik.setValues((prevValues) => ({
       ...prevValues,
@@ -234,7 +240,6 @@ export default function AddEvent() {
         ...prevValues.playerDetails.slice(index + 1),
       ],
     }));
-    // setSubscribedPlayer(subscribedPlayer.filter((e) => e !== email));
   };
 
   useEffect(() => {
@@ -277,15 +282,6 @@ export default function AddEvent() {
       formik.setFieldValue("payoutDetails", updatedPayoutDetails);
     }
   }, [formik.values.event_round]);
-
-  useEffect(() => {
-    if (activeSubscriptionUsersData?.Users?.length) {
-      const alreadyInPlayer = activeSubscriptionUsersData.Users.filter((item) =>
-        formik.values.playerDetails.some((item2) => item2.email === item.email)
-      );
-      setSubscribedPlayer(alreadyInPlayer);
-    }
-  }, [activeSubscriptionUsersData, formik.values.playerDetails]);
 
   // console.log("subscribedPlayersubscribedPlayer", subscribedPlayer);
 
@@ -986,24 +982,27 @@ export default function AddEvent() {
                                   handleChangePlayerDetails(e, index)
                                 }
                               >
-                                <option value={""}
-                                >Select</option>
+                                <option value={""}>Select</option>
                                 {activeSubscriptionUsersData?.Users?.length ? (
                                   activeSubscriptionUsersData?.Users?.map(
-                                    (item) => (
-                                      <option
-                                        value={item.id}
-                                        hidden={
-                                          subscribedPlayer.length &&
-                                          subscribedPlayer.find(
-                                            (i) => i.email === item.email
-                                          )
-                                        }
-                                      >
-                                        {item?.fname} {item?.lname}
-                                      </option>
-                                    )
-                                  )
+                                    (subs) => ({
+                                      ...subs,
+                                      name: subs.fname + " " + subs.lname,
+                                    })
+                                  ).map((item, i) => (
+                                    <option
+                                      key={i}
+                                      value={item.name}
+                                      disabled={
+                                        subscribedPlayer.length &&
+                                        subscribedPlayer.find(
+                                          (i) => i.email === item.email
+                                        )
+                                      }
+                                    >
+                                      {item?.fname} {item?.lname}
+                                    </option>
+                                  ))
                                 ) : (
                                   <option disabled>No Player Found</option>
                                 )}
@@ -1068,7 +1067,7 @@ export default function AddEvent() {
                                 }
                               </div>
                             </td>
-                            <td>
+                            <td className="text-center">
                               {/* <CustomImgeUploader
                                 handleChangePlayerDetails={
                                   handleChangePlayerDetails
@@ -1090,15 +1089,16 @@ export default function AddEvent() {
                                     ?.image_path
                                 }
                               </div> */}
-                              <img
-                                src={
-                                  players?.image_path ??
-                                  "https://placehold.co/200x200"
-                                }
-                                alt={players.name}
-                                width="100px"
-                                className="rounded upload-image"
-                              />
+                              {players?.image_path ? (
+                                <img
+                                  src={players?.image_path}
+                                  alt={players.name}
+                                  width="100px"
+                                  className="rounded upload-image"
+                                />
+                              ) : (
+                                "Player Image"
+                              )}
                             </td>
                             {index !== 0 ? (
                               <td className="p-0 m-0 td-table px-1">

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {
   getAdmin,
   getCitiesApi,
@@ -740,7 +740,7 @@ const apiSlice = createSlice({
     eventsDataError: null,
     eventsDataSuccess: null,
 
-    eventByIdData: [],
+    eventByIdData: {},
     eventByIdDataLoading: false,
     eventByIdDataError: null,
     eventByIdDataSuccess: null,

@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   getAdmin,
   getCitiesApi,
@@ -48,6 +48,7 @@ import {
   subscriptionByIdApi,
   allUsersSubscriptionsApi,
   activeSubscriptionUsersApi,
+  setEventWinningApi,
 } from "../api";
 
 export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
@@ -610,6 +611,18 @@ export const activeSubscriptionUsers = createAsyncThunk(
     }
   }
 );
+
+export const setEventWinning = createAsyncThunk(
+  "api/setEventWinning",
+  async (data, thunkAPI) => {
+    try {
+      const response = await setEventWinningApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 const apiSlice = createSlice({
   name: "api",
   initialState: {
@@ -834,6 +847,11 @@ const apiSlice = createSlice({
     activeSubscriptionUsersDataLoading: false,
     activeSubscriptionUsersDataError: null,
     activeSubscriptionUsersDataSuccess: null,
+
+    setEventWinningData: [],
+    setEventWinningDataLoading: false,
+    setEventWinningDataError: null,
+    setEventWinningDataSuccess: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -1516,6 +1534,21 @@ const apiSlice = createSlice({
       .addCase(activeSubscriptionUsers.rejected, (state, action) => {
         state.activeSubscriptionUsersDataLoading = false;
         state.activeSubscriptionUsersDataError = action.error.message;
+      });
+
+    builder
+      .addCase(setEventWinning.pending, (state) => {
+        state.setEventWinningDataLoading = true;
+        state.setEventWinningDataSuccess = false;
+      })
+      .addCase(setEventWinning.fulfilled, (state, action) => {
+        state.setEventWinningDataLoading = false;
+        state.setEventWinningData = action.payload;
+        state.setEventWinningDataSuccess = true;
+      })
+      .addCase(setEventWinning.rejected, (state, action) => {
+        state.setEventWinningDataLoading = false;
+        state.setEventWinningDataError = action.error.message;
       });
   },
 });

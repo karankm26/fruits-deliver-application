@@ -132,7 +132,7 @@ export default function AddEvent() {
       number_of_players: playerDetails.length,
       places_paid: formik.values.payoutDetails.length,
       roleId: adminData?.id,
-      role,
+      role: adminData?.role,
     };
     dispatch(CreateEvents(dataWrapper));
     setSuccess(true);
@@ -718,7 +718,7 @@ export default function AddEvent() {
                     <input
                       // value={selected.event_ticket}
                       type="text"
-                      className="form-control"
+                      className="form-control "
                       id="event_ticket"
                       name="event_ticket"
                       // onChange={handleChange}
@@ -1145,7 +1145,7 @@ export default function AddEvent() {
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      id="bounty_detail"
+                      id="bounty_detail_1"
                       name="bounty_detail"
                       checked={formik.values.bounty_detail === "none"}
                       onChange={(e) => {
@@ -1158,7 +1158,7 @@ export default function AddEvent() {
                       }}
                       onBlur={formik.handleBlur}
                     />
-                    <label className="form-check-label" htmlFor="formCheck6">
+                    <label className="form-check-label" htmlFor="bounty_detail_1">
                       None
                     </label>
                   </div>
@@ -1166,7 +1166,7 @@ export default function AddEvent() {
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      id="bounty_detail"
+                      id="bounty_detail_2"
                       name="bounty_detail"
                       checked={formik.values.bounty_detail === "bounty"}
                       onChange={(e) => {
@@ -1178,7 +1178,7 @@ export default function AddEvent() {
                         });
                       }}
                     />
-                    <label className="form-check-label" htmlFor="formCheck6">
+                    <label className="form-check-label" htmlFor="bounty_detail_2">
                       Bounty
                     </label>
                   </div>
@@ -1186,7 +1186,7 @@ export default function AddEvent() {
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      id="bounty_detail"
+                      id="bounty_detail_3"
                       name="bounty_detail"
                       checked={formik.values.bounty_detail === "pko_bounty"}
                       onChange={(e) => {
@@ -1198,7 +1198,7 @@ export default function AddEvent() {
                         });
                       }}
                     />
-                    <label className="form-check-label" htmlFor="formCheck6">
+                    <label className="form-check-label" htmlFor="bounty_detail_3">
                       PKO Bounty
                     </label>
                   </div>

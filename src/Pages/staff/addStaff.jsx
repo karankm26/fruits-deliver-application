@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout/index.jsx";
 import Loader from "../../utils/loader.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { staffRegister } from "../../features/apiSlice.js";
+import {
+  activeSubscriptionUsers,
+  staffRegister,
+} from "../../features/apiSlice.js";
 import { useNavigate } from "react-router-dom";
+import CreatableSelect from "react-select/creatable";
 
 const emptyData = {
   firstName: "",
@@ -29,18 +33,36 @@ const emptyData = {
 export default function AddStaff() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { staffRegisterDataLoading, staffRegisterDataSuccess } = useSelector(
-    (state) => state.api
-  );
+  const {
+    staffRegisterDataLoading,
+    staffRegisterDataSuccess,
+    activeSubscriptionUsersData,
+  } = useSelector((state) => state.api);
   const id = localStorage.getItem("id");
   const [selected, setSelected] = useState(emptyData);
   const [showPassword, setShowPassword] = useState(false);
+  const [players, setPlayers] = useState([]);
 
   useEffect(() => {
     if (staffRegisterDataSuccess) {
       navigate("/staff");
     }
   }, [staffRegisterDataSuccess]);
+
+  useEffect(() => {
+    dispatch(activeSubscriptionUsers());
+  }, [dispatch]);
+
+  console.log(selected);
+
+  useEffect(() => {
+    if (activeSubscriptionUsersData?.Users?.length) {
+      const users = activeSubscriptionUsersData.Users.map((item) => {
+        return { label: item.fname, value: item.fname };
+      });
+      setPlayers(users);
+    }
+  }, [activeSubscriptionUsersData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,7 +90,6 @@ export default function AddStaff() {
         }
       }
     }
-
     setSelected(updatedData);
   };
 
@@ -103,6 +124,7 @@ export default function AddStaff() {
     }
   };
 
+  console.log(players);
   return (
     <Layout>
       <Loader isLoading={staffRegisterDataLoading} />
@@ -131,11 +153,27 @@ export default function AddStaff() {
             <form onSubmit={handleSubmit} className="card-body">
               <div className="live-preview">
                 <div className="row gy-4">
-                  <div className="col-xxl-3 col-md-3">
+                  <div className="col-xxl-3 col-lg-3">
                     <div>
                       <label htmlFor="basiInput" className="form-label">
                         First Name
                       </label>
+                      {/* <CreatableSelect
+                        isClearable
+                        options={players}
+                        onCreateOption={(e) => {
+                          setSelected({ ...selected, firstName: e });
+                          setPlayers([...players, { label: e, value: e }]);
+                        }}
+                        // name="firstName"
+                        // value={"ff"}
+
+                        onChange={(e) => {
+                          console.log(e);
+                          setSelected({ ...selected, firstName: e.label });
+                        }}
+                        placeholder="Enter First Name"
+                      /> */}
                       <input
                         type="text"
                         className="form-control"
@@ -147,7 +185,7 @@ export default function AddStaff() {
                       />
                     </div>
                   </div>
-                  <div className="col-xxl-3 col-md-3">
+                  <div className="col-xxl-3 col-lg-3">
                     <div>
                       <label htmlFor="basiInput" className="form-label">
                         Last Name
@@ -163,7 +201,7 @@ export default function AddStaff() {
                       />
                     </div>
                   </div>
-                  <div className="col-xxl-3 col-md-3">
+                  <div className="col-xxl-3 col-lg-3">
                     <div>
                       <label htmlFor="basiInput" className="form-label">
                         Email
@@ -179,7 +217,7 @@ export default function AddStaff() {
                       />
                     </div>
                   </div>
-                  <div className="col-xxl-3 col-md-3">
+                  <div className="col-xxl-3 col-lg-3">
                     <div>
                       <label htmlFor="basiInput" className="form-label">
                         Password
@@ -356,7 +394,7 @@ export default function AddStaff() {
                     </div>
                   </div>
                   <div className="px-5 pt-3 row">
-                    <div className="col-xxl-3 col-md-3">
+                    <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
@@ -382,7 +420,7 @@ export default function AddStaff() {
                         </label>
                       </div>
                     </div>
-                    <div className="col-xxl-3 col-md-3">
+                    <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
@@ -436,7 +474,7 @@ export default function AddStaff() {
                     </div>
                   </div>
                   <div className="px-5 pt-3 row">
-                    <div className="col-xxl-3 col-md-3">
+                    <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
@@ -462,7 +500,7 @@ export default function AddStaff() {
                         </label>
                       </div>
                     </div>
-                    <div className="col-xxl-3 col-md-3">
+                    <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
@@ -488,7 +526,7 @@ export default function AddStaff() {
                         </label>
                       </div>
                     </div>
-                    <div className="col-xxl-3 col-md-3">
+                    <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
@@ -514,7 +552,7 @@ export default function AddStaff() {
                         </label>
                       </div>
                     </div>
-                    {/* <div className="col-xxl-3 col-md-3">
+                    {/* <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"

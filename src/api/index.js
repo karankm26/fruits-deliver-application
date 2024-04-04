@@ -1,6 +1,6 @@
 import axios from "axios";
-import {snack} from "../utils/snack";
-import {history} from "../history";
+import { snack } from "../utils/snack";
+import { history } from "../history";
 const apiUrl = import.meta.env.VITE_API_URL + "/api";
 const countryApiUrl = import.meta.env.VITE_COUNTRIES_API_URL;
 
@@ -676,19 +676,19 @@ const addSubscriptionApi = async (data) => {
   return response;
 };
 
-const updateSubscriptionApi = async (data) => {
-  const response = await axios
-    .put(`${apiUrl}/subscriptionForm/update/${data.id}`, data.body)
-    .then((res) => {
-      snack.success("Subscription Plan Updated Successfully!");
-      return res.data;
-    })
-    .catch((err) => {
-      snack.error(err?.response?.data?.error);
-      throw new Error(err);
-    });
-  return response;
-};
+// const updateSubscriptionApi = async (data) => {
+//   const response = await axios
+//     .put(`${apiUrl}/subscriptionForm/update/${data.id}`, data.body)
+//     .then((res) => {
+//       snack.success("Subscription Plan Updated Successfully!");
+//       return res.data;
+//     })
+//     .catch((err) => {
+//       snack.error(err?.response?.data?.error);
+//       throw new Error(err);
+//     });
+//   return response;
+// };
 
 const allSubscriptionApi = async () => {
   const response = await axios
@@ -735,6 +735,34 @@ const activeSubscriptionUsersApi = async (data) => {
       return res.data;
     })
     .catch((err) => {
+      throw new Error(err);
+    });
+  return response;
+};
+
+const updateSubscriptionApi = async (data) => {
+  const response = await axios
+    .put(`${apiUrl}/subscriptionForm/update/${data.id}`, data.body)
+    .then((res) => {
+      snack.success("Subscription Plan Updated Successfully!");
+      return res.data;
+    })
+    .catch((err) => {
+      snack.error(err?.response?.data?.error);
+      throw new Error(err);
+    });
+  return response;
+};
+
+const setEventWinningApi = async (data) => {
+  const response = await axios
+    .post(`${apiUrl}/events/win/${data?.id}`, data.body)
+    .then((res) => {
+      snack.success("Winning Uploaded Successfully!");
+      return res.data;
+    })
+    .catch((err) => {
+      snack.error(err?.response?.data?.message);
       throw new Error(err);
     });
   return response;
@@ -791,4 +819,5 @@ export {
   subscriptionByIdApi,
   allUsersSubscriptionsApi,
   activeSubscriptionUsersApi,
+  setEventWinningApi,
 };

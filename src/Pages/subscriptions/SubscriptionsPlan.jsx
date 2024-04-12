@@ -5,6 +5,7 @@ import {
   allSubscription,
   fetchSubscribersList,
   subscribersNotificationSend,
+  updateSubscription,
 } from "../../features/apiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../utils/loader";
@@ -36,6 +37,8 @@ export default function SubscriptionsPlan() {
     subscribersNotificationData,
     allSubscriptionData,
     allSubscriptionDataLoading,
+    updateSubscriptionDataSuccess,
+    updateSubscriptionDataLoading,
   } = useSelector((state) => state.api);
 
   const { subscribe } = subscribersListData;
@@ -43,7 +46,7 @@ export default function SubscriptionsPlan() {
 
   useEffect(() => {
     dispatch(allSubscription());
-  }, [dispatch]);
+  }, [dispatch, updateSubscriptionDataSuccess]);
 
   const defineLimit = (p) => {
     setLimit(p);
@@ -76,9 +79,15 @@ export default function SubscriptionsPlan() {
 
   const subscriptionData = [];
   console.log(allSubscriptionData?.SubscriptionForm);
+
+  const handleStatusUpdate = (id, status) => {
+    dispatch(updateSubscription({ id, body: { status } }));
+  };
   return (
     <Layout>
-      <Loader isLoading={allSubscriptionDataLoading} />
+      <Loader
+        isLoading={allSubscriptionDataLoading || updateSubscriptionDataLoading}
+      />
       <div className="row">
         <div className="col-12">
           <div className="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -160,6 +169,16 @@ export default function SubscriptionsPlan() {
                             >
                               Edit
                             </Link>
+                            <button
+                              onClick={() =>
+                                handleStatusUpdate(item.id, !item.status)
+                              }
+                              className={`ms-1 btn btn-${
+                                item.status ? `danger` : `success`
+                              }`}
+                            >
+                              {item.status ? "Inactive" : "Active"}
+                            </button>
                           </div>
                         </div>
                       </div>

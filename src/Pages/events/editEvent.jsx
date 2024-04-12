@@ -150,7 +150,6 @@ export default function EditEvent() {
         acc.players_stack.push(item.players_stack);
         acc.email.push(item.email);
         acc.player_status.push(1);
-
         return acc;
       },
       {

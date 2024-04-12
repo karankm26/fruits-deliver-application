@@ -670,7 +670,7 @@ const addSubscriptionApi = async (data) => {
       return res.data;
     })
     .catch((err) => {
-      snack.error(err?.response?.data?.error);
+      snack.error(err?.response?.data?.message);
       throw new Error(err);
     });
   return response;

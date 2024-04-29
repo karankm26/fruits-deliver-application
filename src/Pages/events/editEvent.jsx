@@ -129,8 +129,8 @@ export default function EditEvent() {
   }, [eventByIdData]);
 
   useEffect(() => {
-    if (activeSubscriptionUsersData?.Users?.length) {
-      const alreadyInPlayer = activeSubscriptionUsersData.Users.filter((item) =>
+    if (activeSubscriptionUsersData?.length) {
+      const alreadyInPlayer = activeSubscriptionUsersData.filter((item) =>
         formik.values.playerDetails.some((item2) => item2.email === item.email)
       );
       setSubscribedPlayer(alreadyInPlayer);
@@ -150,6 +150,7 @@ export default function EditEvent() {
         acc.players_stack.push(item.players_stack);
         acc.email.push(item.email);
         acc.player_status.push(1);
+        acc.email_sent.push(item.email_sent);
         return acc;
       },
       {
@@ -345,7 +346,7 @@ export default function EditEvent() {
     // console.log(e.target);
     const { value } = e.target;
     const updatedInputs = [...formik.values.playerDetails];
-    const findUser = activeSubscriptionUsersData.Users.find(
+    const findUser = activeSubscriptionUsersData.find(
       (user) => user.fname + " " + user.lname === value
     );
     const imageConvert = findUser && (await toDataURL(findUser.image));
@@ -440,7 +441,7 @@ export default function EditEvent() {
   console.log(formik.values);
   // useEffect(() => {
   //   if (activeSubscriptionUsersData) {
-  //     const filtered = activeSubscriptionUsersData.Users.map((subs) => {
+  //     const filtered = activeSubscriptionUsersData.map((subs) => {
   //       return {...subs, name: subs.fname + " " + subs.lname};
   //     });
   //     console.log("ss", filtered);
@@ -1062,26 +1063,26 @@ export default function EditEvent() {
                                 <option value={""} selected disabled>
                                   Select
                                 </option>
-                                {activeSubscriptionUsersData?.Users?.length ? (
-                                  activeSubscriptionUsersData?.Users?.map(
-                                    (subs) => ({
+                                {activeSubscriptionUsersData?.length ? (
+                                  activeSubscriptionUsersData
+                                    ?.map((subs) => ({
                                       ...subs,
                                       name: subs.fname + " " + subs.lname,
-                                    })
-                                  ).map((item, i) => (
-                                    <option
-                                      key={i}
-                                      value={item.name}
-                                      disabled={
-                                        subscribedPlayer.length &&
-                                        subscribedPlayer.find(
-                                          (i) => i.email === item.email
-                                        )
-                                      }
-                                    >
-                                      {item?.name}
-                                    </option>
-                                  ))
+                                    }))
+                                    .map((item, i) => (
+                                      <option
+                                        key={i}
+                                        value={item.name}
+                                        disabled={
+                                          subscribedPlayer.length &&
+                                          subscribedPlayer.find(
+                                            (i) => i.email === item.email
+                                          )
+                                        }
+                                      >
+                                        {item?.name}
+                                      </option>
+                                    ))
                                 ) : (
                                   <option disabled>No Player Found</option>
                                 )}

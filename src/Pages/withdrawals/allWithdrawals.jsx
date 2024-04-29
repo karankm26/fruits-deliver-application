@@ -25,7 +25,16 @@ export default function AllWithdrawals() {
   const { totalPages, currentPage } = paginate;
 
   useEffect(() => {
-    dispatch(withdrawals({ search, limit, currentPage, type: "" }));
+    dispatch(
+      withdrawals({
+        search,
+        limit,
+        currentPage,
+        type: "",
+        startDate: "",
+        endDate: "",
+      })
+    );
   }, [
     dispatch,
     search,

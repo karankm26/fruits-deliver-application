@@ -4,30 +4,51 @@ import Loader from "../../utils/loader";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { fetchTransactions } from "../../features/apiSlice";
-import { Link } from "react-router-dom";
 import Pagination from "../../utils/pagination";
+import CustomDateRangePicker from "../../utils/customDateRangePicker";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { CSVLink } from "react-csv";
 
 export default function TransactionLog() {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
+  const [dateRange, setDateRange] = useState({
+    Duration_Start: "",
+    Duration_End: "",
+  });
   const [paginate, setPaginate] = useState({
     totalPages: 1,
     currentPage: 1,
   });
   const { totalPages, currentPage } = paginate;
   const {
-    transactionsData: { rows, count },
+    transactionsData: { result },
     userDataLoading,
     transactionsData,
     transactionsDataSuccess,
   } = useSelector((state) => state.api);
 
-  console.log(transactionsData);
+  const rows = result?.rows;
+  const count = result?.count;
 
   useEffect(() => {
-    dispatch(fetchTransactions({ search, limit, type: "", currentPage }));
-  }, [dispatch, search, limit, currentPage]);
+    dispatch(
+      fetchTransactions({
+        search,
+        limit,
+        type: "",
+        currentPage,
+        ...(dateRange?.Duration_Start && dateRange?.Duration_End
+          ? {
+              startDate: dateRange?.Duration_Start,
+              endDate: dateRange?.Duration_End,
+            }
+          : { startDate: "", endDate: "" }),
+      })
+    );
+  }, [dispatch, search, limit, currentPage, dateRange]);
 
   useEffect(() => {
     if (count) {
@@ -44,8 +65,91 @@ export default function TransactionLog() {
     setPaginate({ ...paginate, currentPage: current });
   };
 
-  console.log(paginate);
+  console.log(transactionsData);
 
+  const handleExportPDF = () => {
+    const statement = "dddd";
+    const unit = "pt";
+    const size = "A4";
+    const orientation = "landscape";
+
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+
+    doc.setFontSize(12);
+
+    const title = `BKRM Games Transaction Log Report  |  Date: ${moment().format(
+      "MM/DD/YYYY hh:mm:ss A"
+    )}\n${
+      dateRange.Duration_Start &&
+      dateRange.Duration_End &&
+      `From ${moment(dateRange.Duration_Start).format(
+        "MM/DD/YYYY"
+      )} to ${moment(dateRange.Duration_End).format("MM/DD/YYYY")}`
+    }`;
+    const headers = [
+      [
+        "S.No",
+        "Name",
+        "Email",
+        "Transaction Id",
+        "Transaction Type",
+        "Amount",
+        "Post Balance",
+        "Description",
+        "Transaction Date",
+      ],
+    ];
+
+    const data =
+      rows?.length &&
+      rows.map((elt, index) => {
+        return [
+          index + 1,
+          elt.User.fname + " " + elt.User.lname,
+          elt.User.email,
+          elt.tansactionId,
+          elt.transactionType,
+          "$" + elt.amount.toLocaleString(),
+          "$" + elt.balance.toLocaleString(),
+          elt.description.replace(/^\s+|\s+$/gm, ""),
+          moment(elt.createdAt).format("MM/DD/YYYY hh:mm:ss A"),
+        ];
+      });
+
+    let content = {
+      startY: 70,
+      startX: 50,
+      head: headers,
+      body: data,
+      tableWidth: "auto",
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save(
+      `BKRM Games transaction log report ${moment().format(
+        "MM/DD/YYYY_hh:mm:ss_A"
+      )}.pdf`
+    );
+  };
+  const csvData = rows?.length
+    ? rows.map((elt, index) => {
+        return {
+          "S.No:": index + 1,
+          Name: elt.User.fname + " " + elt.User.lname,
+          Email: elt.User.email,
+          "Transaction ID": elt.tansactionId,
+          "Transaction Type": elt.transactionType,
+          Amount: "$" + elt.amount.toLocaleString(),
+          "Post Balance": "$" + elt.balance.toLocaleString(),
+          Description: elt.description.replace(/^\s+|\s+$/gm, ""),
+          "Date & Time": moment(elt.createdAt).format("MM/DD/YYYY hh:mm:ss A"),
+        };
+      })
+    : [];
+
+  console.log(csvData);
   return (
     <Layout>
       <Loader isLoading={userDataLoading} />
@@ -69,7 +173,28 @@ export default function TransactionLog() {
         <div className="col-lg-12">
           <div className="card">
             <div className="card-header">
-              <h5 className="card-title mb-0">Transaction Logs</h5>
+              <div className="row">
+                <div className="col-lg-6">
+                  <h5 className="card-title mb-0">Transaction Logs</h5>
+                </div>
+                <div className="col-lg-6 text-lg-end">
+                  {/* <button className="btn btn-sm btn-soft-info">Excel</button> */}
+                  <button
+                    className="btn btn-sm btn-soft-info ms-1"
+                    onClick={handleExportPDF}
+                  >
+                    PDF
+                  </button>
+                  {/* <button className="btn btn-sm btn-soft-info ms-1">CSV</button> */}
+                  <CSVLink
+                    data={csvData}
+                    filename={`transaction log report ${new Date().toLocaleString()}.csv`}
+                    className="btn btn-sm btn-soft-info ms-1"
+                  >
+                    CSV
+                  </CSVLink>
+                </div>
+              </div>
             </div>
             <div className="card-body table-responsive">
               <div
@@ -77,7 +202,7 @@ export default function TransactionLog() {
                 className="dataTables_wrapper dt-bootstrap5 no-footer"
               >
                 <div className="row">
-                  <div className="col-sm-12 col-md-6">
+                  <div className="col-sm-12 col-md-3">
                     <div className="dataTables_length " id="example_length">
                       <label className="d-inline-flex align-items-center">
                         Show{" "}
@@ -96,7 +221,16 @@ export default function TransactionLog() {
                       </label>
                     </div>
                   </div>
-                  <div className="col-sm-12 col-md-6 text-end">
+                  <div className="col-sm-12 col-md-6 text-center">
+                    <label className="d-inline-flex align-items-center">
+                      Date Filter:
+                      <CustomDateRangePicker
+                        setDateRange={setDateRange}
+                        dateRange={dateRange}
+                      />
+                    </label>
+                  </div>
+                  <div className="col-sm-12 col-md-3 text-end">
                     <div id="example_filter" className="dataTables_filter">
                       <label className="d-inline-flex align-items-center">
                         Search:

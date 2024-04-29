@@ -49,6 +49,7 @@ import {
   allUsersSubscriptionsApi,
   activeSubscriptionUsersApi,
   setEventWinningApi,
+  winningApi,
 } from "../api";
 
 export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
@@ -623,6 +624,18 @@ export const setEventWinning = createAsyncThunk(
     }
   }
 );
+
+export const winning = createAsyncThunk(
+  "api/winning",
+  async (data, thunkAPI) => {
+    try {
+      const response = await winningApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 const apiSlice = createSlice({
   name: "api",
   initialState: {
@@ -852,6 +865,11 @@ const apiSlice = createSlice({
     setEventWinningDataLoading: false,
     setEventWinningDataError: null,
     setEventWinningDataSuccess: null,
+
+    winningData: [],
+    winningDataLoading: false,
+    winningDataError: null,
+    winningDataSuccess: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -1549,6 +1567,22 @@ const apiSlice = createSlice({
       .addCase(setEventWinning.rejected, (state, action) => {
         state.setEventWinningDataLoading = false;
         state.setEventWinningDataError = action.error.message;
+      });
+
+    builder
+      .addCase(winning.pending, (state) => {
+        state.winningDataLoading = true;
+        state.winningDataSuccess = false;
+      })
+      .addCase(winning.fulfilled, (state, action) => {
+        state.winningDataLoading = false;
+        state.winningData = action.payload;
+        state.winningDataSuccess = true;
+      })
+      .addCase(winning.rejected, (state, action) => {
+        state.winningDataLoading = false;
+        state.winningDataError = action.error.message;
+        state.winningData = [];
       });
   },
 });

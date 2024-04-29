@@ -277,7 +277,7 @@ const userWithdraw = async (data) => {
 const allWithdrawals = async (data) => {
   const response = await axios
     .get(
-      `${apiUrl}/withdrawals?search=${data.search}&page=${data.currentPage}&pageSize=${data.limit}`,
+      `${apiUrl}/withdrawals?search=${data.search}&startDate=${data.startDate}&endDate=${data.endDate}&page=${data.currentPage}&pageSize=${data.limit}`,
       data
     )
     .then((res) => {
@@ -330,7 +330,7 @@ const depositStatusApi = async (data) => {
 const allDepositsApi = async (data) => {
   const response = await axios
     .get(
-      `${apiUrl}/deposits?search=${data.search}&page=${data.currentPage}&pageSize=${data.limit}`,
+      `${apiUrl}/deposits?search=${data.search}&startDate=${data.startDate}&endDate=${data.endDate}&page=${data.currentPage}&pageSize=${data.limit}`,
       data
     )
     .then((res) => {
@@ -512,7 +512,7 @@ const updateSupportTicketMessageByIdApi = async (data) => {
 const getTransactions = async (data) => {
   const response = await axios
     .get(
-      `${apiUrl}/transaction?search=${data.search}&type=${data.type}&page=${data.currentPage}&pageSize=${data.limit}`
+      `${apiUrl}/transaction?search=${data.search}&type=${data.type}&startDate=${data.startDate}&endDate=${data.endDate}&page=${data.currentPage}&pageSize=${data.limit}`
     )
     .then((res) => {
       return res.data;
@@ -730,7 +730,7 @@ const allUsersSubscriptionsApi = async (data) => {
 
 const activeSubscriptionUsersApi = async (data) => {
   const response = await axios
-    .get(`${apiUrl}/subscriptionUser?returnUser=true`)
+    .get(`${apiUrl}/subscriptionUser/WithActive/active`)
     .then((res) => {
       return res.data;
     })
@@ -763,6 +763,20 @@ const setEventWinningApi = async (data) => {
     })
     .catch((err) => {
       snack.error(err?.response?.data?.message);
+      throw new Error(err);
+    });
+  return response;
+};
+
+const winningApi = async (data) => {
+  const response = await axios
+    .get(
+      `${apiUrl}/user/winners/all?search=${data.search}&startDate=${data.startDate}&endDate=${data.endDate}&page=${data.currentPage}&pageSize=${data.limit}`
+    )
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
       throw new Error(err);
     });
   return response;
@@ -820,4 +834,5 @@ export {
   allUsersSubscriptionsApi,
   activeSubscriptionUsersApi,
   setEventWinningApi,
+  winningApi,
 };

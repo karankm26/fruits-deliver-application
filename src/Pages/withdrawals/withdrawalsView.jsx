@@ -94,6 +94,7 @@ export default function WithdrawalsView() {
       navigate("/withdrawals");
     }
   }, [withdrawalsDataSuccess, success]);
+  
   return (
     <Layout>
       <div className="row">

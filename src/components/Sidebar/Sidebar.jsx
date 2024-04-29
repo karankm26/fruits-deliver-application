@@ -52,7 +52,7 @@ export default function Sidebar() {
   return (
     <div>
       <div className="app-menu navbar-menu">
-        <div className="navbar-brand-box">
+        <div className="-navbarbrand-box">
           <a href="index.html" className="logo logo-dark">
             <span className="logo-sm">
               <img src="/assets/img/logo-dark.png" alt="logo" height={35} />
@@ -290,7 +290,11 @@ export default function Sidebar() {
               >
                 <a
                   className={`nav-link menu-link ${
-                    (path === `/add-event` || path === `/events`) && `active`
+                    (path === `/add-event` ||
+                      path === `/events` ||
+                      path === `/event-winnings` ||
+                      path === `/event-winnings-list`) &&
+                    `active`
                   }`}
                   role="button"
                   href="#sidebar-events"
@@ -306,7 +310,8 @@ export default function Sidebar() {
                   className={`collapse menu-dropdown ${
                     (path === `/add-event` ||
                       path === `/events` ||
-                      path === `/event-winnings`) &&
+                      path === `/event-winnings` ||
+                      path === `/event-winnings-list`) &&
                     `show`
                   }`}
                   id="sidebar-events"
@@ -340,7 +345,7 @@ export default function Sidebar() {
                     </li>
                     <li
                       className="nav-item"
-                      hidden={!isPermission("manage_events", "events")}
+                      hidden={!isPermission("manage_events", "add_winning")}
                     >
                       <Link
                         to={"/event-winnings"}
@@ -350,6 +355,25 @@ export default function Sidebar() {
                         data-key="t-events"
                       >
                         Set Event Winnings
+                      </Link>
+                    </li>{" "}
+                    <li
+                      className="nav-item"
+                      hidden={
+                        !isPermission(
+                          "manage_events",
+                          "uploaded_winning_history"
+                        )
+                      }
+                    >
+                      <Link
+                        to={"/event-winnings-list"}
+                        className={`nav-link ${
+                          path === `/event-winnings-list` && `active`
+                        }`}
+                        data-key="t-events"
+                      >
+                        Event Win History
                       </Link>
                     </li>
                   </ul>
@@ -363,7 +387,8 @@ export default function Sidebar() {
                   className={`nav-link menu-link ${
                     (path === `/transaction-logs` ||
                       path === `/email-logs` ||
-                      path === `/login-logs`) &&
+                      path === `/login-logs` ||
+                      path === `/winning-logs`) &&
                     `active`
                   }`}
                   role="button"
@@ -380,7 +405,8 @@ export default function Sidebar() {
                   className={`collapse menu-dropdown ${
                     (path === `/transaction-logs` ||
                       path === `/email-logs` ||
-                      path === `/login-logs`) &&
+                      path === `/login-logs` ||
+                      path === `/winning-logs`) &&
                     `show`
                   }`}
                   id="sidebar-reports"
@@ -428,6 +454,20 @@ export default function Sidebar() {
                         data-key="t-subscribe-notifications"
                       >
                         Transaction Logs
+                      </Link>
+                    </li>
+                    <li
+                      className="nav-item"
+                      hidden={!isPermission("manage_reports", "winning_log")}
+                    >
+                      <Link
+                        to={"/winning-logs"}
+                        className={`nav-link ${
+                          path === `/winning-logs` && `active`
+                        }`}
+                        data-key="t-subscribe-notifications"
+                      >
+                        Winning Logs
                       </Link>
                     </li>
                   </ul>

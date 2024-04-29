@@ -157,7 +157,7 @@ export default function EmailUnverfiedUsers() {
                               "MMM Do YYYY, h:mm:ss a"
                             )}
                           </td>
-                          <td>${item?.balance}</td>
+                          <td>${item?.balance?.toLocaleString()}</td>
                           {/* <td>
                             <span
                               className={`badge ${

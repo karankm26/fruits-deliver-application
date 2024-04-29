@@ -42,7 +42,8 @@ import dayjs from "dayjs";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+// import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function CustomDatePicker({ handleChange, value, formik }) {
   const [date, setDate] = useState(null);
@@ -56,7 +57,7 @@ export default function CustomDatePicker({ handleChange, value, formik }) {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={["DesktopDatePicker"]}>
         <DemoItem>
-          <DesktopDatePicker
+          <DatePicker
             minDate={dayjs()}
             value={date}
             name="event_date"
@@ -68,9 +69,13 @@ export default function CustomDatePicker({ handleChange, value, formik }) {
                   value: dayjs(e).format("DD-MM-YYYY"),
                 },
               });
-            }}
+            }} 
             slotProps={{
-              textField: { id: "event_date", onBlur: formik.handleBlur },
+              textField: {
+                id: "event_date",
+                name: "event_date",
+                onBlur: formik.handleBlur,
+              },
             }}
             sx={{
               "& .MuiOutlinedInput-root": {

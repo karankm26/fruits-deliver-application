@@ -38,6 +38,7 @@ export default function UserView() {
   const [amount, setAmount] = useState("");
   const [subject, setSubject] = useState("");
   const [editorHtml, setEditorHtml] = useState("");
+  const [selectedImage, setSelectedImage] = useState("");
 
   const [discription, setDiscription] = useState("");
   const { id } = useParams();
@@ -99,8 +100,15 @@ export default function UserView() {
       country: selected.country,
       twofa_status: selected.twofa_status,
       sms_verify: selected.sms_verify,
+      image: selectedImage,
     };
-    dispatch(updateUser({ id, body }));
+    const formData = new FormData();
+    for (const key in body) {
+      if (body.hasOwnProperty(key)) {
+        formData.append(key, body[key]);
+      }
+    }
+    dispatch(updateUser({ id, body: formData }));
   };
 
   const handleBalanceSubmit = (e) => {
@@ -147,20 +155,29 @@ export default function UserView() {
       );
     }
   };
-
+  // console.log(selectedImage)
   return (
     <Layout>
       <Loader isLoading={userUpdateDataLoading || balanceUpdateDataLoading} />
       <div className="row">
         <div className="col-12">
           <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 className="mb-sm-0">Manage Users</h4>
+            <div>
+              <h4 className="mb-sm-0">Manage Users</h4>
+              <h6 className="text-uppercase pt-1">
+                User: {userData?.fname}&nbsp;{userData?.lname} (
+                {userData?.SubscriptionUsers?.length ? "Player" : "Backer"})
+              </h6>
+            </div>
             <div className="page-title-right">
               <ol className="breadcrumb m-0">
                 <li className="breadcrumb-item">
                   <a>Manage Users</a>
                 </li>
                 <li className="breadcrumb-item active">Users</li>
+                <li className="breadcrumb-item active">
+                  {userData?.fname}&nbsp;{userData?.lname}
+                </li>
               </ol>
             </div>
           </div>
@@ -399,6 +416,43 @@ export default function UserView() {
             </div>
             <form onSubmit={handleSubmit} className="card-body ">
               <div className="live-preview">
+                <div className="text-center">
+                  <div className="profile-user position-relative d-inline-block mx-auto  mb-4">
+                    <img
+                      src={
+                        selected?.image && selectedImage === ""
+                          ? selected.image
+                          : selectedImage
+                          ? URL.createObjectURL(selectedImage)
+                          : "assets/images/user-dummy-img.jpg"
+                      }
+                      className="rounded-circle avatar-xl img-thumbnail user-profile-image"
+                      alt="user-profile-image"
+                    />
+                    <div className="avatar-xs p-0 rounded-circle profile-photo-edit">
+                      <input
+                        id="profile-img-file-input"
+                        type="file"
+                        name="image"
+                        className="profile-img-file-input"
+                        onChange={(e) => setSelectedImage(e.target.files[0])}
+                      />
+                      <label
+                        htmlFor="profile-img-file-input"
+                        className="profile-photo-edit avatar-xs"
+                      >
+                        <span className="avatar-title rounded-circle bg-light text-body">
+                          <i className="ri-camera-fill" />
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  {/* <h5 className="fs-16 mb-1">
+                        {adminData?.firstName} {adminData?.lastName}
+                      </h5> */}
+                  {/* <p className="text-muted mb-0">{adminData?.role}</p> */}
+                </div>
+
                 <div className="row gy-4">
                   <div className=" col-md-4">
                     <div>

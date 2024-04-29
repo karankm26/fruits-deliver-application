@@ -126,8 +126,8 @@ export default function EmailLogs() {
                 <thead>
                   <tr>
                     <th style={{ width: 60 }}>Sr No.</th>
-                    <th>Name</th>
-                    <th>Email-Phone</th>
+                    <th>Email</th>
+                    <th>Subject</th>
                     <th>Created At</th>
                     <th>Action</th>
                   </tr>

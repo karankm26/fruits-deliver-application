@@ -48,6 +48,10 @@ import AddSubscriptions from "./Pages/subscriptions/addSubscriptions.jsx";
 import EditSubscriptions from "./Pages/subscriptions/editSubscriptions.jsx";
 import UserSubscriptionList from "./Pages/subscriptions/userSubscriberList.jsx";
 import AddEventWinning from "./Pages/events/addEventWinning.jsx";
+import WinningLogs from "./Pages/reports/winningLog.jsx";
+import EventWinningList from "./Pages/events/winningList.jsx";
+import EventWinningListView from "./Pages/events/winningListView.jsx";
+import ScrollToTopOnNavigate from "./components/ScrollToTopOnNavigate.jsx";
 
 export default function RoutePath() {
   const adminData = useContext(Context);
@@ -92,6 +96,7 @@ export default function RoutePath() {
   return (
     <HashRouter basename="/">
       <Suspense fallback={<Loader />}>
+        <ScrollToTopOnNavigate />
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route
@@ -246,7 +251,6 @@ export default function RoutePath() {
                 </Permission>
               }
             />
-
             <Route
               path="/transaction-logs"
               element={
@@ -287,6 +291,16 @@ export default function RoutePath() {
                   permission={isPermission("manage_reports", "login_history")}
                 >
                   <LoginLogs />
+                </Permission>
+              }
+            />
+            <Route
+              path="/winning-logs"
+              element={
+                <Permission
+                  permission={isPermission("manage_reports", "winning_log")}
+                >
+                  <WinningLogs />
                 </Permission>
               }
             />
@@ -366,7 +380,6 @@ export default function RoutePath() {
                 </Permission>
               }
             />
-
             <Route
               path="/view-event/:id"
               element={
@@ -387,7 +400,6 @@ export default function RoutePath() {
                 </Permission>
               }
             />
-
             <Route
               path="/subscriptions-plans"
               element={
@@ -396,7 +408,6 @@ export default function RoutePath() {
                 </Permission>
               }
             />
-
             <Route
               path="/add-subscriptions"
               element={
@@ -421,12 +432,39 @@ export default function RoutePath() {
                 </Permission>
               }
             />
-
             <Route
               path="/event-winnings"
               element={
-                <Permission permission={true}>
+                <Permission
+                  permission={isPermission("manage_events", "add_winning")}
+                >
                   <AddEventWinning />
+                </Permission>
+              }
+            />{" "}
+            <Route
+              path="/event-winnings-list"
+              element={
+                <Permission
+                  permission={isPermission(
+                    "manage_events",
+                    "uploaded_winning_history"
+                  )}
+                >
+                  <EventWinningList />
+                </Permission>
+              }
+            />{" "}
+            <Route
+              path="/event-winnings-list/:id"
+              element={
+                <Permission
+                  permission={isPermission(
+                    "manage_events",
+                    "uploaded_winning_history"
+                  )}
+                >
+                  <EventWinningListView />
                 </Permission>
               }
             />

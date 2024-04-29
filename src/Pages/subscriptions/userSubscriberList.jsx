@@ -127,7 +127,7 @@ export default function UserSubscriptionList() {
                     <th>Plan Type/Duration</th>
                     <th>Purchase Date</th>
                     <th>Expire Date</th>
-                    <th>Action</th>
+                    {/* <th>Action</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -153,18 +153,19 @@ export default function UserSubscriptionList() {
                               )}
                             </td>
                             <td>
-                              {moment(item?.subscriptionEndDate).format(
-                                "DD/MM/YYYY"
-                              )}
+                              {moment(
+                                item?.subscriptionEndDate,
+                                "DD-MM-YYYY"
+                              ).format("DD/MM/YYYY")}
                             </td>
 
-                            <td>
+                            {/* <td>
                               <div className="dropdown d-inline-block">
                                 <button className="btn btn-sm btn-soft-info">
                                   Details
                                 </button>
                               </div>
-                            </td>
+                            </td> */}
                           </tr>
                         )
                       )

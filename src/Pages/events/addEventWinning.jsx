@@ -1,14 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import Loader from "../../utils/loader";
 import { useDispatch, useSelector } from "react-redux";
-import { styled } from "@mui/material/styles";
-import Context from "../../components/Context";
-import {
-  CreateEvents,
-  fetchEvents,
-  setEventWinning,
-} from "../../features/apiSlice";
+import { fetchEvents, setEventWinning } from "../../features/apiSlice";
 import { useNavigate } from "react-router-dom";
 import { getOrdinal } from "../../utils/getOrdinal";
 
@@ -17,7 +11,7 @@ export default function AddEventWinning() {
   const [rounds, setRounds] = useState([]);
   const [selectEvent, setSelectEvent] = useState("");
   const [players, setPlayers] = useState([]);
-  const [winning, setWinnig] = useState([]);
+  const [winningA, setWinnigA] = useState({});
   const [currentEvent, setCurrentEvent] = useState([{}]);
   const dispatch = useDispatch();
   const {
@@ -28,7 +22,7 @@ export default function AddEventWinning() {
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = () => {
-    dispatch(setEventWinning({ id: currentEvent?.id, body: { win: winning } }));
+    dispatch(setEventWinning({ id: currentEvent?.id, body: winningA }));
     setSuccess(true);
   };
 
@@ -38,7 +32,7 @@ export default function AddEventWinning() {
 
   useEffect(() => {
     if (success && setEventWinningDataSuccess) {
-      navigate("/events");
+      navigate("/event-winnings-list");
     }
   }, [success, setEventWinningDataSuccess]);
 
@@ -54,14 +48,16 @@ export default function AddEventWinning() {
   }, [events, selectEvent]);
 
   const handleChange = (value, roundIndex, payoutIndex) => {
-    const newWinning = [...winning];
-    if (!newWinning[roundIndex]) {
-      newWinning[roundIndex] = [];
+    const newWinningA = { ...winningA };
+    const newIndex = roundIndex + 1;
+    if (!newWinningA[newIndex]) {
+      newWinningA[newIndex] = [];
     }
-    newWinning[roundIndex][payoutIndex] = value;
-
-    setWinnig(newWinning);
+    newWinningA[newIndex][payoutIndex] = value;
+    setWinnigA(newWinningA);
   };
+
+  console.log(Object.values(winningA));
 
   return (
     <Layout>
@@ -133,10 +129,9 @@ export default function AddEventWinning() {
                               <th className="text-center">Player Name</th>
                             </tr>
                           </thead>
-                          {console.log("roundround", round)}
                           <tbody>
                             {round.length &&
-                              round.map((payout, payoutIndex) => (
+                              round.map((_, payoutIndex) => (
                                 <tr key={payoutIndex}>
                                   <td className="text-center">
                                     {getOrdinal(payoutIndex + 1)}
@@ -145,19 +140,26 @@ export default function AddEventWinning() {
                                   <td>
                                     <select
                                       className="form-select form-select-sm"
-                                      onChange={(e) =>
+                                      onChange={(e) => {
                                         handleChange(
                                           +e.target.value,
                                           roundIndex,
                                           payoutIndex
-                                        )
-                                      }
+                                        );
+                                      }}
                                     >
-                                      <option selected value={""}>
+                                      <option selected disabled value={""}>
                                         Select Player
                                       </option>
+
                                       {players.map((item) => (
-                                        <option value={item.id}>
+                                        <option
+                                          key={item.id}
+                                          value={item.id}
+                                          hidden={winningA?.[
+                                            roundIndex + 1
+                                          ]?.some((a) => a === item.id)}
+                                        >
                                           {item.name}
                                         </option>
                                       ))}

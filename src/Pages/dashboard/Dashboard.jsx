@@ -1,12 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  allDeposits,
   fetchAdmin,
+  fetchTransactions,
   fetchUserDetails,
   loginLogsDetails,
+  withdrawals,
 } from "../../features/apiSlice";
 import Layout from "../../components/Layout";
 import ReactEcharts from "echarts-for-react";
+import moment from "moment";
+import { Link } from "react-router-dom";
+import { groupTransactionsByDate } from "../../utils/groupByDates";
+import { lineChartData } from "../../utils/lineChartData";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
@@ -16,10 +23,20 @@ export default function Dashboard() {
     error,
     userDetailsData,
     loginLogsDetailsData,
+    transactionsData,
+    withdrawalsData,
+    allDepositsData,
   } = useSelector((state) => state.api);
   const userId = localStorage.getItem("id");
-
+  const [dateRange, setDateRange] = useState({
+    startDate: "",
+    endDate: "",
+  });
+  const [transactionsDate, setTransactionsDate] = useState("week");
   const userDetail = userDetailsData?.[0];
+  const count = transactionsData?.result?.count;
+  const countRef = useRef(null);
+  const countRefCount = useRef(0);
 
   useEffect(() => {
     if (userId) dispatch(fetchAdmin(userId));
@@ -300,6 +317,92 @@ export default function Dashboard() {
     ],
   };
 
+  useEffect(() => {
+    dispatch(
+      fetchTransactions({
+        search: "",
+        limit: countRef.current ? countRef.current : "10",
+        type: "",
+        currentPage: 1,
+        ...dateRange,
+      })
+    );
+    dispatch(
+      withdrawals({
+        search: "",
+        limit: countRef.current ? countRef.current : "10",
+        type: "",
+        currentPage: 1,
+        ...dateRange,
+      })
+    );
+    dispatch(
+      allDeposits({
+        search: "",
+        limit: countRef.current ? countRef.current : "10",
+        type: "",
+        currentPage: 1,
+        ...dateRange,
+      })
+    );
+  }, [dispatch, dateRange, transactionsDate]);
+
+  useEffect(() => {
+    if (count && countRefCount.current < 1) {
+      countRef.current = count;
+      countRefCount.current = +1;
+    }
+  }, [count]);
+
+  useEffect(() => {
+    const dateRanges = {
+      week: {
+        startDate: moment().clone().startOf("isoWeek").format("YYYY-MM-DD"),
+        endDate: moment().clone().endOf("isoWeek").format("YYYY-MM-DD"),
+      },
+      month: {
+        startDate: moment().startOf("month").format("YYYY-MM-DD"),
+        endDate: moment().endOf("month").format("YYYY-MM-DD"),
+      },
+      year: {
+        startDate: moment().startOf("year").format("YYYY-MM-DD"),
+        endDate: moment().endOf("year").format("YYYY-MM-DD"),
+      },
+    };
+
+    if (dateRanges.hasOwnProperty(transactionsDate)) {
+      setDateRange(dateRanges[transactionsDate]);
+    }
+  }, [transactionsDate]);
+
+  const dataArray = groupTransactionsByDate(
+    transactionsData?.result?.rows,
+    "amount"
+  );
+  const dataArrayDeposit = groupTransactionsByDate(
+    allDepositsData?.rows,
+    "Amount"
+  );
+  const dataArrayWithdraw = groupTransactionsByDate(
+    withdrawalsData?.rows,
+    "Amount"
+  );
+
+  const OptionTransaction = lineChartData(transactionsDate, dataArray);
+  const OptionTransactionWithDraw = lineChartData(
+    transactionsDate,
+    dataArrayWithdraw
+  );
+  const OptionTransactionDeposit = lineChartData(
+    transactionsDate,
+    dataArrayDeposit
+  );
+
+  console.log(
+    OptionTransaction,
+    OptionTransactionWithDraw,
+    OptionTransactionDeposit
+  );
   return (
     <Layout>
       <div>
@@ -425,10 +528,13 @@ export default function Dashboard() {
                     Session By Country
                   </h4>
                   <div className="flex-shrink-0">
-                    <a href="#!" className="btn btn-soft-primary btn-sm">
-                      View All Companies
+                    <Link
+                      to={"/login-logs"}
+                      className="btn btn-soft-primary btn-sm"
+                    >
+                      View
                       <i className="ri-arrow-right-line align-bottom" />
-                    </a>
+                    </Link>
                   </div>
                 </div>
 
@@ -481,7 +587,9 @@ export default function Dashboard() {
           <div className="col-xl-6">
             <div className="card card-height-100">
               <div className="card-header align-items-center d-flex">
-                <h4 className="card-title mb-0 flex-grow-1">Users by OS</h4>
+                <h4 className="card-title mb-0 flex-grow-1">
+                  Users by Browsers
+                </h4>
                 <div className="flex-shrink-0">
                   <div className="dropdown card-header-dropdown">
                     <a
@@ -521,9 +629,7 @@ export default function Dashboard() {
           <div className="col-xl-6">
             <div className="card card-height-100">
               <div className="card-header align-items-center d-flex">
-                <h4 className="card-title mb-0 flex-grow-1">
-                  Users by Browsers
-                </h4>
+                <h4 className="card-title mb-0 flex-grow-1">Users by OS</h4>
                 <div className="flex-shrink-0">
                   <div className="dropdown card-header-dropdown">
                     <a
@@ -557,6 +663,167 @@ export default function Dashboard() {
 
               <div className="card-body">
                 <ReactEcharts option={optionOs} className="apex-charts" />
+              </div>
+            </div>
+          </div>{" "}
+          <div className="col-xl-12">
+            <div className="card card-height-100">
+              <div className="card-header align-items-center d-flex">
+                <h4 className="card-title mb-0 flex-grow-1">Transactions</h4>
+                <div className="flex-shrink-0">
+                  <div className="dropdown card-header-dropdown">
+                    {transactionsDate.charAt(0).toUpperCase() +
+                      transactionsDate.slice(1) +
+                      "ly Transaction"}
+                    <a
+                      className="text-reset dropdown-btn"
+                      href="#"
+                      data-bs-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <span className="text-muted fs-16">
+                        <i className="mdi mdi-dots-vertical align-middle" />
+                      </span>
+                    </a>
+                    <div className="dropdown-menu dropdown-menu-end">
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("week")}
+                      >
+                        Week
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("month")}
+                      >
+                        Month
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("year")}
+                      >
+                        Year
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card-body">
+                <ReactEcharts
+                  key={transactionsData}
+                  option={OptionTransaction}
+                  className="apex-charts"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="col-xl-6">
+            <div className="card card-height-100">
+              <div className="card-header align-items-center d-flex">
+                <h4 className="card-title mb-0 flex-grow-1">Withdrawals</h4>
+                <div className="flex-shrink-0">
+                  <div className="dropdown card-header-dropdown">
+                    {" "}
+                    {transactionsDate.charAt(0).toUpperCase() +
+                      transactionsDate.slice(1) +
+                      "ly Transaction"}
+                    <a
+                      className="text-reset dropdown-btn"
+                      href="#"
+                      data-bs-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <span className="text-muted fs-16">
+                        <i className="mdi mdi-dots-vertical align-middle" />
+                      </span>
+                    </a>
+                    <div className="dropdown-menu dropdown-menu-end">
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("week")}
+                      >
+                        Week
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("month")}
+                      >
+                        Month
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("year")}
+                      >
+                        Year
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card-body">
+                <ReactEcharts
+                  key={transactionsData}
+                  option={OptionTransactionWithDraw}
+                  className="apex-charts"
+                />
+              </div>
+            </div>
+          </div>{" "}
+          <div className="col-xl-6">
+            <div className="card card-height-100">
+              <div className="card-header align-items-center d-flex">
+                <h4 className="card-title mb-0 flex-grow-1">Deposits</h4>
+                <div className="flex-shrink-0">
+                  <div className="dropdown card-header-dropdown">
+                    {" "}
+                    {transactionsDate.charAt(0).toUpperCase() +
+                      transactionsDate.slice(1) +
+                      "ly Transaction"}
+                    <a
+                      className="text-reset dropdown-btn"
+                      href="#"
+                      data-bs-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <span className="text-muted fs-16">
+                        <i className="mdi mdi-dots-vertical align-middle" />
+                      </span>
+                    </a>
+                    <div className="dropdown-menu dropdown-menu-end">
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("week")}
+                      >
+                        Week
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("month")}
+                      >
+                        Month
+                      </a>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => setTransactionsDate("year")}
+                      >
+                        Year
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card-body">
+                <ReactEcharts
+                  key={transactionsData}
+                  option={OptionTransactionDeposit}
+                  className="apex-charts"
+                />
               </div>
             </div>
           </div>

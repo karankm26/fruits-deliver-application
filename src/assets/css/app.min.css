@@ -1333,7 +1333,7 @@
   .navbar-menu {
   position: absolute;
   width: var(--vz-vertical-menu-width-sm) !important;
-  padding-top: 70px;
+  /* padding-top: 70px; */
 }
 
 :is([data-layout="vertical"], [data-layout="semibox"])[data-sidebar-size="sm"]
@@ -19527,6 +19527,46 @@ span.flatpickr-weekday {
   background-color: var(--vz-input-bg-custom) !important;
   color: var(--vz-body-color) !important;
 }
-.css-slyssw{
+.css-slyssw {
   color: var(--vz-body-color) !important;
+}
+
+/*  */
+.dropdown-card {
+  box-shadow: 0px 1px 3px rgba(56, 65, 74, 45.15);
+}
+.dropdown-card ul {
+  list-style: none;
+}
+.-navbarbrand-box {
+  display: flex;
+  justify-content: center;
+}
+.dropdown-card {
+  box-shadow: 0px 1px 3px rgba(56, 65, 74, 45.15);
+}
+.dropdown-card ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0rem;
+}
+.dropdown-card ul li {
+  padding: 5px;
+}
+
+.dropdown-card ul li:hover {
+  background-color: var(--vz-dropdown-link-hover-bg);
+  cursor: pointer;
+}
+.dropdown-card .card-body {
+  padding: 6px !important;
+}
+.staff-card {
+  position: relative;
+}
+.staff-card .ri-close-line {
+  position: absolute;
+  right: 10px;
+  top: 37px;
+  cursor: pointer;
 }

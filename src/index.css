@@ -116,3 +116,34 @@ div:where(.swal2-container) div:where(.swal2-popup) {
 .css-11a8txn-MuiStack-root {
   width: 100% !important;
 }
+
+.table > :not(caption) > * > * {
+  padding: 0.5rem 0.2rem !important;
+  text-align: center !important;
+  font-size: 12px !important;
+}
+
+/* .react-clndr .popover {
+  position: absolute;
+  z-index: 99999999999999999999;
+  right: 0;
+}
+.react-clndr .cover {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px";
+} */
+.ri-calendar-fill {
+  right: 5px;
+  top: 4px;
+  position: absolute;
+  cursor: pointer;
+}
+.dropdown-card {
+  margin: 0 !important;
+}
+.dropdown-menu {
+  padding: 0 !important;
+}

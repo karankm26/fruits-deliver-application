@@ -17,6 +17,7 @@ export default function AllUsers() {
   } = useSelector((state) => state.api);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
+  const [type, setType] = useState("");
   const [paginate, setPaginate] = useState({
     totalPages: 1,
     currentPage: 1,
@@ -24,7 +25,7 @@ export default function AllUsers() {
   const { totalPages, currentPage } = paginate;
 
   useEffect(() => {
-    dispatch(fetchUsers({ search, limit, currentPage, type: "" }));
+    dispatch(fetchUsers({ search, limit, currentPage, type }));
   }, [
     dispatch,
     search,
@@ -32,6 +33,7 @@ export default function AllUsers() {
     userUpdateDataSuccess,
     userUpdateDataLoading,
     currentPage,
+    type,
   ]);
 
   useEffect(() => {
@@ -84,7 +86,7 @@ export default function AllUsers() {
                 className="dataTables_wrapper dt-bootstrap5 no-footer"
               >
                 <div className="row">
-                  <div className="col-sm-12 col-md-6">
+                  <div className="col-sm-12 col-md-4">
                     <div className="dataTables_length " id="example_length">
                       <label className="d-inline-flex align-items-center">
                         Show{" "}
@@ -103,7 +105,26 @@ export default function AllUsers() {
                       </label>
                     </div>
                   </div>
-                  <div className="col-sm-12 col-md-6 text-end">
+                  <div className="col-sm-12 col-md-4 text-lg-center">
+                    <div className="dataTables_length " id="example_length">
+                      <label className="d-inline-flex align-items-center">
+                        Filter{" "}
+                        <select
+                          name="example_length"
+                          aria-controls="example"
+                          className="form-select form-select-sm"
+                          onChange={(e) => setType(e.target.value)}
+                        >
+                          <option value={""} selected>
+                            All
+                          </option>
+                          <option value={"isBacker"}>Backer</option>
+                          <option value={"isSubscriber"}>Player</option>
+                        </select>{" "}
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-sm-12 col-md-4 text-lg-end">
                     <div id="example_filter" className="dataTables_filter">
                       <label className="d-inline-flex align-items-center">
                         Search:
@@ -165,7 +186,9 @@ export default function AllUsers() {
                               "MMM Do YYYY, h:mm:ss a"
                             )}
                           </td>
-                          <td>${item?.balance}</td>
+                          <td>
+                            ${item?.balance?.toLocaleString()?.toLocaleString()}
+                          </td>
                           <td>
                             <span
                               className={`badge ${

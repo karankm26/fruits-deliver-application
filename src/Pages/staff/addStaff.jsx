@@ -7,7 +7,6 @@ import {
   staffRegister,
 } from "../../features/apiSlice.js";
 import { useNavigate } from "react-router-dom";
-import CreatableSelect from "react-select/creatable";
 
 const emptyData = {
   firstName: "",
@@ -17,11 +16,14 @@ const emptyData = {
   manage_events: {
     events: false,
     add_event: false,
+    add_winning: false,
+    uploaded_winning_history: false,
   },
   manage_reports: {
     transaction_log: false,
     login_history: false,
     email_history: false,
+    winning_log: false,
   },
   manage_users: false,
   manage_deposits: false,
@@ -41,7 +43,6 @@ export default function AddStaff() {
   const id = localStorage.getItem("id");
   const [selected, setSelected] = useState(emptyData);
   const [showPassword, setShowPassword] = useState(false);
-  const [players, setPlayers] = useState([]);
 
   useEffect(() => {
     if (staffRegisterDataSuccess) {
@@ -52,22 +53,6 @@ export default function AddStaff() {
   useEffect(() => {
     dispatch(activeSubscriptionUsers());
   }, [dispatch]);
-
-  console.log(selected);
-
-  useEffect(() => {
-    if (activeSubscriptionUsersData?.Users?.length) {
-      const users = activeSubscriptionUsersData.Users.map((item) => {
-        return { label: item.fname, value: item.fname };
-      });
-      setPlayers(users);
-    }
-  }, [activeSubscriptionUsersData]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSelected({ ...selected, [name]: value });
-  };
 
   const handleChangeChecked = (e) => {
     const { name, checked } = e.target;
@@ -124,7 +109,28 @@ export default function AddStaff() {
     }
   };
 
-  console.log(players);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelected({ ...selected, [name]: value });
+  };
+
+  const handlePlayerChange = (item) => {
+    setSelected({
+      ...selected,
+      firstName: item.fname,
+      lastName: item.lname,
+      email: item.email,
+    });
+  };
+  const handlePlayerRemove = () => {
+    setSelected({
+      ...selected,
+      firstName: "",
+      lastName: "",
+      email: "",
+    });
+  };
+
   return (
     <Layout>
       <Loader isLoading={staffRegisterDataLoading} />
@@ -154,35 +160,49 @@ export default function AddStaff() {
               <div className="live-preview">
                 <div className="row gy-4">
                   <div className="col-xxl-3 col-lg-3">
-                    <div>
+                    <div className="dropdown staff-card">
                       <label htmlFor="basiInput" className="form-label">
                         First Name
-                      </label>
-                      {/* <CreatableSelect
-                        isClearable
-                        options={players}
-                        onCreateOption={(e) => {
-                          setSelected({ ...selected, firstName: e });
-                          setPlayers([...players, { label: e, value: e }]);
-                        }}
-                        // name="firstName"
-                        // value={"ff"}
-
-                        onChange={(e) => {
-                          console.log(e);
-                          setSelected({ ...selected, firstName: e.label });
-                        }}
-                        placeholder="Enter First Name"
-                      /> */}
+                      </label>{" "}
+                      <i
+                        hidden={!selected.firstName}
+                        className="ri-close-line"
+                        onClick={handlePlayerRemove}
+                      />
                       <input
                         type="text"
                         className="form-control"
                         id="basiInput"
                         name="firstName"
-                        value={selected.fname}
+                        value={selected.firstName}
                         onChange={handleChange}
                         placeholder="Enter First Name"
+                        data-bs-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
                       />
+                      <div className="dropdown-menu" style={{ width: "100%" }}>
+                        <div className="card dropdown-card">
+                          <div className="card-body">
+                            <ul>
+                              {activeSubscriptionUsersData?.length ? (
+                                activeSubscriptionUsersData.map(
+                                  (item, index) => (
+                                    <li
+                                      key={index}
+                                      onClick={() => handlePlayerChange(item)}
+                                    >
+                                      {item.fname} {item.lname}
+                                    </li>
+                                  )
+                                )
+                              ) : (
+                                <li>No Player Found</li>
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="col-xxl-3 col-lg-3">
@@ -196,7 +216,7 @@ export default function AddStaff() {
                         id="basiInput"
                         name="lastName"
                         placeholder="Enter Last Name"
-                        value={selected.lname}
+                        value={selected.lastName}
                         onChange={handleChange}
                       />
                     </div>
@@ -384,6 +404,8 @@ export default function AddStaff() {
                               ...selected.manage_events,
                               events: e.target.checked,
                               add_event: e.target.checked,
+                              add_winning: e.target.checked,
+                              uploaded_winning_history: e.target.checked,
                             },
                           })
                         }
@@ -442,6 +464,60 @@ export default function AddStaff() {
                           Add Event
                         </label>
                       </div>
+                    </div>{" "}
+                    <div className="col-xxl-3 col-lg-3">
+                      <div className="form-check form-switch mb-3" dir="ltr">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="add_winning"
+                          checked={selected?.manage_events?.add_winning}
+                          name="add_winning"
+                          onChange={(e) =>
+                            setSelected({
+                              ...selected,
+                              manage_events: {
+                                ...selected.manage_events,
+                                add_winning: e.target.checked,
+                              },
+                            })
+                          }
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="add_winning"
+                        >
+                          Add Winning
+                        </label>
+                      </div>
+                    </div>{" "}
+                    <div className="col-xxl-3 col-lg-3">
+                      <div className="form-check form-switch mb-3" dir="ltr">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="uploaded_winning_history"
+                          checked={
+                            selected?.manage_events?.uploaded_winning_history
+                          }
+                          name="uploaded_winning_history"
+                          onChange={(e) =>
+                            setSelected({
+                              ...selected,
+                              manage_events: {
+                                ...selected.manage_events,
+                                uploaded_winning_history: e.target.checked,
+                              },
+                            })
+                          }
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="uploaded_winning_history"
+                        >
+                          Uploaded Winning History
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -464,6 +540,7 @@ export default function AddStaff() {
                               transaction_log: e.target.checked,
                               login_history: e.target.checked,
                               email_history: e.target.checked,
+                              winning_log: e.target.checked,
                             },
                           })
                         }
@@ -552,29 +629,29 @@ export default function AddStaff() {
                         </label>
                       </div>
                     </div>
-                    {/* <div className="col-xxl-3 col-lg-3">
+                    <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
                           className="form-check-input"
-                          id="transaction_log"
-                          checked={selected?.manage_reports?.transaction_log}
-                          name="transaction_log"
+                          id="winning_log"
+                          checked={selected?.manage_reports?.winning_log}
+                          name="winning_log"
                           onChange={(e) =>
                             setSelected({
                               ...selected,
-                              transaction_log: e.target.checked,
+                              winning_log: e.target.checked,
                             })
                           }
                         />
                         <label
                           className="form-check-label"
-                          htmlFor="transaction_log"
+                          htmlFor="winning_log"
                         >
-                          Transaction Log
+                          Winning Log
                         </label>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
                 <div className="row gy-4  pt-3">

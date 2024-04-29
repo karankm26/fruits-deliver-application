@@ -77,11 +77,10 @@ export default function Login() {
               </div>
             </div>
           </div>
-          {/* end row */}
+
           <div className="row justify-content-center">
             <div className="col-md-8 col-lg-6 col-xl-5">
               <div className="mt-3">
-                {/*  */}
                 <div className="card">
                   <div className="card-body">
                     <ul
@@ -109,7 +108,7 @@ export default function Login() {
                         </a>
                       </li>
                     </ul>
-                    {/* Tab panes */}
+
                     <div className="tab-content text-muted">
                       <div
                         className="tab-pane active"
@@ -308,7 +307,6 @@ export default function Login() {
                   {/* end card-body */}
                 </div>
                 {/* end card */}
-                {/*  */}
               </div>
             </div>
           </div>

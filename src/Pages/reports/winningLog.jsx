@@ -6,38 +6,56 @@ import moment from "moment";
 import {
   UpdateEvents,
   fetchEvents,
-  fetchUser,
   fetchUsers,
   updateEventStatus,
   updateUser,
+  winning,
 } from "../../features/apiSlice";
 import Pagination from "../../utils/pagination";
 import { Link } from "react-router-dom";
+import CustomDateRangePicker from "../../utils/customDateRangePicker";
 
-export default function AllEvents() {
+export default function WinningLogs() {
   const dispatch = useDispatch();
   const {
     updateEventStatusDataLoading,
     updateEventStatusDataSuccess,
     eventsData: { events, total },
-    userData,
+    winningData: { rows, count },
   } = useSelector((state) => state.api);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
+  const [dateRange, setDateRange] = useState({
+    Duration_Start: "",
+    Duration_End: "",
+  });
   const [paginate, setPaginate] = useState({
     totalPages: 1,
     currentPage: 1,
   });
   const { totalPages, currentPage } = paginate;
-  const count = total ?? 0;
+  // const count = total ?? 0;
 
   useEffect(() => {
-    dispatch(fetchEvents({ search, limit, currentPage }));
+    dispatch(
+      winning({
+        search,
+        limit,
+        currentPage,
+        ...(dateRange?.Duration_Start && dateRange?.Duration_End
+          ? {
+              startDate: dateRange?.Duration_Start,
+              endDate: dateRange?.Duration_End,
+            }
+          : { startDate: "", endDate: "" }),
+      })
+    );
   }, [
     dispatch,
     search,
     limit,
     currentPage,
+    dateRange,
     updateEventStatusDataLoading,
     updateEventStatusDataSuccess,
   ]);
@@ -60,29 +78,20 @@ export default function AllEvents() {
   const handleChangeStatus = (type, id) => {
     dispatch(updateEventStatus({ id, body: { status: type } }));
   };
-  console.log(events);
-
-  useEffect(() => {
-    dispatch(fetchUser(1));
-  }, [dispatch]);
-  console.log(userData);
-
-  // const handleFindEventCreator = ()=>{
-
-  // }
+  console.log(rows);
   return (
     <Layout>
       <Loader isLoading={updateEventStatusDataLoading} />
       <div className="row">
         <div className="col-12">
           <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 className="mb-sm-0">Manage Event</h4>
+            <h4 className="mb-sm-0">Manage Report</h4>
             <div className="page-title-right">
               <ol className="breadcrumb m-0">
                 <li className="breadcrumb-item">
-                  <a>Manage Event</a>
+                  <a>Manage Report</a>
                 </li>
-                <li className="breadcrumb-item active">All Event</li>
+                <li className="breadcrumb-item active">Winning Logs</li>
               </ol>
             </div>
           </div>
@@ -93,7 +102,7 @@ export default function AllEvents() {
         <div className="col-lg-12">
           <div className="card">
             <div className="card-header">
-              <h5 className="card-title mb-0">All Event</h5>
+              <h5 className="card-title mb-0">Winning Logs</h5>
             </div>
             <div className="card-body table-responsive">
               <div
@@ -101,7 +110,7 @@ export default function AllEvents() {
                 className="dataTables_wrapper dt-bootstrap5 no-footer"
               >
                 <div className="row">
-                  <div className="col-sm-12 col-md-6">
+                  <div className="col-sm-12 col-md-3">
                     <div className="dataTables_length " id="example_length">
                       <label className="d-inline-flex align-items-center">
                         Show{" "}
@@ -120,7 +129,16 @@ export default function AllEvents() {
                       </label>
                     </div>
                   </div>
-                  <div className="col-sm-12 col-md-6 text-end">
+                  <div className="col-sm-12 col-md-6 text-center">
+                    <label className="d-inline-flex align-items-center">
+                      Date Filter:
+                      <CustomDateRangePicker
+                        setDateRange={setDateRange}
+                        dateRange={dateRange}
+                      />
+                    </label>
+                  </div>
+                  <div className="col-sm-12 col-md-3 text-end">
                     <div id="example_filter" className="dataTables_filter">
                       <label className="d-inline-flex align-items-center">
                         Search:
@@ -156,76 +174,35 @@ export default function AllEvents() {
                   <tr>
                     <th style={{ width: 60 }}>Sr No.</th>
                     <th>Event Name</th>
-                    <th>Event Rounds</th>
-                    <th>Player Count</th>
-                    <th>Created At</th>
-                    <th>Created By</th>
-                    <th>Status</th>
-                    <th>Action</th>
+                    <th>Round</th>
+                    <th>Amount Staked</th>
+                    <th>Player Staked</th>
+                    <th>Backer</th>
+                    <th>Backer Total Equity</th>
+                    <th>Total Won</th>
+                    <th>Won%</th>
+                    <th>Date and Time</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {events?.length
-                    ? events.map((item, index) => (
+                  {rows?.length
+                    ? rows.map((item, index) => (
                         <tr key={index}>
                           <td>{(currentPage - 1) * limit + 1 + index}</td>
-                          <td className="d-flex align-items-center">
-                            <div>
-                              <img
-                                className="table-image me-2"
-                                src={item?.image}
-                              />
-                            </div>
-                            <div>{item?.event_name}</div>
+                          <td>{item?.event_name}</td>
+                          <td>{item?.win_round}</td>
+                          <td>$ {item?.your_stack}</td>
+                          <td>{item?.player_name}</td>
+                          <td>
+                            {item?.User?.fname} {item?.User?.lname}
                           </td>
-                          <td>{item?.event_round}</td>
-                          <td className="text-capitalize">
-                            {item?.players_details?.length}
-                          </td>
+                          <td>{item?.user_equity} %</td>
+                          <td>$ {item?.Winning_Amount}</td>
+                          <td>{item?.win_percentage} %</td>{" "}
                           <td>
                             {moment(item?.createdAt).format(
-                              "MMM Do YYYY, h:mm:ss a"
+                              "MM/DD/YYYY hh:mm:ss A"
                             )}
-                          </td>
-                          <td>{item?.creatorName}</td>
-                          <td>
-                            <span
-                              className={`badge ${
-                                item?.status
-                                  ? `bg-success-subtle text-success`
-                                  : `bg-danger-subtle text-danger`
-                              }`}
-                            >
-                              {item?.status ? "Active" : "Inactive"}
-                            </span>
-                          </td>
-
-                          <td>
-                            <div className="dropdown d-inline-block">
-                              <button
-                                onClick={() =>
-                                  handleChangeStatus(
-                                    item?.status ? 0 : 1,
-                                    item?.id
-                                  )
-                                }
-                                className={`btn btn-sm ${
-                                  item?.status
-                                    ? "btn-soft-danger"
-                                    : "btn-soft-success"
-                                }`}
-                              >
-                                {item?.status ? "Inactive" : "Active"}
-                              </button>
-                            </div>
-                            <div className="dropdown d-inline-block ms-1">
-                              <Link
-                                to={"/edit-event/" + item?.id}
-                                className="btn btn-sm btn-soft-info"
-                              >
-                                Edit
-                              </Link>
-                            </div>
                           </td>
                         </tr>
                       ))

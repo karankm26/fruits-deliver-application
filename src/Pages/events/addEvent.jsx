@@ -96,7 +96,7 @@ export default function AddEvent() {
   useEffect(() => {
     dispatch(fetchEvents({ search: "", limit: 10, currentPage: 1 }));
   }, [dispatch, eventCreateDataSuccess]);
-
+  console.log(activeSubscriptionUsersData);
   useEffect(() => {
     dispatch(activeSubscriptionUsers());
   }, [dispatch, eventCreateDataSuccess]);
@@ -113,6 +113,7 @@ export default function AddEvent() {
         acc.players_stack.push(0);
         acc.email.push(item.email);
         acc.player_status.push(1);
+        acc.email_sent.push(1);
         return acc;
       },
       {
@@ -124,6 +125,7 @@ export default function AddEvent() {
         players_id: [],
         email: [],
         player_status: [],
+        email_sent: [],
       }
     );
     const dataWrapper = {
@@ -133,11 +135,12 @@ export default function AddEvent() {
       places_paid: formik.values.payoutDetails.length,
       roleId: adminData?.id,
       role: adminData?.role,
+      createId: adminData?.id,
     };
+    console.log("dataWrapper", dataWrapper);
     dispatch(CreateEvents(dataWrapper));
     setSuccess(true);
   };
-  console.log(adminData);
   const formik = useFormik({
     initialValues: { ...emptyData },
     validationSchema: eventSchema,
@@ -192,7 +195,7 @@ export default function AddEvent() {
   const handleChangePlayerDetails = async (e, index) => {
     const { value } = e.target;
     const updatedInputs = [...formik.values.playerDetails];
-    const findUser = activeSubscriptionUsersData.Users.find(
+    const findUser = activeSubscriptionUsersData.find(
       (user) => user.fname + " " + user.lname === value
     );
     const imageConvert = findUser && (await toDataURL(findUser.image));
@@ -208,8 +211,8 @@ export default function AddEvent() {
   };
 
   useEffect(() => {
-    if (activeSubscriptionUsersData?.Users?.length) {
-      const alreadyInPlayer = activeSubscriptionUsersData.Users.filter((item) =>
+    if (activeSubscriptionUsersData?.length) {
+      const alreadyInPlayer = activeSubscriptionUsersData.filter((item) =>
         formik.values.playerDetails.some((item2) => item2.email === item.email)
       );
       setSubscribedPlayer(alreadyInPlayer);
@@ -983,26 +986,26 @@ export default function AddEvent() {
                                 }
                               >
                                 <option value={""}>Select</option>
-                                {activeSubscriptionUsersData?.Users?.length ? (
-                                  activeSubscriptionUsersData?.Users?.map(
-                                    (subs) => ({
+                                {activeSubscriptionUsersData?.length ? (
+                                  activeSubscriptionUsersData
+                                    ?.map((subs) => ({
                                       ...subs,
                                       name: subs.fname + " " + subs.lname,
-                                    })
-                                  ).map((item, i) => (
-                                    <option
-                                      key={i}
-                                      value={item.name}
-                                      disabled={
-                                        subscribedPlayer.length &&
-                                        subscribedPlayer.find(
-                                          (i) => i.email === item.email
-                                        )
-                                      }
-                                    >
-                                      {item?.fname} {item?.lname}
-                                    </option>
-                                  ))
+                                    }))
+                                    .map((item, i) => (
+                                      <option
+                                        key={i}
+                                        value={item.name}
+                                        disabled={
+                                          subscribedPlayer.length &&
+                                          subscribedPlayer.find(
+                                            (i) => i.email === item.email
+                                          )
+                                        }
+                                      >
+                                        {item?.fname} {item?.lname}
+                                      </option>
+                                    ))
                                 ) : (
                                   <option disabled>No Player Found</option>
                                 )}
@@ -1158,7 +1161,10 @@ export default function AddEvent() {
                       }}
                       onBlur={formik.handleBlur}
                     />
-                    <label className="form-check-label" htmlFor="bounty_detail_1">
+                    <label
+                      className="form-check-label"
+                      htmlFor="bounty_detail_1"
+                    >
                       None
                     </label>
                   </div>
@@ -1178,7 +1184,10 @@ export default function AddEvent() {
                         });
                       }}
                     />
-                    <label className="form-check-label" htmlFor="bounty_detail_2">
+                    <label
+                      className="form-check-label"
+                      htmlFor="bounty_detail_2"
+                    >
                       Bounty
                     </label>
                   </div>
@@ -1198,7 +1207,10 @@ export default function AddEvent() {
                         });
                       }}
                     />
-                    <label className="form-check-label" htmlFor="bounty_detail_3">
+                    <label
+                      className="form-check-label"
+                      htmlFor="bounty_detail_3"
+                    >
                       PKO Bounty
                     </label>
                   </div>

@@ -13,11 +13,14 @@ const emptyData = {
   manage_events: {
     events: false,
     add_event: false,
+    add_winning: false,
+    uploaded_winning_history: false,
   },
   manage_reports: {
     transaction_log: false,
     login_history: false,
     email_history: false,
+    winning_log: false,
   },
   manage_users: false,
   manage_deposits: false,
@@ -44,7 +47,7 @@ export default function EditStaff() {
   }, [dispatch, id]);
 
   useEffect(() => {
-    if (staffByIdData) setSelected(staffByIdData);
+    if (staffByIdData) setSelected({ ...selected, ...staffByIdData });
   }, [dispatch, staffByIdData]);
 
   useEffect(() => {
@@ -372,6 +375,8 @@ export default function EditStaff() {
                               ...selected.manage_events,
                               events: e.target.checked,
                               add_event: e.target.checked,
+                              add_winning: e.target.checked,
+                              uploaded_winning_history: e.target.checked,
                             },
                           })
                         }
@@ -431,6 +436,60 @@ export default function EditStaff() {
                         </label>
                       </div>
                     </div>
+                    <div className="col-xxl-3 col-lg-3">
+                      <div className="form-check form-switch mb-3" dir="ltr">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="add_winning"
+                          checked={selected?.manage_events?.add_winning}
+                          name="add_winning"
+                          onChange={(e) =>
+                            setSelected({
+                              ...selected,
+                              manage_events: {
+                                ...selected.manage_events,
+                                add_winning: e.target.checked,
+                              },
+                            })
+                          }
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="add_winning"
+                        >
+                          Add Winning
+                        </label>
+                      </div>
+                    </div>{" "}
+                    <div className="col-xxl-3 col-lg-3">
+                      <div className="form-check form-switch mb-3" dir="ltr">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          id="uploaded_winning_history"
+                          checked={
+                            selected?.manage_events?.uploaded_winning_history
+                          }
+                          name="uploaded_winning_history"
+                          onChange={(e) =>
+                            setSelected({
+                              ...selected,
+                              manage_events: {
+                                ...selected.manage_events,
+                                uploaded_winning_history: e.target.checked,
+                              },
+                            })
+                          }
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="uploaded_winning_history"
+                        >
+                          Uploaded Winning History
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="row gy-4 pt-3">
@@ -455,6 +514,7 @@ export default function EditStaff() {
                               transaction_log: e.target.checked,
                               login_history: e.target.checked,
                               email_history: e.target.checked,
+                              winning_log: e.target.checked,
                             },
                           })
                         }
@@ -543,32 +603,32 @@ export default function EditStaff() {
                         </label>
                       </div>
                     </div>
-                    {/* <div className="col-xxl-3 col-md-3">
+                    <div className="col-xxl-3 col-lg-3">
                       <div className="form-check form-switch mb-3" dir="ltr">
                         <input
                           type="checkbox"
                           className="form-check-input"
-                          id="transaction_log"
-                          checked={selected?.manage_reports?.transaction_log}
-                          name="transaction_log"
+                          id="winning_log"
+                          checked={selected?.manage_reports?.winning_log}
+                          name="winning_log"
                           onChange={(e) =>
                             setSelected({
                               ...selected,
                               manage_reports: {
                                 ...selected.manage_reports,
-                                transaction_log: e.target.checked,
+                                winning_log: e.target.checked,
                               },
                             })
                           }
                         />
                         <label
                           className="form-check-label"
-                          htmlFor="transaction_log"
+                          htmlFor="winning_log"
                         >
-                          Transaction Log
+                          Winning Log
                         </label>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
                 <div className="row gy-4  pt-3">

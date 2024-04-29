@@ -26,7 +26,16 @@ export default function Deposits() {
   const { totalPages, currentPage } = paginate;
 
   useEffect(() => {
-    dispatch(allDeposits({ search, limit, currentPage, type: "" }));
+    dispatch(
+      allDeposits({
+        search,
+        limit,
+        currentPage,
+        type: "",
+        startDate: "",
+        endDate: "",
+      })
+    );
   }, [
     dispatch,
     search,

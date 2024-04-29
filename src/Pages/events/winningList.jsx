@@ -3,24 +3,17 @@ import Layout from "../../components/Layout";
 import Loader from "../../utils/loader";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import {
-  UpdateEvents,
-  fetchEvents,
-  fetchUser,
-  fetchUsers,
-  updateEventStatus,
-  updateUser,
-} from "../../features/apiSlice";
+import { fetchEvents } from "../../features/apiSlice";
 import Pagination from "../../utils/pagination";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function AllEvents() {
+export default function EventWinningList() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const {
     updateEventStatusDataLoading,
     updateEventStatusDataSuccess,
     eventsData: { events, total },
-    userData,
   } = useSelector((state) => state.api);
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState(10);
@@ -57,19 +50,6 @@ export default function AllEvents() {
     setPaginate({ ...paginate, currentPage: current });
   };
 
-  const handleChangeStatus = (type, id) => {
-    dispatch(updateEventStatus({ id, body: { status: type } }));
-  };
-  console.log(events);
-
-  useEffect(() => {
-    dispatch(fetchUser(1));
-  }, [dispatch]);
-  console.log(userData);
-
-  // const handleFindEventCreator = ()=>{
-
-  // }
   return (
     <Layout>
       <Loader isLoading={updateEventStatusDataLoading} />
@@ -82,7 +62,9 @@ export default function AllEvents() {
                 <li className="breadcrumb-item">
                   <a>Manage Event</a>
                 </li>
-                <li className="breadcrumb-item active">All Event</li>
+                <li className="breadcrumb-item active">
+                  Event Winning History List
+                </li>
               </ol>
             </div>
           </div>
@@ -93,7 +75,7 @@ export default function AllEvents() {
         <div className="col-lg-12">
           <div className="card">
             <div className="card-header">
-              <h5 className="card-title mb-0">All Event</h5>
+              <h5 className="card-title mb-0">Event Winning History List</h5>
             </div>
             <div className="card-body table-responsive">
               <div
@@ -157,10 +139,10 @@ export default function AllEvents() {
                     <th style={{ width: 60 }}>Sr No.</th>
                     <th>Event Name</th>
                     <th>Event Rounds</th>
-                    <th>Player Count</th>
-                    <th>Created At</th>
+                    <th>Total Player</th>
+                    <th>Uploaded At</th>
                     <th>Created By</th>
-                    <th>Status</th>
+                    <th>Winning Uploaded</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -183,49 +165,25 @@ export default function AllEvents() {
                             {item?.players_details?.length}
                           </td>
                           <td>
-                            {moment(item?.createdAt).format(
+                            {moment(item?.updatedAt).format(
                               "MMM Do YYYY, h:mm:ss a"
                             )}
                           </td>
-                          <td>{item?.creatorName}</td>
-                          <td>
-                            <span
-                              className={`badge ${
-                                item?.status
-                                  ? `bg-success-subtle text-success`
-                                  : `bg-danger-subtle text-danger`
-                              }`}
-                            >
-                              {item?.status ? "Active" : "Inactive"}
-                            </span>
-                          </td>
+                          <td>{item?.role}</td>
+                          <td>{item?.positionsInfo?.length ? "Yes" : "No"}</td>
 
                           <td>
-                            <div className="dropdown d-inline-block">
-                              <button
-                                onClick={() =>
-                                  handleChangeStatus(
-                                    item?.status ? 0 : 1,
-                                    item?.id
-                                  )
+                            <button
+                              disabled={!item?.positionsInfo?.length}
+                              onClick={() => {
+                                if (item?.positionsInfo?.length) {
+                                  navigate("/event-winnings-list/" + item?.id);
                                 }
-                                className={`btn btn-sm ${
-                                  item?.status
-                                    ? "btn-soft-danger"
-                                    : "btn-soft-success"
-                                }`}
-                              >
-                                {item?.status ? "Inactive" : "Active"}
-                              </button>
-                            </div>
-                            <div className="dropdown d-inline-block ms-1">
-                              <Link
-                                to={"/edit-event/" + item?.id}
-                                className="btn btn-sm btn-soft-info"
-                              >
-                                Edit
-                              </Link>
-                            </div>
+                              }}
+                              className="btn btn-sm btn-soft-info"
+                            >
+                              View
+                            </button>
                           </td>
                         </tr>
                       ))

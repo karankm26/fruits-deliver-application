@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { loginSchema, loginStaffSchema } from "../../schema";
+import { loginSchema } from "../../schema";
 import { useDispatch, useSelector } from "react-redux";
 // import { login } from "../../features/apiSlice";
 import { useFormik } from "formik";
-import { loginAsync, loginStaffAsync } from "../../features/loginSlice";
+import { loginAsync, loginOperatorAsync } from "../../features/loginSlice";
 import Loader from "../../utils/loader";
-import { history } from "../../history";
 
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  history.navigate = useNavigate();
-  history.location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const { loginToken, loginData, loginDataSuccess, loginDataLoading } =
     useSelector((state) => state.login);
@@ -21,23 +18,20 @@ export default function Login() {
     initialValues: { email: "", password: "" },
     validationSchema: loginSchema,
     onSubmit: (values) => {
-      console.log("submit validation");
       dispatch(loginAsync(values));
     },
   });
 
   const formikStaff = useFormik({
-    initialValues: { username: "", password: "" },
-    validationSchema: loginStaffSchema,
+    initialValues: { email: "", password: "" },
+    validationSchema: loginSchema,
     onSubmit: (values) => {
-      console.log("staff Submit", values);
-      dispatch(loginStaffAsync(values));
+      dispatch(loginOperatorAsync(values));
     },
   });
 
   useEffect(() => {
     if (loginDataSuccess && loginData) {
-      console.log(loginData.id);
       localStorage.setItem("id", loginData.id);
       localStorage.setItem("token", loginData.token);
       navigate("/");
@@ -47,37 +41,8 @@ export default function Login() {
   return (
     <div className="auth-page-wrapper pt-4">
       <Loader isLoading={loginDataLoading} />
-      <div className="auth-one-bg-position auth-one-bg" id="auth-particles">
-        <div className="bg-overlay" />
-        <div className="shape">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            version="1.1"
-            xmlnsXlink="http://www.w3.org/1999/xlink"
-            viewBox="0 0 1440 120"
-          >
-            <path d="M 0,36 C 144,53.6 432,123.2 720,124 C 1008,124.8 1296,56.8 1440,40L1440 140L0 140z" />
-          </svg>
-        </div>
-      </div>
       <div className="auth-page-content">
         <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="text-center text-white-50">
-                <div>
-                  <Link to={"/"} className="d-inline-block auth-logo">
-                    <img
-                      src="assets/img/logo-light.png"
-                      alt="LOGO"
-                      height={55}
-                    />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="row justify-content-center">
             <div className="col-md-8 col-lg-6 col-xl-5">
               <div className="mt-3">
@@ -104,7 +69,7 @@ export default function Login() {
                           href="#pill-justified-profile-1"
                           role="tab"
                         >
-                          Staff
+                          Operator
                         </a>
                       </li>
                     </ul>
@@ -121,17 +86,15 @@ export default function Login() {
                               Welcome Back To Admin Login!
                             </h5>
                             <p className="text-muted">
-                              Sign in to continue to Backroom Games.
+                              Sign in to continue to Jai Laxmi Fruit Supplier
+                              Service Center, Ugaon.
                             </p>
                           </div>
                           <div className="p-2 mt-4">
                             <form onSubmit={formikAdmin.handleSubmit}>
                               <div className="mb-3">
-                                <label
-                                  htmlFor="username"
-                                  className="form-label"
-                                >
-                                  Username
+                                <label htmlFor="email" className="form-label">
+                                  Email
                                 </label>
                                 <input
                                   type="text"
@@ -144,14 +107,6 @@ export default function Login() {
                                 />
                               </div>
                               <div className="mb-3">
-                                <div className="float-end">
-                                  <a
-                                    href="auth-pass-reset-basic.html"
-                                    className="text-muted"
-                                  >
-                                    Forgot password?
-                                  </a>
-                                </div>
                                 <label
                                   className="form-label"
                                   htmlFor="password-input"
@@ -180,20 +135,7 @@ export default function Login() {
                                   </button>
                                 </div>
                               </div>
-                              <div className="form-check">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  defaultValue
-                                  id="auth-remember-check"
-                                />
-                                <label
-                                  className="form-check-label"
-                                  htmlFor="auth-remember-check"
-                                >
-                                  Remember me
-                                </label>
-                              </div>
+
                               <div className="mt-4">
                                 <button
                                   className="btn btn-success w-100"
@@ -214,40 +156,30 @@ export default function Login() {
                         <div className="card-body p-4">
                           <div className="text-center mt-2">
                             <h5 className="text-primary">
-                              Welcome Back To Staff Login!
+                              Welcome Back To Operator Login!
                             </h5>
                             <p className="text-muted">
-                              Sign in to continue to Backroom Games.
+                              Sign in to continue to Jai Laxmi Fruit Supplier
+                              Service Center, Ugaon.
                             </p>
                           </div>
                           <div className="p-2 mt-4">
                             <form onSubmit={formikStaff.handleSubmit}>
                               <div className="mb-3">
-                                <label
-                                  htmlFor="username"
-                                  className="form-label"
-                                >
-                                  Username
+                                <label htmlFor="Email" className="form-label">
+                                  Email
                                 </label>
                                 <input
                                   type="text"
                                   className="form-control"
-                                  id="username"
+                                  id="email"
                                   placeholder="Enter email"
-                                  value={formikStaff.values.username}
+                                  value={formikStaff.values.email}
                                   onChange={formikStaff.handleChange}
                                   onBlur={formikStaff.handleBlur}
                                 />
                               </div>
                               <div className="mb-3">
-                                <div className="float-end">
-                                  <a
-                                    href="auth-pass-reset-basic.html"
-                                    className="text-muted"
-                                  >
-                                    Forgot password?
-                                  </a>
-                                </div>
                                 <label
                                   className="form-label"
                                   htmlFor="password-input"
@@ -276,20 +208,7 @@ export default function Login() {
                                   </button>
                                 </div>
                               </div>
-                              <div className="form-check">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  defaultValue
-                                  id="auth-remember-check"
-                                />
-                                <label
-                                  className="form-check-label"
-                                  htmlFor="auth-remember-check"
-                                >
-                                  Remember me
-                                </label>
-                              </div>
+
                               <div className="mt-4">
                                 <button
                                   className="btn btn-success w-100"

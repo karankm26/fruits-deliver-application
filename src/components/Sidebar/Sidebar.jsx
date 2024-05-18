@@ -31,44 +31,26 @@ export default function Sidebar() {
   //   }
   // };
 
-  const isPermission = (isGiven, isGivenInside) => {
-    const isAdmin = adminData?.role === "admin";
-    const isSubAdmin = adminData?.role === "sub-admin";
-    if (isAdmin) {
-      return true;
-    }
-    if (isSubAdmin) {
-      if (typeof adminData[isGiven] === "object") {
-        return isGivenInside === "all"
-          ? Object.values(adminData[isGiven]).some((value) => value)
-          : adminData[isGiven][isGivenInside];
-      } else {
-        return adminData[isGiven];
-      }
-    }
-    return false;
-  };
-
   return (
     <div>
       <div className="app-menu navbar-menu">
         <div className="-navbarbrand-box">
-          <a href="index.html" className="logo logo-dark">
+          {" "}
+          <Link to={"/"} className="logo d-flex">
             <span className="logo-sm">
-              <img src="/assets/img/logo-dark.png" alt="logo" height={35} />
+              <img src="/assets/images/image-2.png" alt="logo" height={35} />
             </span>
             <span className="logo-lg">
-              <img src="/assets/img/logo-dark.png" alt="logo" height={55} />
+              <img src="/assets/images/image-2.png" alt="logo" height={55} />
             </span>
-          </a>
-          <a href="index.html" className="logo logo-light">
-            <span className="logo-sm">
-              <img src="/assets/img/logo-light.png" alt="logo" height={35} />
-            </span>
-            <span className="logo-lg">
-              <img src="/assets/img/logo-light.png" alt="logo" height={55} />
-            </span>
-          </a>
+            <h4
+              href="index.html"
+              className="logo logo-dark"
+              style={{ fontWeight: 800 }}
+            >
+              Jai Laxmi Fruits
+            </h4>
+          </Link>
           <button
             type="button"
             className="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -81,8 +63,6 @@ export default function Sidebar() {
           id="scrollbar"
           className="simplebar-content-wrapper"
           data-simplebar="init"
-          // className="h-100 simplebar-scrollable-y"
-          // style={{ overflow: "auto" }}
         >
           <div className="container-fluid">
             <div id="two-column-menu"></div>
@@ -109,17 +89,14 @@ export default function Sidebar() {
                   <span data-key="t-dashboards">Dashboards</span>
                 </Link>
               </li>
-              <li className="nav-item" hidden={!isPermission("manage_users")}>
+              <li className="nav-item">
                 <a
                   className={`nav-link menu-link ${
-                    (path === `/all-users` ||
-                      path === `/active-users` ||
-                      path === `/inactive-users` ||
-                      path === `/email-verfied-users` ||
-                      path === `/email-unverfied-users` ||
-                      path === `/mobile-verified-users` ||
-                      path === `/mobile-unverified-users` ||
-                      path === `/notification-to-all`) &&
+                    (path === `/all-memos` ||
+                      path === `/unseen-memos` ||
+                      path === `/today-memos` ||
+                      path === `/this-month-memos` ||
+                      path === `/add-memo`) &&
                     `active`
                   }`}
                   role="button"
@@ -129,19 +106,16 @@ export default function Sidebar() {
                   data-bs-toggle="collapse"
                 >
                   <i className="ri-group-line" />
-                  <span data-key="t-dashboards">Manage Users</span>
+                  <span data-key="t-dashboards">Manage Memo</span>
                 </a>
 
                 <div
                   className={`collapse menu-dropdown ${
-                    (path === `/all-users` ||
-                      path === `/active-users` ||
-                      path === `/inactive-users` ||
-                      path === `/email-verfied-users` ||
-                      path === `/email-unverfied-users` ||
-                      path === `/mobile-verified-users` ||
-                      path === `/mobile-unverified-users` ||
-                      path === `/notification-to-all`) &&
+                    (path === `/all-memos` ||
+                      path === `/unseen-memos` ||
+                      path === `/today-memos` ||
+                      path === `/this-month-memos` ||
+                      path === `/add-memo`) &&
                     `show`
                   }`}
                   id="sidebarDashboards"
@@ -149,619 +123,245 @@ export default function Sidebar() {
                   <ul className="nav nav-sm flex-column">
                     <li className="nav-item">
                       <Link
-                        to={"/all-users"}
+                        to={"/all-memos"}
                         className={`nav-link ${
-                          path === `/all-users` && `active`
+                          path === `/all-memos` && `active`
                         }`}
                         data-key="t-user"
                       >
-                        All User
+                        All Memo's
                       </Link>
                     </li>
-                    <li className="nav-item">
+                    <li
+                      className="nav-item"
+                      hidden={adminData?.role !== "operator"}
+                    >
                       <Link
-                        to={"/active-users"}
+                        to={"/add-memo"}
                         className={`nav-link ${
-                          path === `/active-users` && `active`
+                          path === `/add-memo` && `active`
                         }`}
                         data-key="t-user"
                       >
-                        Active Users
+                        Add Memo
+                      </Link>
+                    </li>
+                    <li
+                      className="nav-item"
+                      hidden={adminData.role === "operator"}
+                    >
+                      <Link
+                        to={"/unseen-memos"}
+                        className={`nav-link ${
+                          path === `/unseen-memos` && `active`
+                        }`}
+                        data-key="t-user"
+                      >
+                        Unseen Memo's
                       </Link>
                     </li>
 
                     <li className="nav-item">
                       <Link
-                        to={"/inactive-users"}
+                        to={"/today-memos"}
                         className={`nav-link ${
-                          path === `/inactive-users` && `active`
+                          path === `/today-memos` && `active`
                         }`}
                         data-key="t-user"
                       >
-                        Inactive Users
+                        Today's Memo
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link
-                        to={"/email-verfied-users"}
+                        to={"/this-month-memos"}
                         className={`nav-link ${
-                          path === `/email-verfied-users` && `active`
+                          path === `/this-month-memos` && `active`
                         }`}
                         data-key="t-user"
                       >
-                        Email Verified Users
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/email-unverfied-users"}
-                        className={`nav-link ${
-                          path === `/email-unverfied-users` && `active`
-                        }`}
-                        data-key="t-user"
-                      >
-                        Email Unverfied Users
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/mobile-verified-users"}
-                        className={`nav-link ${
-                          path === `/mobile-verified-user` && `active`
-                        }`}
-                        data-key="t-user"
-                      >
-                        Mobile Verified Users
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/mobile-unverified-users"}
-                        className={`nav-link ${
-                          path === `/mobile-unverified-users` && `active`
-                        }`}
-                        data-key="t-user"
-                      >
-                        Mobile Unverified Users
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/notification-to-all"}
-                        className={`nav-link ${
-                          path === `/notification-to-all` && `active`
-                        }`}
-                        data-key="t-user"
-                      >
-                        Notification to All Users
+                        This Month’s Memo
                       </Link>
                     </li>
                   </ul>
                 </div>
               </li>
-              <li className="nav-item" hidden={adminData?.role === "sub-admin"}>
+              <li className="nav-item" hidden={adminData?.role === "operator"}>
                 <a
                   className={`nav-link menu-link ${
-                    (path === `/add-staff` || path === `/staff`) && `active`
+                    (path === `/add-owner` ||
+                      path === `/owner-list` ||
+                      path === `/owner-login-history`) &&
+                    `active`
                   }`}
                   role="button"
-                  href="#sidebar-staff"
+                  href="#sidebar-owner"
                   aria-expanded="false"
-                  aria-controls="sidebar-staff"
+                  aria-controls="sidebar-owner"
                   data-bs-toggle="collapse"
                 >
                   <i className="ri-team-line" />
-                  <span data-key="t-staff">Manage Staff</span>
+                  <span data-key="t-staff">Manage Owner's</span>
                 </a>
 
                 <div
                   className={`collapse menu-dropdown ${
-                    (path === `/add-staff` || path === `/staff`) && `show`
-                  }`}
-                  id="sidebar-staff"
-                >
-                  <ul className="nav nav-sm flex-column">
-                    <li className="nav-item">
-                      <Link
-                        to={"/add-staff"}
-                        className={`nav-link ${
-                          path === `/add-staff` && `active`
-                        }`}
-                        data-key="t-staff"
-                      >
-                        Add Staff
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/staff"}
-                        className={`nav-link ${path === `/staff` && `active`}`}
-                        data-key="t-subscribe-notifications"
-                      >
-                        Staff Members
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li
-                className="nav-item"
-                hidden={!isPermission("manage_events", "all")}
-              >
-                <a
-                  className={`nav-link menu-link ${
-                    (path === `/add-event` ||
-                      path === `/events` ||
-                      path === `/event-winnings` ||
-                      path === `/event-winnings-list`) &&
-                    `active`
-                  }`}
-                  role="button"
-                  href="#sidebar-events"
-                  aria-expanded="false"
-                  aria-controls="sidebar-events"
-                  data-bs-toggle="collapse"
-                >
-                  <i className="ri-gamepad-line" />
-                  <span data-key="t-events">Manage Events</span>
-                </a>
-
-                <div
-                  className={`collapse menu-dropdown ${
-                    (path === `/add-event` ||
-                      path === `/events` ||
-                      path === `/event-winnings` ||
-                      path === `/event-winnings-list`) &&
+                    (path === `/add-owner` ||
+                      path === `/owner-list` ||
+                      path === `/owner-login-history`) &&
                     `show`
                   }`}
-                  id="sidebar-events"
+                  id="sidebar-owner"
                 >
                   <ul className="nav nav-sm flex-column">
-                    <li
-                      className="nav-item"
-                      hidden={!isPermission("manage_events", "add_event")}
-                    >
+                    <li className="nav-item">
                       <Link
-                        to={"/add-event"}
+                        to={"/add-owner"}
                         className={`nav-link ${
-                          path === `/add-event` && `active`
+                          path === `/add-owner` && `active`
                         }`}
-                        data-key="t-events"
+                        data-key="t-owner"
                       >
-                        Add Event
+                        Add New Owner
                       </Link>
                     </li>
-                    <li
-                      className="nav-item"
-                      hidden={!isPermission("manage_events", "events")}
-                    >
+                    <li className="nav-item">
                       <Link
-                        to={"/events"}
-                        className={`nav-link ${path === `/events` && `active`}`}
-                        data-key="t-events"
-                      >
-                        All Events
-                      </Link>
-                    </li>
-                    <li
-                      className="nav-item"
-                      hidden={!isPermission("manage_events", "add_winning")}
-                    >
-                      <Link
-                        to={"/event-winnings"}
+                        to={"/owner-list"}
                         className={`nav-link ${
-                          path === `/event-winnings` && `active`
+                          path === `/owner-list` && `active`
                         }`}
-                        data-key="t-events"
+                        data-key="t-owner"
                       >
-                        Set Event Winnings
+                        Owner List
                       </Link>
                     </li>{" "}
-                    <li
-                      className="nav-item"
-                      hidden={
-                        !isPermission(
-                          "manage_events",
-                          "uploaded_winning_history"
-                        )
-                      }
-                    >
+                    <li className="nav-item">
                       <Link
-                        to={"/event-winnings-list"}
+                        to={"/owner-login-history"}
                         className={`nav-link ${
-                          path === `/event-winnings-list` && `active`
+                          path === `/owner-login-history` && `active`
                         }`}
-                        data-key="t-events"
+                        data-key="t-owner"
                       >
-                        Event Win History
+                        Login History
                       </Link>
                     </li>
                   </ul>
                 </div>
               </li>
-              <li
-                className="nav-item"
-                hidden={!isPermission("manage_reports", "all")}
-              >
+              <li className="nav-item" hidden={adminData?.role === "operator"}>
                 <a
                   className={`nav-link menu-link ${
-                    (path === `/transaction-logs` ||
-                      path === `/email-logs` ||
-                      path === `/login-logs` ||
-                      path === `/winning-logs`) &&
+                    (path === `/add-operator` ||
+                      path === `/operator-list` ||
+                      path === `/operator-login-history`) &&
                     `active`
                   }`}
                   role="button"
-                  href="#sidebar-reports"
+                  href="#sidebar-operator"
                   aria-expanded="false"
-                  aria-controls="sidebar-reports"
+                  aria-controls="sidebar-operator"
                   data-bs-toggle="collapse"
                 >
-                  <i className="ri-file-chart-line" />
-                  <span data-key="t-subscribe">Manage Reports</span>
+                  <i className="ri-team-line" />
+                  <span data-key="t-operator">Manage Operator</span>
                 </a>
 
                 <div
                   className={`collapse menu-dropdown ${
-                    (path === `/transaction-logs` ||
-                      path === `/email-logs` ||
-                      path === `/login-logs` ||
-                      path === `/winning-logs`) &&
+                    (path === `/add-operator` ||
+                      path === `/operator-list` ||
+                      path === `/operator-login-history`) &&
                     `show`
                   }`}
-                  id="sidebar-reports"
+                  id="sidebar-operator"
+                >
+                  <ul className="nav nav-sm flex-column">
+                    <li className="nav-item">
+                      <Link
+                        to={"/add-operator"}
+                        className={`nav-link ${
+                          path === `/add-operator` && `active`
+                        }`}
+                        data-key="t-operator"
+                      >
+                        Add Operator
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        to={"/operator-list"}
+                        className={`nav-link ${
+                          path === `/operator-list` && `active`
+                        }`}
+                        data-key="t-operator"
+                      >
+                        Operator List
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        to={"/operator-login-history"}
+                        className={`nav-link ${
+                          path === `/operator-login-history` && `active`
+                        }`}
+                        data-key="t-operator"
+                      >
+                        Login History
+                      </Link>
+                    </li>{" "}
+                  </ul>
+                </div>
+              </li>
+
+              <li className="nav-item">
+                <a
+                  className={`nav-link menu-link ${
+                    (path === `/upload-apk` || path === `/get-apk`) && `active`
+                  }`}
+                  role="button"
+                  href="#sidebar-apk"
+                  aria-expanded="false"
+                  aria-controls="sidebar-apk"
+                  data-bs-toggle="collapse"
+                >
+                  <i className="ri-dashboard-line" />
+                  <span data-key="t-apk">Android Application</span>
+                </a>
+
+                <div
+                  className={`collapse menu-dropdown ${
+                    (path === `/upload-apk` || path === `/get-apk`) && `show`
+                  }`}
+                  id="sidebar-apk"
                 >
                   <ul className="nav nav-sm flex-column">
                     <li
                       className="nav-item"
-                      hidden={!isPermission("manage_reports", "login_history")}
+                      hidden={adminData?.role === "operator"}
                     >
                       <Link
-                        to={"/login-logs"}
+                        to={"/upload-apk"}
                         className={`nav-link ${
-                          path === `/login-logs` && `active`
+                          path === `/upload-apk` && `active`
                         }`}
-                        data-key="t-subscribe-list"
+                        data-key="t-apk"
                       >
-                        Login Logs
-                      </Link>
-                    </li>
-                    <li
-                      className="nav-item"
-                      hidden={!isPermission("manage_reports", "email_history")}
-                    >
-                      <Link
-                        to={"/email-logs"}
-                        className={`nav-link ${
-                          path === `/email-logs` && `active`
-                        }`}
-                        data-key="t-subscribe-notifications"
-                      >
-                        Email Logs
-                      </Link>
-                    </li>
-                    <li
-                      className="nav-item"
-                      hidden={
-                        !isPermission("manage_reports", "transaction_log")
-                      }
-                    >
-                      <Link
-                        to={"/transaction-logs"}
-                        className={`nav-link ${
-                          path === `/transaction-logs` && `active`
-                        }`}
-                        data-key="t-subscribe-notifications"
-                      >
-                        Transaction Logs
-                      </Link>
-                    </li>
-                    <li
-                      className="nav-item"
-                      hidden={!isPermission("manage_reports", "winning_log")}
-                    >
-                      <Link
-                        to={"/winning-logs"}
-                        className={`nav-link ${
-                          path === `/winning-logs` && `active`
-                        }`}
-                        data-key="t-subscribe-notifications"
-                      >
-                        Winning Logs
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li
-                className="nav-item"
-                hidden={!isPermission("manage_deposits")}
-              >
-                <a
-                  className={`nav-link menu-link ${
-                    path === `/deposits` && `active`
-                  }`}
-                  role="button"
-                  href="#sidebar-deposits"
-                  aria-expanded="false"
-                  aria-controls="sidebar-deposits"
-                  data-bs-toggle="collapse"
-                >
-                  <i className="bx bx-dollar" />
-                  <span data-key="t-deposits">Manage Deposits</span>
-                </a>
-
-                <div
-                  className={`collapse menu-dropdown ${
-                    path === `/deposits` && `show`
-                  }`}
-                  id="sidebar-deposits"
-                >
-                  <ul className="nav nav-sm flex-column">
-                    <li className="nav-item">
-                      <Link
-                        to={"/deposits"}
-                        className={`nav-link ${
-                          path === `/deposits` && `active`
-                        }`}
-                        data-key="t-deposits"
-                      >
-                        Deposits
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </li>{" "}
-              <li
-                className="nav-item"
-                hidden={!isPermission("manage_withdrawals")}
-              >
-                <a
-                  className={`nav-link menu-link ${
-                    (path === `/withdrawals` ||
-                      path === `/pending-withdrawals` ||
-                      path === `/approved-withdrawals` ||
-                      path === `/rejected-withdrawals`) &&
-                    `active`
-                  }`}
-                  role="button"
-                  href="#sidebar-withdrawals"
-                  aria-expanded="false"
-                  aria-controls="sidebar-withdrawals"
-                  data-bs-toggle="collapse"
-                >
-                  {/* <i className="ri-message-line" /> */}
-                  <i className="bx bx-money-withdraw" />
-                  <span data-key="t-withdrawals">Manage Withdrawals</span>
-                </a>
-
-                <div
-                  className={`collapse menu-dropdown ${
-                    (path === `/withdrawals` ||
-                      path === `/pending-withdrawals` ||
-                      path === `/approved-withdrawals` ||
-                      path === `/rejected-withdrawals`) &&
-                    `show`
-                  }`}
-                  id="sidebar-withdrawals"
-                >
-                  <ul className="nav nav-sm flex-column">
-                    <li className="nav-item">
-                      <Link
-                        to={"/withdrawals"}
-                        className={`nav-link ${
-                          path === `/withdrawals` && `active`
-                        }`}
-                        data-key="t-withdrawals"
-                      >
-                        All Withdrawals
-                      </Link>
-                    </li>
-                    {/* <li className="nav-item">
-                      <Link
-                        to={"/rejected-withdrawals"}
-                        className={`nav-link ${
-                          path === `/rejected-withdrawals` && `active`
-                        }`}
-                        data-key="t-withdrawals"
-                      >
-                        Rejected Withdrawals
+                        Upload apk
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link
-                        to={"/pending-withdrawals"}
+                        to={"/get-apk"}
                         className={`nav-link ${
-                          path === `/pending-withdrawals` && `active`
+                          path === `/get-apk` && `active`
                         }`}
-                        data-key="t-withdrawals"
+                        data-key="t-apk"
                       >
-                        Pending Withdrawals
+                        Get apk
                       </Link>
                     </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/approved-withdrawals"}
-                        className={`nav-link ${
-                          path === `/approved-withdrawals` && `active`
-                        }`}
-                        data-key="t-withdrawals"
-                      >
-                        Approved Withdrawals
-                      </Link>
-                    </li> */}
-                  </ul>
-                </div>
-              </li>
-              <li
-                className="nav-item"
-                hidden={!isPermission("manage_subscribers")}
-              >
-                <a
-                  className={`nav-link menu-link ${
-                    (path === `/subscribers-list` ||
-                      path === `/subscribers-notifications`) &&
-                    `active`
-                  }`}
-                  role="button"
-                  href="#sidebar-subscription"
-                  aria-expanded="false"
-                  aria-controls="sidebar-subscription"
-                  data-bs-toggle="collapse"
-                >
-                  <i className="ri-arrow-up-circle-line" />
-                  <span data-key="t-subscription">Manage Subscriptions</span>
-                </a>
-
-                <div
-                  className={`collapse menu-dropdown ${
-                    (path === `/subscriptions-plans` ||
-                      path === `/add-subscriptions` ||
-                      path === `/user-subscriptions`) &&
-                    `show`
-                  }`}
-                  id="sidebar-subscription"
-                >
-                  <ul className="nav nav-sm flex-column">
-                    <li className="nav-item">
-                      <Link
-                        to={"/add-subscriptions"}
-                        className={`nav-link ${
-                          path === `/add-subscriptions` && `active`
-                        }`}
-                        data-key="t-subscription-add"
-                      >
-                        Add Subscription Plan
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/subscriptions-plans"}
-                        className={`nav-link ${
-                          path === `/subscriptions-plans` && `active`
-                        }`}
-                        data-key="t-subscription-plan"
-                      >
-                        Subscriptions Plans
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/user-subscriptions"}
-                        className={`nav-link ${
-                          path === `/user-subscriptions` && `active`
-                        }`}
-                        data-key="t-user-subscription"
-                      >
-                        User Subscriptions
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li
-                className="nav-item"
-                hidden={!isPermission("manage_subscribers")}
-              >
-                <a
-                  className={`nav-link menu-link ${
-                    (path === `/subscribers-list` ||
-                      path === `/subscribers-notifications`) &&
-                    `active`
-                  }`}
-                  role="button"
-                  href="#sidebar-subscriber"
-                  aria-expanded="false"
-                  aria-controls="sidebar-subscriber"
-                  data-bs-toggle="collapse"
-                >
-                  <i className="ri-rss-line" />
-                  <span data-key="t-subscribe">Manage Subscribers</span>
-                </a>
-
-                <div
-                  className={`collapse menu-dropdown ${
-                    (path === `/subscribers-list` ||
-                      path === `/subscribers-notifications`) &&
-                    `show`
-                  }`}
-                  id="sidebar-subscriber"
-                >
-                  <ul className="nav nav-sm flex-column">
-                    <li className="nav-item">
-                      <Link
-                        to={"/subscribers-list"}
-                        className={`nav-link ${
-                          path === `/subscribers-list` && `active`
-                        }`}
-                        data-key="t-subscribe-list"
-                      >
-                        Subscribers List
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link
-                        to={"/subscribers-notifications"}
-                        className={`nav-link ${
-                          path === `/subscribers-notifications` && `active`
-                        }`}
-                        data-key="t-subscribe-notifications"
-                      >
-                        Notify All Subscribers
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li
-                className="nav-item"
-                hidden={!isPermission("manage_supportTickets")}
-              >
-                <a
-                  className={`nav-link menu-link ${
-                    path === `/support-tickets` && `active`
-                  }`}
-                  role="button"
-                  href="#sidebar-support-ticket"
-                  aria-expanded="false"
-                  aria-controls="sidebar-support-ticket"
-                  data-bs-toggle="collapse"
-                >
-                  <i className="ri-message-line" />
-                  <span data-key="t-support-ticket">
-                    Manage Support Tickets
-                  </span>
-                </a>
-
-                <div
-                  className={`collapse menu-dropdown ${
-                    path === `/support-tickets` && `show`
-                  }`}
-                  id="sidebar-support-ticket"
-                >
-                  <ul className="nav nav-sm flex-column">
-                    <li className="nav-item">
-                      <Link
-                        to={"/support-tickets"}
-                        className={`nav-link ${
-                          path === `/support-tickets` && `active`
-                        }`}
-                        data-key="t-support-ticket"
-                      >
-                        Support Tickets
-                      </Link>
-                    </li>
-                    {/* <li className="nav-item">
-                      <Link
-                        to={"/subscribers-notifications"}
-                        className={`nav-link ${
-                          path === `/subscribers-notifications` && `active`
-                        }`}
-                        data-key="t-subscribe-notifications"
-                      >
-                        Notify All Subscribers
-                      </Link>
-                    </li> */}
                   </ul>
                 </div>
               </li>

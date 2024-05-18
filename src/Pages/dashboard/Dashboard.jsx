@@ -1,54 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  allDeposits,
-  fetchAdmin,
-  fetchTransactions,
-  fetchUserDetails,
-  loginLogsDetails,
-  withdrawals,
-} from "../../features/apiSlice";
 import Layout from "../../components/Layout";
 import ReactEcharts from "echarts-for-react";
-import moment from "moment";
-import { Link } from "react-router-dom";
-import { groupTransactionsByDate } from "../../utils/groupByDates";
-import { lineChartData } from "../../utils/lineChartData";
+import { getMemo } from "../../features/apiSlice";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
-  const {
-    data: user,
-    status,
-    error,
-    userDetailsData,
-    loginLogsDetailsData,
-    transactionsData,
-    withdrawalsData,
-    allDepositsData,
-  } = useSelector((state) => state.api);
-  const userId = localStorage.getItem("id");
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
-    endDate: "",
-  });
-  const [transactionsDate, setTransactionsDate] = useState("week");
+  const { userDetailsData, getMemoData } = useSelector((state) => state.api);
   const userDetail = userDetailsData?.[0];
-  const count = transactionsData?.result?.count;
-  const countRef = useRef(null);
-  const countRefCount = useRef(0);
 
   useEffect(() => {
-    if (userId) dispatch(fetchAdmin(userId));
-    dispatch(fetchUserDetails());
-    dispatch(loginLogsDetails());
-  }, [dispatch, userId]);
+    dispatch(
+      getMemo({ type: "", status: "", startDate: "", endDate: "", search: "" })
+    );
+  }, [dispatch]);
 
   const dashboardContent = [
     {
       id: 1,
-      title: "Users",
-      count: userDetail?.Total_Users,
+      title: "Total Memo",
+      count: getMemoData?.seenMemo + getMemoData?.unseenMemo,
       hike: true,
       percent: 16.24,
       icon: "ri-group-line",
@@ -56,40 +27,40 @@ export default function Dashboard() {
     },
     {
       id: 2,
-      title: "Active Users",
-      count: userDetail?.active_accounts,
+      title: "Seen Memo",
+      count: getMemoData?.seenMemo,
       hike: true,
       percent: 10,
       icon: "ri-user-follow-line",
       color: "success",
     },
-    {
-      id: 3,
-      title: "Inactive Users",
-      count: userDetail?.inactive_accounts,
-      hike: true,
-      percent: 30,
-      icon: "ri-user-unfollow-line",
-      color: "danger",
-    },
+    // {
+    //   id: 3,
+    //   title: "Unseen Memo",
+    //   count: getMemoData?.unseenMemo,
+    //   hike: true,
+    //   percent: 30,
+    //   icon: "ri-user-unfollow-line",
+    //   color: "danger",
+    // },
     {
       id: 4,
-      title: "Email Verified Users",
-      count: userDetail?.email_verified,
+      title: "Today's Memo",
+      count: getMemoData?.todayMemoCount,
       hike: true,
       percent: 56.24,
       icon: "ri-mail-check-line",
       color: "info",
     },
-    // {
-    //   id: 5,
-    //   title: "Email Unverified Users",
-    //   count: userDetail?.email_unverified,
-    //   hike: false,
-    //   percent: 16.24,
-    //   icon: "ri-mail-close-line",
-    //   color: "info",
-    // },
+    {
+      id: 5,
+      title: "This Month Memo",
+      count: getMemoData?.monthMemoCount,
+      hike: false,
+      percent: 16.24,
+      icon: "ri-mail-close-line",
+      color: "info",
+    },
     // {
     //   id: 6,
     //   title: "Mobile Verified Users",
@@ -137,100 +108,6 @@ export default function Dashboard() {
     // },
   ];
 
-  const optionOs = {
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      top: "bottom",
-    },
-    // toolbox: {
-    //   show: true,
-    //   feature: {
-    //     mark: { show: true },
-    //     dataView: { show: true, readOnly: false },
-    //     restore: { show: true },
-    //     saveAsImage: { show: true },
-    //   },
-    // },
-    series: [
-      {
-        name: "Access From",
-        type: "pie",
-        radius: ["45%", "80%"],
-        avoidLabelOverlap: false,
-        bottom: "40",
-        // itemStyle: {
-        //   borderRadius: 10,
-        //   borderColor: "#fff",
-        //   borderWidth: 2,
-        // },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 40,
-            fontWeight: "bold",
-          },
-        },
-        labelLine: {
-          show: false,
-        },
-
-        data: loginLogsDetailsData?.os,
-      },
-    ],
-  };
-  const optionBrowsers = {
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      top: "bottom",
-    },
-    // toolbox: {
-    //   show: true,
-    //   feature: {
-    //     mark: { show: true },
-    //     dataView: { show: true, readOnly: false },
-    //     restore: { show: true },
-    //     saveAsImage: { show: true },
-    //   },
-    // },
-    series: [
-      {
-        name: "Access From",
-        type: "pie",
-        radius: ["45%", "80%"],
-        avoidLabelOverlap: false,
-        bottom: "40",
-        // itemStyle: {
-        //   borderRadius: 10,
-        //   borderColor: "#fff",
-        //   borderWidth: 2,
-        // },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 40,
-            fontWeight: "bold",
-          },
-        },
-        labelLine: {
-          show: false,
-        },
-        data: loginLogsDetailsData?.browser,
-      },
-    ],
-  };
-
   const userDetails = {
     // title: {
     //   text: "Referer of a Website",
@@ -250,13 +127,14 @@ export default function Dashboard() {
         type: "pie",
         radius: "80%",
         data: [
-          { value: userDetail?.Total_Users, name: "Total Users" },
-          { value: userDetail?.active_accounts, name: "Active Users" },
-          { value: userDetail?.inactive_accounts, name: "Inactive Users" },
-          { value: userDetail?.email_verified, name: "Email Verified" },
-          { value: userDetail?.email_unverified, name: "Email Unverified" },
-          { value: userDetail?.sms_verified, name: "Mobile Verified" },
-          { value: userDetail?.sms_unverified, name: "Mobile Unverified" },
+          {
+            value: getMemoData?.seenMemo + getMemoData?.unseenMemo,
+            name: "Total Memo",
+          },
+          { value: getMemoData?.seenMemo, name: "Seen Memo" },
+          { value: getMemoData?.unseenMemo, name: "Unseen Memo" },
+          { value: getMemoData?.todayMemoCount, name: "Today's Memo" },
+          { value: getMemoData?.monthMemoCount, name: "This Month Memo" },
         ],
         emphasis: {
           itemStyle: {
@@ -269,140 +147,6 @@ export default function Dashboard() {
     ],
   };
 
-  const option3 = {
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "shadow",
-      },
-    },
-    legend: {
-      show: false,
-    },
-    grid: {
-      top: "5%",
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
-    },
-    xAxis: [
-      {
-        type: "value",
-      },
-    ],
-    yAxis: [
-      {
-        type: "category",
-        axisTick: {
-          show: false,
-        },
-        data: loginLogsDetailsData?.country?.map((item) => item.name),
-      },
-    ],
-
-    series: [
-      {
-        name: "Users",
-        type: "bar",
-        label: {
-          show: true,
-          position: "inside",
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: loginLogsDetailsData?.country?.map((item) => item.value),
-      },
-    ],
-  };
-
-  useEffect(() => {
-    dispatch(
-      fetchTransactions({
-        search: "",
-        limit: countRef.current ? countRef.current : "10",
-        type: "",
-        currentPage: 1,
-        ...dateRange,
-      })
-    );
-    dispatch(
-      withdrawals({
-        search: "",
-        limit: countRef.current ? countRef.current : "10",
-        type: "",
-        currentPage: 1,
-        ...dateRange,
-      })
-    );
-    dispatch(
-      allDeposits({
-        search: "",
-        limit: countRef.current ? countRef.current : "10",
-        type: "",
-        currentPage: 1,
-        ...dateRange,
-      })
-    );
-  }, [dispatch, dateRange, transactionsDate]);
-
-  useEffect(() => {
-    if (count && countRefCount.current < 1) {
-      countRef.current = count;
-      countRefCount.current = +1;
-    }
-  }, [count]);
-
-  useEffect(() => {
-    const dateRanges = {
-      week: {
-        startDate: moment().clone().startOf("isoWeek").format("YYYY-MM-DD"),
-        endDate: moment().clone().endOf("isoWeek").format("YYYY-MM-DD"),
-      },
-      month: {
-        startDate: moment().startOf("month").format("YYYY-MM-DD"),
-        endDate: moment().endOf("month").format("YYYY-MM-DD"),
-      },
-      year: {
-        startDate: moment().startOf("year").format("YYYY-MM-DD"),
-        endDate: moment().endOf("year").format("YYYY-MM-DD"),
-      },
-    };
-
-    if (dateRanges.hasOwnProperty(transactionsDate)) {
-      setDateRange(dateRanges[transactionsDate]);
-    }
-  }, [transactionsDate]);
-
-  const dataArray = groupTransactionsByDate(
-    transactionsData?.result?.rows,
-    "amount"
-  );
-  const dataArrayDeposit = groupTransactionsByDate(
-    allDepositsData?.rows,
-    "Amount"
-  );
-  const dataArrayWithdraw = groupTransactionsByDate(
-    withdrawalsData?.rows,
-    "Amount"
-  );
-
-  const OptionTransaction = lineChartData(transactionsDate, dataArray);
-  const OptionTransactionWithDraw = lineChartData(
-    transactionsDate,
-    dataArrayWithdraw
-  );
-  const OptionTransactionDeposit = lineChartData(
-    transactionsDate,
-    dataArrayDeposit
-  );
-
-  console.log(
-    OptionTransaction,
-    OptionTransactionWithDraw,
-    OptionTransactionDeposit
-  );
   return (
     <Layout>
       <div>
@@ -441,7 +185,7 @@ export default function Dashboard() {
                                 </p>
                               </div>
                               <div className="flex-shrink-0">
-                                <h5
+                                {/* <h5
                                   className={`text-${
                                     item?.hike ? `success` : `danger`
                                   } fs-14 mb-0`}
@@ -454,7 +198,7 @@ export default function Dashboard() {
                                     } fs-13 align-middle`}
                                   />
                                   +16.24 %
-                                </h5>
+                                </h5> */}
                               </div>
                             </div>
                             <div className="d-flex align-items-end justify-content-between mt-4">
@@ -498,16 +242,8 @@ export default function Dashboard() {
                   <div className="card card-height-100">
                     <div className="card-header align-items-center d-flex">
                       <h4 className="card-title mb-0 flex-grow-1">
-                        Live Users Stats
+                        Live Memo Stats
                       </h4>
-                      <div className="flex-shrink-0">
-                        <button
-                          type="button"
-                          className="btn btn-soft-primary btn-sm"
-                        >
-                          Export Report
-                        </button>
-                      </div>
                     </div>
 
                     <div className="card-body">
@@ -519,311 +255,6 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="col-xxl-12">
-              <div className="card card-height-100">
-                <div className="card-header align-items-center d-flex">
-                  <h4 className="card-title mb-0 flex-grow-1">
-                    Session By Country
-                  </h4>
-                  <div className="flex-shrink-0">
-                    <Link
-                      to={"/login-logs"}
-                      className="btn btn-soft-primary btn-sm"
-                    >
-                      View
-                      <i className="ri-arrow-right-line align-bottom" />
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="card-body p-0">
-                  <ReactEcharts option={option3} />
-
-                  {/* <div className="align-items-center mt-4 pt-2 justify-content-between d-md-flex">
-                    <div className="flex-shrink-0 mb-2 mb-md-0">
-                      <div className="text-muted">
-                        Showing <span className="fw-semibold">5</span> of
-                        <span className="fw-semibold">25</span> Results
-                      </div>
-                    </div>
-                    <ul className="pagination pagination-separated pagination-sm mb-0">
-                      <li className="page-item disabled">
-                        <a href="#" className="page-link">
-                          ←
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a href="#" className="page-link">
-                          1
-                        </a>
-                      </li>
-                      <li className="page-item active">
-                        <a href="#" className="page-link">
-                          2
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a href="#" className="page-link">
-                          3
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a href="#" className="page-link">
-                          →
-                        </a>
-                      </li>
-                    </ul>
-                  </div> */}
-                </div>
-              </div>
-              {/* .card*/}
-            </div>
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="col-xl-6">
-            <div className="card card-height-100">
-              <div className="card-header align-items-center d-flex">
-                <h4 className="card-title mb-0 flex-grow-1">
-                  Users by Browsers
-                </h4>
-                <div className="flex-shrink-0">
-                  <div className="dropdown card-header-dropdown">
-                    <a
-                      className="text-reset dropdown-btn"
-                      href="#"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      <span className="text-muted fs-16">
-                        <i className="mdi mdi-dots-vertical align-middle" />
-                      </span>
-                    </a>
-                    <div className="dropdown-menu dropdown-menu-end">
-                      <a className="dropdown-item" href="#">
-                        Today
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Last Week
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Last Month
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Current Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-body">
-                <ReactEcharts option={optionBrowsers} className="apex-charts" />
-              </div>
-            </div>
-          </div>
-          <div className="col-xl-6">
-            <div className="card card-height-100">
-              <div className="card-header align-items-center d-flex">
-                <h4 className="card-title mb-0 flex-grow-1">Users by OS</h4>
-                <div className="flex-shrink-0">
-                  <div className="dropdown card-header-dropdown">
-                    <a
-                      className="text-reset dropdown-btn"
-                      href="#"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      <span className="text-muted fs-16">
-                        <i className="mdi mdi-dots-vertical align-middle" />
-                      </span>
-                    </a>
-                    <div className="dropdown-menu dropdown-menu-end">
-                      <a className="dropdown-item" href="#">
-                        Today
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Last Week
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Last Month
-                      </a>
-                      <a className="dropdown-item" href="#">
-                        Current Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-body">
-                <ReactEcharts option={optionOs} className="apex-charts" />
-              </div>
-            </div>
-          </div>{" "}
-          <div className="col-xl-12">
-            <div className="card card-height-100">
-              <div className="card-header align-items-center d-flex">
-                <h4 className="card-title mb-0 flex-grow-1">Transactions</h4>
-                <div className="flex-shrink-0">
-                  <div className="dropdown card-header-dropdown">
-                    {transactionsDate.charAt(0).toUpperCase() +
-                      transactionsDate.slice(1) +
-                      "ly Transaction"}
-                    <a
-                      className="text-reset dropdown-btn"
-                      href="#"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      <span className="text-muted fs-16">
-                        <i className="mdi mdi-dots-vertical align-middle" />
-                      </span>
-                    </a>
-                    <div className="dropdown-menu dropdown-menu-end">
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("week")}
-                      >
-                        Week
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("month")}
-                      >
-                        Month
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("year")}
-                      >
-                        Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-body">
-                <ReactEcharts
-                  key={transactionsData}
-                  option={OptionTransaction}
-                  className="apex-charts"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="col-xl-6">
-            <div className="card card-height-100">
-              <div className="card-header align-items-center d-flex">
-                <h4 className="card-title mb-0 flex-grow-1">Withdrawals</h4>
-                <div className="flex-shrink-0">
-                  <div className="dropdown card-header-dropdown">
-                    {" "}
-                    {transactionsDate.charAt(0).toUpperCase() +
-                      transactionsDate.slice(1) +
-                      "ly Transaction"}
-                    <a
-                      className="text-reset dropdown-btn"
-                      href="#"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      <span className="text-muted fs-16">
-                        <i className="mdi mdi-dots-vertical align-middle" />
-                      </span>
-                    </a>
-                    <div className="dropdown-menu dropdown-menu-end">
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("week")}
-                      >
-                        Week
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("month")}
-                      >
-                        Month
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("year")}
-                      >
-                        Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-body">
-                <ReactEcharts
-                  key={transactionsData}
-                  option={OptionTransactionWithDraw}
-                  className="apex-charts"
-                />
-              </div>
-            </div>
-          </div>{" "}
-          <div className="col-xl-6">
-            <div className="card card-height-100">
-              <div className="card-header align-items-center d-flex">
-                <h4 className="card-title mb-0 flex-grow-1">Deposits</h4>
-                <div className="flex-shrink-0">
-                  <div className="dropdown card-header-dropdown">
-                    {" "}
-                    {transactionsDate.charAt(0).toUpperCase() +
-                      transactionsDate.slice(1) +
-                      "ly Transaction"}
-                    <a
-                      className="text-reset dropdown-btn"
-                      href="#"
-                      data-bs-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      <span className="text-muted fs-16">
-                        <i className="mdi mdi-dots-vertical align-middle" />
-                      </span>
-                    </a>
-                    <div className="dropdown-menu dropdown-menu-end">
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("week")}
-                      >
-                        Week
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("month")}
-                      >
-                        Month
-                      </a>
-                      <a
-                        className="dropdown-item"
-                        onClick={() => setTransactionsDate("year")}
-                      >
-                        Year
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-body">
-                <ReactEcharts
-                  key={transactionsData}
-                  option={OptionTransactionDeposit}
-                  className="apex-charts"
-                />
               </div>
             </div>
           </div>

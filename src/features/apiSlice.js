@@ -1,55 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  apkUploadApi,
+  changeAdminPasswordApi,
+  createMemoApi,
+  createOperatorApi,
+  createOwnerApi,
   getAdmin,
-  getCitiesApi,
-  getCountriesApi,
-  getStatesApi,
-  // loginAdmin,
-  passwordChangeAdmin,
-  registerAdmin,
-  subscribersList,
-  subscribersNotification,
-  subscribersNotificationToAll,
-  updateAdmin,
-  allUserNotificationApi,
-  userApi,
-  userDiposit,
-  userUpdateApi,
-  userWithdraw,
-  usersApi,
-  userNotificationApi,
-  userCountApi,
-  allStaffApi,
-  staffUpdateApi,
-  staffRegisterApi,
-  staffByIdApi,
-  getAllSupportTicketApi,
-  getSupportTicketMessageByIdApi,
-  sendSupportTicketMessageApi,
-  updateSupportTicketMessageByIdApi,
-  getTransactions,
-  getEvents,
-  createEventApi,
-  getEventById,
-  updateEventApi,
+  getApkApi,
+  getMemoApi,
+  getMemoByIdApi,
+  getMemoIDApi,
+  getOperator,
+  getOperatorsApi,
+  getOwnerApi,
+  getOwnersApi,
   loginLogsApi,
-  fetchUserNotificationApi,
-  allWithdrawals,
-  withdrawalStatusApi,
-  allDepositsApi,
-  depositStatusApi,
-  userAllDetailsApi,
   loginLogsDetailsApi,
-  updateEventStatusApi,
-  register2FAApi,
-  addSubscriptionApi,
-  allSubscriptionApi,
-  updateSubscriptionApi,
-  subscriptionByIdApi,
-  allUsersSubscriptionsApi,
-  activeSubscriptionUsersApi,
-  setEventWinningApi,
-  winningApi,
+  seenMemoApi,
+  updateAdminApi,
+  updateMemoApi,
 } from "../api";
 
 export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
@@ -57,379 +26,11 @@ export const fetchAdmin = createAsyncThunk("api/fetchAdmin", async (id) => {
   return response.data;
 });
 
-export const register = createAsyncThunk(
-  "api/register",
-  async (body, thunkAPI) => {
-    try {
-      const response = await registerAdmin(body);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-// export const login = createAsyncThunk("api/login", async (body, thunkAPI) => {
-//   try {
-//     const response = await loginAdmin(body);
-//     return response.data;
-//   } catch (error) {
-//     return thunkAPI.rejectWithValue(error.response.data);
-//   }
-// });
-
-export const update = createAsyncThunk("api/update", async (data, thunkAPI) => {
-  try {
-    const response = await updateAdmin(data);
+export const fetchOperator = createAsyncThunk(
+  "api/fetchOperator",
+  async (id) => {
+    const response = await getOperator(id);
     return response.data;
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
-});
-
-export const passwordChange = createAsyncThunk(
-  "api/passwordChange",
-  async (data, thunkAPI) => {
-    try {
-      const response = await passwordChangeAdmin(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchSubscribersList = createAsyncThunk(
-  "api/fetchSubscribersList",
-  async (data, thunkAPI) => {
-    try {
-      const response = await subscribersList(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const subscribersNotificationSend = createAsyncThunk(
-  "api/subscribersNotificationSend",
-  async (data, thunkAPI) => {
-    try {
-      const response = await subscribersNotification(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const subscribersNotificationSendToAll = createAsyncThunk(
-  "api/subscribersNotificationSendToAll",
-  async (data, thunkAPI) => {
-    try {
-      const response = await subscribersNotificationToAll(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchUsers = createAsyncThunk(
-  "api/fetchUsers",
-  async (data, thunkAPI) => {
-    try {
-      const response = await usersApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-export const fetchUser = createAsyncThunk(
-  "api/fetchUser",
-  async (data, thunkAPI) => {
-    try {
-      const response = await userApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchUserDetails = createAsyncThunk(
-  "api/fetchUserDetails",
-  async (data, thunkAPI) => {
-    try {
-      const response = await userCountApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchCountries = createAsyncThunk(
-  "api/fetchCountries",
-  async (_, thunkAPI) => {
-    try {
-      const response = await getCountriesApi();
-      return response.data.countries;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchStates = createAsyncThunk(
-  "api/fetchStates",
-  async (data, thunkAPI) => {
-    try {
-      const response = await getStatesApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchCities = createAsyncThunk(
-  "api/fetchCities",
-  async (data, thunkAPI) => {
-    try {
-      const response = await getCitiesApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const updateUser = createAsyncThunk(
-  "api/updateUser",
-  async (data, thunkAPI) => {
-    try {
-      const response = await userUpdateApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const allUserNotification = createAsyncThunk(
-  "api/allUserNotification",
-  async (data, thunkAPI) => {
-    try {
-      const response = await allUserNotificationApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const userNotification = createAsyncThunk(
-  "api/userNotification",
-  async (data, thunkAPI) => {
-    try {
-      console.log("hello2");
-      const response = await userNotificationApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchUserNotification = createAsyncThunk(
-  "api/fetchUserNotification",
-  async (data, thunkAPI) => {
-    try {
-      const response = await fetchUserNotificationApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const adminAddedUserBalance = createAsyncThunk(
-  "api/adminAddedUserBalance",
-  async (data, thunkAPI) => {
-    try {
-      const response = await userDiposit(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-export const admiSubtractedUserBalance = createAsyncThunk(
-  "api/admiSubtractedUserBalance",
-  async (data, thunkAPI) => {
-    try {
-      const response = await userWithdraw(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchAllStaff = createAsyncThunk(
-  "api/fetchAllStaff",
-  async (data, thunkAPI) => {
-    try {
-      const response = await allStaffApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchStaffById = createAsyncThunk(
-  "api/fetchStaffById",
-  async (data, thunkAPI) => {
-    try {
-      const response = await staffByIdApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const staffUpdate = createAsyncThunk(
-  "api/staffUpdate",
-  async (data, thunkAPI) => {
-    try {
-      const response = await staffUpdateApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const staffRegister = createAsyncThunk(
-  "api/staffRegister",
-  async (data, thunkAPI) => {
-    try {
-      const response = await staffRegisterApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchAllSupportTicket = createAsyncThunk(
-  "api/fetchAllSupportTicket",
-  async (data, thunkAPI) => {
-    try {
-      const response = await getAllSupportTicketApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchSupportTicketMessageById = createAsyncThunk(
-  "api/fetchSupportTicketMessageById",
-  async (data, thunkAPI) => {
-    try {
-      const response = await getSupportTicketMessageByIdApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const sendSupportTicketMessage = createAsyncThunk(
-  "api/sendSupportTicketMessage",
-  async (data, thunkAPI) => {
-    try {
-      const response = await sendSupportTicketMessageApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-export const updateSupportTicketMessageById = createAsyncThunk(
-  "api/updateSupportTicketMessageById",
-  async (data, thunkAPI) => {
-    try {
-      const response = await updateSupportTicketMessageByIdApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchTransactions = createAsyncThunk(
-  "api/fetchTransactions",
-  async (data, thunkAPI) => {
-    try {
-      const response = await getTransactions(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchEvents = createAsyncThunk(
-  "api/fetchEvents",
-  async (data, thunkAPI) => {
-    try {
-      const response = await getEvents(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const fetchEventById = createAsyncThunk(
-  "api/fetchEventById",
-  async (data, thunkAPI) => {
-    try {
-      const response = await getEventById(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const CreateEvents = createAsyncThunk(
-  "api/CreateEvents",
-  async (data, thunkAPI) => {
-    try {
-      const response = await createEventApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const UpdateEvents = createAsyncThunk(
-  "api/UpdateEvents",
-  async (data, thunkAPI) => {
-    try {
-      const response = await updateEventApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
   }
 );
 
@@ -438,66 +39,6 @@ export const loginLogs = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await loginLogsApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const withdrawals = createAsyncThunk(
-  "api/withdrawals",
-  async (data, thunkAPI) => {
-    try {
-      const response = await allWithdrawals(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const withdrawalStatus = createAsyncThunk(
-  "api/withdrawalStatus",
-  async (data, thunkAPI) => {
-    try {
-      const response = await withdrawalStatusApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const allDeposits = createAsyncThunk(
-  "api/allDeposits",
-  async (data, thunkAPI) => {
-    try {
-      const response = await allDepositsApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const depositStatus = createAsyncThunk(
-  "api/depositStatus",
-  async (data, thunkAPI) => {
-    try {
-      const response = await depositStatusApi(data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const userAllDetails = createAsyncThunk(
-  "api/userAllDetails",
-  async (data, thunkAPI) => {
-    try {
-      const response = await userAllDetailsApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -517,23 +58,22 @@ export const loginLogsDetails = createAsyncThunk(
   }
 );
 
-export const updateEventStatus = createAsyncThunk(
-  "api/updateEventStatus",
+export const createMemo = createAsyncThunk(
+  "api/createMemo",
   async (data, thunkAPI) => {
     try {
-      const response = await updateEventStatusApi(data);
+      const response = await createMemoApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
-
-export const register2FA = createAsyncThunk(
-  "api/register2FA",
+export const getMemo = createAsyncThunk(
+  "api/getMemo",
   async (data, thunkAPI) => {
     try {
-      const response = await register2FAApi(data);
+      const response = await getMemoApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -541,11 +81,11 @@ export const register2FA = createAsyncThunk(
   }
 );
 
-export const addSubscription = createAsyncThunk(
-  "api/addSubscription",
+export const getMemoById = createAsyncThunk(
+  "api/getMemobyId",
   async (data, thunkAPI) => {
     try {
-      const response = await addSubscriptionApi(data);
+      const response = await getMemoByIdApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -553,47 +93,22 @@ export const addSubscription = createAsyncThunk(
   }
 );
 
-export const updateSubscription = createAsyncThunk(
-  "api/updateSubscription",
+export const createOperator = createAsyncThunk(
+  "api/createOperator",
   async (data, thunkAPI) => {
     try {
-      const response = await updateSubscriptionApi(data);
+      const response = await createOperatorApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
-
-export const allSubscription = createAsyncThunk(
-  "api/allSubscription",
-  async (_, thunkAPI) => {
-    try {
-      const response = await allSubscriptionApi();
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const subscriptionById = createAsyncThunk(
-  "api/subscriptionById",
-  async (id, thunkAPI) => {
-    try {
-      const response = await subscriptionByIdApi(id);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const allUsersSubscriptions = createAsyncThunk(
-  "api/allUsersSubscriptions",
+export const getOperators = createAsyncThunk(
+  "api/getOperators",
   async (data, thunkAPI) => {
     try {
-      const response = await allUsersSubscriptionsApi(data);
+      const response = await getOperatorsApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -601,11 +116,22 @@ export const allUsersSubscriptions = createAsyncThunk(
   }
 );
 
-export const activeSubscriptionUsers = createAsyncThunk(
-  "api/activeSubscriptionUsers",
+export const createOwner = createAsyncThunk(
+  "api/createOwner",
   async (data, thunkAPI) => {
     try {
-      const response = await activeSubscriptionUsersApi(data);
+      const response = await createOwnerApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const getOwners = createAsyncThunk(
+  "api/getOwners",
+  async (data, thunkAPI) => {
+    try {
+      const response = await getOwnersApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -613,11 +139,11 @@ export const activeSubscriptionUsers = createAsyncThunk(
   }
 );
 
-export const setEventWinning = createAsyncThunk(
-  "api/setEventWinning",
+export const getMemoID = createAsyncThunk(
+  "api/getMemoID",
   async (data, thunkAPI) => {
     try {
-      const response = await setEventWinningApi(data);
+      const response = await getMemoIDApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -625,17 +151,66 @@ export const setEventWinning = createAsyncThunk(
   }
 );
 
-export const winning = createAsyncThunk(
-  "api/winning",
+export const updateMemo = createAsyncThunk(
+  "api/updateMemo",
   async (data, thunkAPI) => {
     try {
-      const response = await winningApi(data);
+      const response = await updateMemoApi(data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
+
+export const updateAdmin = createAsyncThunk(
+  "api/updateAdmin",
+  async (data, thunkAPI) => {
+    try {
+      const response = await updateAdminApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const changeAdminPassword = createAsyncThunk(
+  "api/changeAdminPassword",
+  async (data, thunkAPI) => {
+    try {
+      const response = await changeAdminPasswordApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const seenMemo = createAsyncThunk(
+  "api/seenMemo",
+  async (data, thunkAPI) => {
+    try {
+      const response = await seenMemoApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const apkUpload = createAsyncThunk(
+  "api/apkUpload",
+  async (data, thunkAPI) => {
+    try {
+      const response = await apkUploadApi(data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const apiSlice = createSlice({
   name: "api",
   initialState: {
@@ -643,233 +218,80 @@ const apiSlice = createSlice({
     status: "idle",
     error: null,
 
-    profileUpdate: {},
-    profileUpdateLoading: false,
-    profileUpdateError: null,
-    profileUpdateSuccess: null,
-
-    subscribersListData: [],
-    subscribersListDataLoading: false,
-    subscribersListDataError: null,
-    subscribersListDataSuccess: null,
-
-    subscribersNotificationData: [],
-    subscribersNotificationDataLoading: false,
-    subscribersNotificationDataError: null,
-    subscribersNotificationDataSuccess: null,
-
-    subscribersNotificationDataToAll: [],
-    subscribersNotificationDataToAllLoading: false,
-    subscribersNotificationDataToAllError: null,
-    subscribersNotificationDataToAllSuccess: null,
-
-    usersData: [],
-    usersDataLoading: false,
-    usersDataError: null,
-    usersDataSuccess: null,
-
-    userData: {},
-    userDataLoading: false,
-    userDataError: null,
-    userDataSuccess: null,
-
-    userDetailsData: {},
-    userDetailsDataLoading: false,
-    userDetailsDataError: null,
-    userDetailsDataSuccess: null,
-
-    userUpdateData: {},
-    userUpdateDataLoading: false,
-    userUpdateDataError: null,
-    userUpdateDataSuccess: null,
-
-    countriesData: [],
-    countriesDataLoading: false,
-    countriesDataError: null,
-    countriesDataSuccess: null,
-
-    StatesData: [],
-    StatesDataLoading: false,
-    StatesDataError: null,
-    StatesDataSuccess: null,
-
-    CitiesData: [],
-    CitiesDataLoading: false,
-    CitiesDataError: null,
-    CitiesDataSuccess: null,
-
-    balanceUpdateData: [],
-    balanceUpdateDataLoading: false,
-    balanceUpdateDataError: null,
-    balanceUpdateDataSuccess: null,
-
-    allUserNotificationData: [],
-    allUserNotificationDataLoading: false,
-    allUserNotificationDataError: null,
-    allUserNotificationDataSuccess: null,
-
-    userNotificationData: [],
-    userNotificationDataLoading: false,
-    userNotificationDataError: null,
-    userNotificationDataSuccess: null,
-
-    userNotificationData: [],
-    userNotificationDataLoading: false,
-    userNotificationDataError: null,
-    userNotificationDataSuccess: null,
-
-    staffAllData: [],
-    staffAllDataLoading: false,
-    staffAllDataError: null,
-    staffAllDataSuccess: null,
-
-    staffByIdData: [],
-    staffByIdDataLoading: false,
-    staffByIdDataError: null,
-    staffByIdDataSuccess: null,
-
-    staffUpdateDataLoading: false,
-    staffUpdateDataSuccess: null,
-
-    staffRegisterData: [],
-    staffRegisterDataLoading: false,
-    staffRegisterDataError: null,
-    staffRegisterDataSuccess: null,
-
-    allSupportTicketData: [],
-    allSupportTicketDataLoading: false,
-    allSupportTicketDataError: null,
-    allSupportTicketDataSuccess: null,
-
-    supportTicketMessageByIdData: [],
-    supportTicketMessageByIdDataLoading: false,
-    supportTicketMessageByIdDataError: null,
-    supportTicketMessageByIdDataSuccess: null,
-
-    sendSupportTicketMessageData: [],
-    sendSupportTicketMessageDataLoading: false,
-    sendSupportTicketMessageDataError: null,
-    sendSupportTicketMessageDataSuccess: null,
-
-    updateSupportTicketMessageByIdData: [],
-    updateSupportTicketMessageByIdDataLoading: false,
-    updateSupportTicketMessageByIdDataError: null,
-    updateSupportTicketMessageByIdDataSuccess: null,
-
-    transactionsData: [],
-    transactionsDataLoading: false,
-    transactionsDataError: null,
-    transactionsDataSuccess: null,
-
-    eventsData: [],
-    eventsDataLoading: false,
-    eventsDataError: null,
-    eventsDataSuccess: null,
-
-    eventByIdData: {},
-    eventByIdDataLoading: false,
-    eventByIdDataError: null,
-    eventByIdDataSuccess: null,
-
-    eventCreateData: [],
-    eventCreateDataLoading: false,
-    eventCreateDataError: null,
-    eventCreateDataSuccess: null,
-
-    eventUpdateData: [],
-    eventUpdateDataLoading: false,
-    eventUpdateDataError: null,
-    eventUpdateDataSuccess: null,
-
     loginLogsData: [],
     loginLogsDataLoading: false,
     loginLogsDataError: null,
     loginLogsDataSuccess: null,
-
-    fetchUserNotificationData: [],
-    fetchUserNotificationDataLoading: false,
-    fetchUserNotificationDataError: null,
-    fetchUserNotificationDataSuccess: null,
-
-    withdrawalsData: [],
-    withdrawalsDataLoading: false,
-    withdrawalsDataError: null,
-    withdrawalsDataSuccess: null,
-
-    withdrawalStatusData: [],
-    withdrawalStatusDataLoading: false,
-    withdrawalStatusDataError: null,
-    withdrawalStatusDataSuccess: null,
-
-    allDepositsData: [],
-    allDepositsDataLoading: false,
-    allDepositsDataError: null,
-    allDepositsDataSuccess: null,
-
-    depositStatusData: [],
-    depositStatusDataLoading: false,
-    depositStatusDataError: null,
-    depositStatusDataSuccess: null,
-
-    userAllDetailsData: [],
-    userAllDetailsDataLoading: false,
-    userAllDetailsDataError: null,
-    userAllDetailsDataSuccess: null,
 
     loginLogsDetailsData: [],
     loginLogsDetailsDataLoading: false,
     loginLogsDetailsDataError: null,
     loginLogsDetailsDataSuccess: null,
 
-    updateEventStatusData: [],
-    updateEventStatusDataLoading: false,
-    updateEventStatusDataError: null,
-    updateEventStatusDataSuccess: null,
+    createMemoData: {},
+    createMemoDataLoading: false,
+    createMemoDataError: null,
+    createMemoDataSuccess: null,
 
-    register2FAData: [],
-    register2FADataLoading: false,
-    register2FADataError: null,
-    register2FADataSuccess: null,
+    updateMemoData: {},
+    updateMemoDataLoading: false,
+    updateMemoDataError: null,
+    updateMemoDataSuccess: null,
 
-    addSubscriptionData: {},
-    addSubscriptionDataLoading: false,
-    addSubscriptionDataError: null,
-    addSubscriptionDataSuccess: null,
+    getMemoData: [],
+    getMemoDataLoading: false,
+    getMemoDataError: null,
+    getMemoDataSuccess: null,
 
-    updateSubscriptionData: {},
-    updateSubscriptionDataLoading: false,
-    updateSubscriptionDataError: null,
-    updateSubscriptionDataSuccess: null,
+    getMemoByIdData: {},
+    getMemoByIdDataLoading: false,
+    getMemoByIdDataError: null,
+    getMemoByIdDataSuccess: null,
 
-    allSubscriptionData: [],
-    allSubscriptionDataLoading: false,
-    allSubscriptionDataError: null,
-    allSubscriptionDataSuccess: null,
+    createOperatorData: {},
+    createOperatorDataLoading: false,
+    createOperatorDataError: null,
+    createOperatorDataSuccess: null,
 
-    subscriptionByIdData: [],
-    subscriptionByIdDataLoading: false,
-    subscriptionByIdDataError: null,
-    subscriptionByIdDataSuccess: null,
+    getOperatorsData: [],
+    getOperatorsDataLoading: false,
+    getOperatorsDataError: null,
+    getOperatorsDataSuccess: null,
 
-    allUsersSubscriptionsData: [],
-    allUsersSubscriptionsDataLoading: false,
-    allUsersSubscriptionsDataError: null,
-    allUsersSubscriptionsDataSuccess: null,
+    createOwnerData: {},
+    createOwnerDataLoading: false,
+    createOwnerDataError: null,
+    createOwnerDataSuccess: null,
 
-    activeSubscriptionUsersData: [],
-    activeSubscriptionUsersDataLoading: false,
-    activeSubscriptionUsersDataError: null,
-    activeSubscriptionUsersDataSuccess: null,
+    getOwnersData: [],
+    getOwnersDataLoading: false,
+    getOwnersDataError: null,
+    getOwnersDataSuccess: null,
 
-    setEventWinningData: [],
-    setEventWinningDataLoading: false,
-    setEventWinningDataError: null,
-    setEventWinningDataSuccess: null,
+    getMemoIDData: {},
+    getMemoIDDataLoading: false,
+    getMemoIDDataError: null,
+    getMemoIDDataSuccess: null,
 
-    winningData: [],
-    winningDataLoading: false,
-    winningDataError: null,
-    winningDataSuccess: null,
+    updateAdminData: {},
+    updateAdminDataLoading: false,
+    updateAdminDataError: null,
+    updateAdminDataSuccess: null,
+
+    changeAdminPasswordData: {},
+    changeAdminPasswordDataLoading: false,
+    changeAdminPasswordDataError: null,
+    changeAdminPasswordDataSuccess: null,
+
+    seenMemoData: {},
+    seenMemoDataLoading: false,
+    seenMemoDataError: null,
+    seenMemoDataSuccess: null,
+
+    apkUploadData: {},
+    apkUploadDataLoading: false,
+    apkUploadDataError: null,
+    apkUploadDataSuccess: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -885,441 +307,18 @@ const apiSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       });
+
     builder
-      .addCase(register.pending, (state) => {
+      .addCase(fetchOperator.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(fetchOperator.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.data = action.payload;
       })
-      .addCase(register.rejected, (state, action) => {
+      .addCase(fetchOperator.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      });
-
-    // builder
-    //   .addCase(login.pending, (state) => {
-    //     state.loginDataLoading = true;
-    //   })
-    //   .addCase(login.fulfilled, (state, action) => {
-    //     state.loginDataLoading = false;
-    //     state.loginData = action.payload;
-    //     state.loginDataSuccess = true;
-    //   })
-    //   .addCase(login.rejected, (state, action) => {
-    //     state.loginDataLoading = false;
-    //     state.loginDataError = action.error.message;
-    //   });
-
-    builder
-      .addCase(update.pending, (state) => {
-        state.profileUpdateLoading = true;
-        state.profileUpdateSuccess = false;
-      })
-      .addCase(update.fulfilled, (state, action) => {
-        state.profileUpdateLoading = false;
-        state.profileUpdate = action.payload;
-        state.profileUpdateSuccess = true;
-      })
-      .addCase(update.rejected, (state, action) => {
-        state.profileUpdateLoading = false;
-        state.profileUpdateError = action.error.message;
-      });
-
-    builder
-      .addCase(passwordChange.pending, (state) => {
-        state.profileUpdateLoading = true;
-      })
-      .addCase(passwordChange.fulfilled, (state, action) => {
-        state.profileUpdateLoading = false;
-        state.profileUpdate = action.payload;
-        state.profileUpdateSuccess = true;
-      })
-      .addCase(passwordChange.rejected, (state, action) => {
-        state.profileUpdateLoading = false;
-        state.profileUpdateError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchSubscribersList.pending, (state) => {
-        state.subscribersListDataLoading = true;
-      })
-      .addCase(fetchSubscribersList.fulfilled, (state, action) => {
-        state.subscribersListDataLoading = false;
-        state.subscribersListData = action.payload;
-        state.subscribersListDataSuccess = true;
-      })
-      .addCase(fetchSubscribersList.rejected, (state, action) => {
-        state.subscribersListDataLoading = false;
-        state.subscribersListDataError = action.error.message;
-      });
-
-    builder
-      .addCase(subscribersNotificationSend.pending, (state) => {
-        state.subscribersNotificationDataLoading = true;
-      })
-      .addCase(subscribersNotificationSend.fulfilled, (state, action) => {
-        state.subscribersNotificationDataLoading = false;
-        state.subscribersNotificationData = action.payload;
-        state.subscribersNotificationDataSuccess = true;
-      })
-      .addCase(subscribersNotificationSend.rejected, (state, action) => {
-        state.subscribersNotificationDataLoading = false;
-        state.subscribersNotificationDataError = action.error.message;
-      });
-
-    builder
-      .addCase(subscribersNotificationSendToAll.pending, (state) => {
-        state.subscribersNotificationDataToAllLoading = true;
-      })
-      .addCase(subscribersNotificationSendToAll.fulfilled, (state, action) => {
-        state.subscribersNotificationDataToAllLoading = false;
-        state.subscribersNotificationDataToAll = action.payload;
-        state.subscribersNotificationDataToAllSuccess = true;
-      })
-      .addCase(subscribersNotificationSendToAll.rejected, (state, action) => {
-        state.subscribersNotificationDataToAllLoading = false;
-        state.subscribersNotificationDataToAllError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchUsers.pending, (state) => {
-        state.usersDataLoading = true;
-      })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.usersDataLoading = false;
-        state.usersData = action.payload;
-        state.usersDataSuccess = true;
-      })
-      .addCase(fetchUsers.rejected, (state, action) => {
-        state.usersDataLoading = false;
-        state.usersDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchUser.pending, (state) => {
-        state.userDataLoading = true;
-      })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.userDataLoading = false;
-        state.userData = action.payload;
-        state.userDataSuccess = true;
-      })
-      .addCase(fetchUser.rejected, (state, action) => {
-        state.userDataLoading = false;
-        state.userDataError = action.error.message;
-      });
-
-    builder
-      .addCase(updateUser.pending, (state) => {
-        state.userUpdateDataLoading = true;
-      })
-      .addCase(updateUser.fulfilled, (state, action) => {
-        state.userUpdateDataLoading = false;
-        state.userUpdateData = action.payload;
-        state.userUpdateDataSuccess = true;
-      })
-      .addCase(updateUser.rejected, (state, action) => {
-        state.userUpdateDataLoading = false;
-        state.userUpdateDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchCountries.pending, (state) => {
-        state.countriesDataLoading = true;
-      })
-      .addCase(fetchCountries.fulfilled, (state, action) => {
-        state.countriesDataLoading = false;
-        state.countriesData = action.payload;
-        state.countriesDataSuccess = true;
-      })
-      .addCase(fetchCountries.rejected, (state, action) => {
-        state.countriesDataLoading = false;
-        state.countriesDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchStates.pending, (state) => {
-        state.StatesDataLoading = true;
-      })
-      .addCase(fetchStates.fulfilled, (state, action) => {
-        state.StatesDataLoading = false;
-        state.StatesData = action.payload;
-        state.StatesDataSuccess = true;
-      })
-      .addCase(fetchStates.rejected, (state, action) => {
-        state.StatesDataLoading = false;
-        state.StatesDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchCities.pending, (state) => {
-        state.CitiesDataLoading = true;
-      })
-      .addCase(fetchCities.fulfilled, (state, action) => {
-        state.CitiesDataLoading = false;
-        state.CitiesData = action.payload;
-        state.CitiesDataSuccess = true;
-      })
-      .addCase(fetchCities.rejected, (state, action) => {
-        state.CitiesDataLoading = false;
-        state.CitiesDataError = action.error.message;
-      });
-
-    builder
-      .addCase(adminAddedUserBalance.pending, (state) => {
-        state.balanceUpdateDataLoading = true;
-      })
-      .addCase(adminAddedUserBalance.fulfilled, (state, action) => {
-        state.balanceUpdateDataLoading = false;
-        state.balanceUpdateData = action.payload;
-        state.balanceUpdateDataSuccess = true;
-      })
-      .addCase(adminAddedUserBalance.rejected, (state, action) => {
-        state.balanceUpdateDataLoading = false;
-        state.balanceUpdateDataError = action.error.message;
-      });
-    builder
-      .addCase(admiSubtractedUserBalance.pending, (state) => {
-        state.balanceUpdateDataLoading = true;
-      })
-      .addCase(admiSubtractedUserBalance.fulfilled, (state, action) => {
-        state.balanceUpdateDataLoading = false;
-        state.balanceUpdateData = action.payload;
-        state.balanceUpdateDataSuccess = true;
-      })
-      .addCase(admiSubtractedUserBalance.rejected, (state, action) => {
-        state.balanceUpdateDataLoading = false;
-        state.balanceUpdateDataError = action.error.message;
-      });
-
-    builder
-      .addCase(allUserNotification.pending, (state) => {
-        state.allUserNotificationDataLoading = true;
-      })
-      .addCase(allUserNotification.fulfilled, (state, action) => {
-        state.allUserNotificationDataLoading = false;
-        state.allUserNotificationData = action.payload;
-        state.allUserNotificationDataSuccess = true;
-      })
-      .addCase(allUserNotification.rejected, (state, action) => {
-        state.allUserNotificationDataLoading = false;
-        state.allUserNotificationDataError = action.error.message;
-      });
-
-    builder
-      .addCase(userNotification.pending, (state) => {
-        state.userNotificationDataLoading = true;
-      })
-      .addCase(userNotification.fulfilled, (state, action) => {
-        state.userNotificationDataLoading = false;
-        state.userNotificationData = action.payload;
-        state.userNotificationDataSuccess = true;
-      })
-      .addCase(userNotification.rejected, (state, action) => {
-        state.userNotificationDataLoading = false;
-        state.userNotificationDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchUserDetails.pending, (state) => {
-        state.userDetailsDataLoading = true;
-      })
-      .addCase(fetchUserDetails.fulfilled, (state, action) => {
-        state.userDetailsDataLoading = false;
-        state.userDetailsData = action.payload;
-        state.userDetailsDataSuccess = true;
-      })
-      .addCase(fetchUserDetails.rejected, (state, action) => {
-        state.userDetailsDataLoading = false;
-        state.userDetailsDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchAllStaff.pending, (state) => {
-        state.staffAllDataLoading = true;
-      })
-      .addCase(fetchAllStaff.fulfilled, (state, action) => {
-        state.staffAllDataLoading = false;
-        state.staffAllData = action.payload;
-        state.staffAllDataSuccess = true;
-      })
-      .addCase(fetchAllStaff.rejected, (state, action) => {
-        state.staffAllDataLoading = false;
-        state.staffAllDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchStaffById.pending, (state) => {
-        state.staffByIdDataLoading = true;
-      })
-      .addCase(fetchStaffById.fulfilled, (state, action) => {
-        state.staffByIdDataLoading = false;
-        state.staffByIdData = action.payload;
-        state.staffByIdDataSuccess = true;
-      })
-      .addCase(fetchStaffById.rejected, (state, action) => {
-        state.staffByIdDataLoading = false;
-        state.staffByIdDataError = action.error.message;
-      });
-
-    builder
-      .addCase(staffUpdate.pending, (state) => {
-        state.staffUpdateDataLoading = true;
-        state.staffUpdateDataSuccess = false;
-      })
-      .addCase(staffUpdate.fulfilled, (state, action) => {
-        state.staffUpdateDataLoading = false;
-        // state.staffUpdateData = action.payload;
-        state.staffUpdateDataSuccess = true;
-      })
-      .addCase(staffUpdate.rejected, (state, action) => {
-        state.staffUpdateDataLoading = false;
-        // state.staffUpdateDataError = action.error.message;
-      });
-
-    builder
-      .addCase(staffRegister.pending, (state) => {
-        state.staffRegisterDataLoading = true;
-      })
-      .addCase(staffRegister.fulfilled, (state, action) => {
-        state.staffRegisterDataLoading = false;
-        state.staffRegisterData = action.payload;
-        state.staffRegisterDataSuccess = true;
-      })
-      .addCase(staffRegister.rejected, (state, action) => {
-        state.staffRegisterDataLoading = false;
-        state.staffRegisterDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchAllSupportTicket.pending, (state) => {
-        state.allSupportTicketDataLoading = true;
-      })
-      .addCase(fetchAllSupportTicket.fulfilled, (state, action) => {
-        state.allSupportTicketDataLoading = false;
-        state.allSupportTicketData = action.payload;
-        state.allSupportTicketDataSuccess = true;
-      })
-      .addCase(fetchAllSupportTicket.rejected, (state, action) => {
-        state.allSupportTicketDataLoading = false;
-        state.allSupportTicketDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchSupportTicketMessageById.pending, (state) => {
-        state.supportTicketMessageByIdDataLoading = true;
-      })
-      .addCase(fetchSupportTicketMessageById.fulfilled, (state, action) => {
-        state.supportTicketMessageByIdDataLoading = false;
-        state.supportTicketMessageByIdData = action.payload;
-        state.supportTicketMessageByIdDataSuccess = true;
-      })
-      .addCase(fetchSupportTicketMessageById.rejected, (state, action) => {
-        state.supportTicketMessageByIdDataLoading = false;
-        state.supportTicketMessageByIdDataError = action.error.message;
-      });
-
-    builder
-      .addCase(sendSupportTicketMessage.pending, (state) => {
-        state.sendSupportTicketMessageDataLoading = true;
-      })
-      .addCase(sendSupportTicketMessage.fulfilled, (state, action) => {
-        state.sendSupportTicketMessageDataLoading = false;
-        state.sendSupportTicketMessageData = action.payload;
-        state.sendSupportTicketMessageDataSuccess = true;
-      })
-      .addCase(sendSupportTicketMessage.rejected, (state, action) => {
-        state.sendSupportTicketMessageDataLoading = false;
-        state.sendSupportTicketMessageDataError = action.error.message;
-      });
-
-    builder
-      .addCase(updateSupportTicketMessageById.pending, (state) => {
-        state.updateSupportTicketMessageByIdDataLoading = true;
-      })
-      .addCase(updateSupportTicketMessageById.fulfilled, (state, action) => {
-        state.updateSupportTicketMessageByIdDataLoading = false;
-        state.updateSupportTicketMessageByIdData = action.payload;
-        state.updateSupportTicketMessageByIdDataSuccess = true;
-      })
-      .addCase(updateSupportTicketMessageById.rejected, (state, action) => {
-        state.updateSupportTicketMessageByIdDataLoading = false;
-        state.updateSupportTicketMessageByIdDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchTransactions.pending, (state) => {
-        state.transactionsDataLoading = true;
-        state.transactionsDataSuccess = false;
-      })
-      .addCase(fetchTransactions.fulfilled, (state, action) => {
-        state.transactionsDataLoading = false;
-        state.transactionsData = action.payload;
-        state.transactionsDataSuccess = true;
-      })
-      .addCase(fetchTransactions.rejected, (state, action) => {
-        state.transactionsDataLoading = false;
-        state.transactionsDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchEvents.pending, (state) => {
-        state.eventsDataLoading = true;
-      })
-      .addCase(fetchEvents.fulfilled, (state, action) => {
-        state.eventsDataLoading = false;
-        state.eventsData = action.payload;
-        state.eventsDataSuccess = true;
-      })
-      .addCase(fetchEvents.rejected, (state, action) => {
-        state.eventsDataLoading = false;
-        state.eventsDataError = action.error.message;
-      });
-
-    builder
-      .addCase(fetchEventById.pending, (state) => {
-        state.eventByIdDataLoading = true;
-      })
-      .addCase(fetchEventById.fulfilled, (state, action) => {
-        state.eventByIdDataLoading = false;
-        state.eventByIdData = action.payload;
-        state.eventByIdDataSuccess = true;
-      })
-      .addCase(fetchEventById.rejected, (state, action) => {
-        state.eventByIdDataLoading = false;
-        state.eventByIdDataError = action.error.message;
-      });
-
-    builder
-      .addCase(CreateEvents.pending, (state) => {
-        state.eventCreateDataLoading = true;
-        state.eventCreateDataSuccess = false;
-      })
-      .addCase(CreateEvents.fulfilled, (state, action) => {
-        state.eventCreateDataLoading = false;
-        state.eventCreateData = action.payload;
-        state.eventCreateDataSuccess = true;
-      })
-      .addCase(CreateEvents.rejected, (state, action) => {
-        state.eventCreateDataLoading = false;
-        state.eventCreateDataError = action.error.message;
-      });
-
-    builder
-      .addCase(UpdateEvents.pending, (state) => {
-        state.eventUpdateDataLoading = true;
-        state.eventUpdateDataSuccess = false;
-      })
-      .addCase(UpdateEvents.fulfilled, (state, action) => {
-        state.eventUpdateDataLoading = false;
-        state.eventUpdateData = action.payload;
-        state.eventUpdateDataSuccess = true;
-      })
-      .addCase(UpdateEvents.rejected, (state, action) => {
-        state.eventUpdateDataLoading = false;
-        state.eventUpdateDataError = action.error.message;
       });
 
     builder
@@ -1337,87 +336,101 @@ const apiSlice = createSlice({
       });
 
     builder
-      .addCase(fetchUserNotification.pending, (state) => {
-        state.fetchUserNotificationDataLoading = true;
+      .addCase(createMemo.pending, (state) => {
+        state.createMemoDataLoading = true;
       })
-      .addCase(fetchUserNotification.fulfilled, (state, action) => {
-        state.fetchUserNotificationDataLoading = false;
-        state.fetchUserNotificationData = action.payload;
-        state.fetchUserNotificationDataSuccess = true;
+      .addCase(createMemo.fulfilled, (state, action) => {
+        state.createMemoDataLoading = false;
+        state.createMemoData = action.payload;
+        state.createMemoDataSuccess = true;
       })
-      .addCase(fetchUserNotification.rejected, (state, action) => {
-        state.fetchUserNotificationDataLoading = false;
-        state.fetchUserNotificationDataError = action.error.message;
+      .addCase(createMemo.rejected, (state, action) => {
+        state.createMemoDataLoading = false;
+        state.createMemoDataError = action.error.message;
       });
 
     builder
-      .addCase(withdrawals.pending, (state) => {
-        state.withdrawalsDataLoading = true;
+      .addCase(getMemo.pending, (state) => {
+        state.getMemoDataLoading = true;
       })
-      .addCase(withdrawals.fulfilled, (state, action) => {
-        state.withdrawalsDataLoading = false;
-        state.withdrawalsData = action.payload;
-        state.withdrawalsDataSuccess = true;
+      .addCase(getMemo.fulfilled, (state, action) => {
+        state.getMemoDataLoading = false;
+        state.getMemoData = action.payload;
+        state.getMemoDataSuccess = true;
       })
-      .addCase(withdrawals.rejected, (state, action) => {
-        state.withdrawalsDataLoading = false;
-        state.withdrawalsDataError = action.error.message;
+      .addCase(getMemo.rejected, (state, action) => {
+        state.getMemoDataLoading = false;
+        state.getMemoDataError = action.error.message;
       });
 
     builder
-      .addCase(withdrawalStatus.pending, (state) => {
-        state.withdrawalStatusDataLoading = true;
+      .addCase(getMemoById.pending, (state) => {
+        state.getMemoByIdDataLoading = true;
       })
-      .addCase(withdrawalStatus.fulfilled, (state, action) => {
-        state.withdrawalStatusDataLoading = false;
-        state.withdrawalStatusData = action.payload;
-        state.withdrawalStatusDataSuccess = true;
+      .addCase(getMemoById.fulfilled, (state, action) => {
+        state.getMemoByIdDataLoading = false;
+        state.getMemoByIdData = action.payload;
+        state.getMemoByIdDataSuccess = true;
       })
-      .addCase(withdrawalStatus.rejected, (state, action) => {
-        state.withdrawalStatusDataLoading = false;
-        state.withdrawalStatusDataError = action.error.message;
+      .addCase(getMemoById.rejected, (state, action) => {
+        state.getMemoByIdDataLoading = false;
+        state.getMemoByIdDataError = action.error.message;
       });
 
     builder
-      .addCase(allDeposits.pending, (state) => {
-        state.allDepositsDataLoading = true;
+      .addCase(createOperator.pending, (state) => {
+        state.createOperatorDataLoading = true;
       })
-      .addCase(allDeposits.fulfilled, (state, action) => {
-        state.allDepositsDataLoading = false;
-        state.allDepositsData = action.payload;
-        state.allDepositsDataSuccess = true;
+      .addCase(createOperator.fulfilled, (state, action) => {
+        state.createOperatorDataLoading = false;
+        state.createOperatorData = action.payload;
+        state.createOperatorDataSuccess = true;
       })
-      .addCase(allDeposits.rejected, (state, action) => {
-        state.allDepositsDataLoading = false;
-        state.allDepositsDataError = action.error.message;
+      .addCase(createOperator.rejected, (state, action) => {
+        state.createOperatorDataLoading = false;
+        state.createOperatorDataError = action.error.message;
       });
 
     builder
-      .addCase(depositStatus.pending, (state) => {
-        state.depositStatusDataLoading = true;
+      .addCase(getOperators.pending, (state) => {
+        state.getOperatorsDataLoading = true;
       })
-      .addCase(depositStatus.fulfilled, (state, action) => {
-        state.depositStatusDataLoading = false;
-        state.depositStatusData = action.payload;
-        state.depositStatusDataSuccess = true;
+      .addCase(getOperators.fulfilled, (state, action) => {
+        state.getOperatorsDataLoading = false;
+        state.getOperatorsData = action.payload;
+        state.getOperatorsDataSuccess = true;
       })
-      .addCase(depositStatus.rejected, (state, action) => {
-        state.depositStatusDataLoading = false;
-        state.depositStatusDataError = action.error.message;
+      .addCase(getOperators.rejected, (state, action) => {
+        state.getOperatorsDataLoading = false;
+        state.getOperatorsDataError = action.error.message;
       });
 
     builder
-      .addCase(userAllDetails.pending, (state) => {
-        state.userAllDetailsDataLoading = true;
+      .addCase(createOwner.pending, (state) => {
+        state.createOwnerDataLoading = true;
       })
-      .addCase(userAllDetails.fulfilled, (state, action) => {
-        state.userAllDetailsDataLoading = false;
-        state.userAllDetailsData = action.payload;
-        state.userAllDetailsDataSuccess = true;
+      .addCase(createOwner.fulfilled, (state, action) => {
+        state.createOwnerDataLoading = false;
+        state.createOwnerData = action.payload;
+        state.createOwnerDataSuccess = true;
       })
-      .addCase(userAllDetails.rejected, (state, action) => {
-        state.userAllDetailsDataLoading = false;
-        state.userAllDetailsDataError = action.error.message;
+      .addCase(createOwner.rejected, (state, action) => {
+        state.createOwnerDataLoading = false;
+        state.createOwnerDataError = action.error.message;
+      });
+
+    builder
+      .addCase(getOwners.pending, (state) => {
+        state.getOwnersDataLoading = true;
+      })
+      .addCase(getOwners.fulfilled, (state, action) => {
+        state.getOwnersDataLoading = false;
+        state.getOwnersData = action.payload;
+        state.getOwnersDataSuccess = true;
+      })
+      .addCase(getOwners.rejected, (state, action) => {
+        state.getOwnersDataLoading = false;
+        state.getOwnersDataError = action.error.message;
       });
 
     builder
@@ -1435,154 +448,87 @@ const apiSlice = createSlice({
       });
 
     builder
-      .addCase(updateEventStatus.pending, (state) => {
-        state.updateEventStatusDataLoading = true;
-        state.updateEventStatusDataSuccess = false;
+      .addCase(getMemoID.pending, (state) => {
+        state.getMemoIDDataLoading = true;
       })
-      .addCase(updateEventStatus.fulfilled, (state, action) => {
-        state.updateEventStatusDataLoading = false;
-        state.updateEventStatusData = action.payload;
-        state.updateEventStatusDataSuccess = true;
+      .addCase(getMemoID.fulfilled, (state, action) => {
+        state.getMemoIDDataLoading = false;
+        state.getMemoIDData = action.payload;
+        state.getMemoIDDataSuccess = true;
       })
-      .addCase(updateEventStatus.rejected, (state, action) => {
-        state.updateEventStatusDataLoading = false;
-        state.updateEventStatusDataError = action.error.message;
+      .addCase(getMemoID.rejected, (state, action) => {
+        state.getMemoIDDataLoading = false;
+        state.getMemoIDDataError = action.error.message;
       });
 
     builder
-      .addCase(register2FA.pending, (state) => {
-        state.register2FADataLoading = true;
-        state.register2FADataSuccess = false;
+      .addCase(updateMemo.pending, (state) => {
+        state.updateMemoDataLoading = true;
       })
-      .addCase(register2FA.fulfilled, (state, action) => {
-        state.register2FADataLoading = false;
-        state.register2FAData = action.payload;
-        state.register2FADataSuccess = true;
+      .addCase(updateMemo.fulfilled, (state, action) => {
+        state.updateMemoDataLoading = false;
+        state.updateMemoData = action.payload;
+        state.updateMemoDataSuccess = true;
       })
-      .addCase(register2FA.rejected, (state, action) => {
-        state.register2FADataLoading = false;
-        state.register2FADataError = action.error.message;
+      .addCase(updateMemo.rejected, (state, action) => {
+        state.updateMemoDataLoading = false;
+        state.updateMemoDataError = action.error.message;
       });
 
     builder
-      .addCase(addSubscription.pending, (state) => {
-        state.addSubscriptionDataLoading = true;
-        state.addSubscriptionDataSuccess = false;
+      .addCase(updateAdmin.pending, (state) => {
+        state.updateAdminDataLoading = true;
       })
-      .addCase(addSubscription.fulfilled, (state, action) => {
-        state.addSubscriptionDataLoading = false;
-        state.addSubscriptionData = action.payload;
-        state.addSubscriptionDataSuccess = true;
+      .addCase(updateAdmin.fulfilled, (state, action) => {
+        state.updateAdminDataLoading = false;
+        state.updateAdminData = action.payload;
+        state.updateAdminDataSuccess = true;
       })
-      .addCase(addSubscription.rejected, (state, action) => {
-        state.addSubscriptionDataLoading = false;
-        state.addSubscriptionDataError = action.error.message;
+      .addCase(updateAdmin.rejected, (state, action) => {
+        state.updateAdminDataLoading = false;
+        state.updateAdminDataError = action.error.message;
       });
 
     builder
-      .addCase(allSubscription.pending, (state) => {
-        state.allSubscriptionDataLoading = true;
-        state.allSubscriptionDataSuccess = false;
+      .addCase(changeAdminPassword.pending, (state) => {
+        state.changeAdminPasswordDataLoading = true;
       })
-      .addCase(allSubscription.fulfilled, (state, action) => {
-        state.allSubscriptionDataLoading = false;
-        state.allSubscriptionData = action.payload;
-        state.allSubscriptionDataSuccess = true;
+      .addCase(changeAdminPassword.fulfilled, (state, action) => {
+        state.changeAdminPasswordDataLoading = false;
+        state.changeAdminPasswordData = action.payload;
+        state.changeAdminPasswordDataSuccess = true;
       })
-      .addCase(allSubscription.rejected, (state, action) => {
-        state.allSubscriptionDataLoading = false;
-        state.allSubscriptionDataError = action.error.message;
+      .addCase(changeAdminPassword.rejected, (state, action) => {
+        state.changeAdminPasswordDataLoading = false;
+        state.changeAdminPasswordDataError = action.error.message;
       });
 
     builder
-      .addCase(updateSubscription.pending, (state) => {
-        state.updateSubscriptionDataLoading = true;
-        state.updateSubscriptionDataSuccess = false;
+      .addCase(seenMemo.pending, (state) => {
+        state.seenMemoDataLoading = true;
       })
-      .addCase(updateSubscription.fulfilled, (state, action) => {
-        state.updateSubscriptionDataLoading = false;
-        state.updateSubscriptionData = action.payload;
-        state.updateSubscriptionDataSuccess = true;
+      .addCase(seenMemo.fulfilled, (state, action) => {
+        state.seenMemoDataLoading = false;
+        state.seenMemoData = action.payload;
+        state.seenMemoDataSuccess = true;
       })
-      .addCase(updateSubscription.rejected, (state, action) => {
-        state.updateSubscriptionDataLoading = false;
-        state.updateSubscriptionDataError = action.error.message;
+      .addCase(seenMemo.rejected, (state, action) => {
+        state.seenMemoDataLoading = false;
+        state.seenMemoDataError = action.error.message;
       });
 
     builder
-      .addCase(subscriptionById.pending, (state) => {
-        state.subscriptionByIdDataLoading = true;
-        state.subscriptionByIdDataSuccess = false;
+      .addCase(apkUpload.pending, (state) => {
+        state.apkUploadDataLoading = true;
       })
-      .addCase(subscriptionById.fulfilled, (state, action) => {
-        state.subscriptionByIdDataLoading = false;
-        state.subscriptionByIdData = action.payload;
-        state.subscriptionByIdDataSuccess = true;
+      .addCase(apkUpload.fulfilled, (state, action) => {
+        state.apkUploadDataLoading = false;
+        state.apkUploadData = action.payload;
+        state.apkUploadDataSuccess = true;
       })
-      .addCase(subscriptionById.rejected, (state, action) => {
-        state.subscriptionByIdDataLoading = false;
-        state.subscriptionByIdDataError = action.error.message;
-      });
-
-    builder
-      .addCase(allUsersSubscriptions.pending, (state) => {
-        state.allUsersSubscriptionsDataLoading = true;
-        state.allUsersSubscriptionsDataSuccess = false;
-      })
-      .addCase(allUsersSubscriptions.fulfilled, (state, action) => {
-        state.allUsersSubscriptionsDataLoading = false;
-        state.allUsersSubscriptionsData = action.payload;
-        state.allUsersSubscriptionsDataSuccess = true;
-      })
-      .addCase(allUsersSubscriptions.rejected, (state, action) => {
-        state.allUsersSubscriptionsDataLoading = false;
-        state.allUsersSubscriptionsDataError = action.error.message;
-      });
-
-    builder
-      .addCase(activeSubscriptionUsers.pending, (state) => {
-        state.activeSubscriptionUsersDataLoading = true;
-        state.activeSubscriptionUsersDataSuccess = false;
-      })
-      .addCase(activeSubscriptionUsers.fulfilled, (state, action) => {
-        state.activeSubscriptionUsersDataLoading = false;
-        state.activeSubscriptionUsersData = action.payload;
-        state.activeSubscriptionUsersDataSuccess = true;
-      })
-      .addCase(activeSubscriptionUsers.rejected, (state, action) => {
-        state.activeSubscriptionUsersDataLoading = false;
-        state.activeSubscriptionUsersDataError = action.error.message;
-      });
-
-    builder
-      .addCase(setEventWinning.pending, (state) => {
-        state.setEventWinningDataLoading = true;
-        state.setEventWinningDataSuccess = false;
-      })
-      .addCase(setEventWinning.fulfilled, (state, action) => {
-        state.setEventWinningDataLoading = false;
-        state.setEventWinningData = action.payload;
-        state.setEventWinningDataSuccess = true;
-      })
-      .addCase(setEventWinning.rejected, (state, action) => {
-        state.setEventWinningDataLoading = false;
-        state.setEventWinningDataError = action.error.message;
-      });
-
-    builder
-      .addCase(winning.pending, (state) => {
-        state.winningDataLoading = true;
-        state.winningDataSuccess = false;
-      })
-      .addCase(winning.fulfilled, (state, action) => {
-        state.winningDataLoading = false;
-        state.winningData = action.payload;
-        state.winningDataSuccess = true;
-      })
-      .addCase(winning.rejected, (state, action) => {
-        state.winningDataLoading = false;
-        state.winningDataError = action.error.message;
-        state.winningData = [];
+      .addCase(apkUpload.rejected, (state, action) => {
+        state.apkUploadDataLoading = false;
+        state.apkUploadDataError = action.error.message;
       });
   },
 });

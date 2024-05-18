@@ -1,10 +1,225 @@
-.btn-select-image {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  text-align: center;
-  background: #f8f9fb;
-  border: 2px dashed #e4e5e7;
-  border-radius: 3px;
+@import url("https://fonts.googleapis.com/css2?family=Reem+Kufi+Fun&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+body {
+  overflow-y: scroll !important;
+  font-family: "Poppins", sans-serif !important;
+}
+.memo-form .page-invoice {
+  border: 1px solid #ff4545 !important;
+  border-radius: 22px !important;
+  background-color: #fff !important;
+}
+
+.memo-form .header .row-header {
+  border-bottom: 1px solid #ff4545 !important;
+}
+.memo-form .header h4 {
+  color: #ff4545 !important;
+  font-weight: 600 !important;
+}
+.memo-form .header .p1 {
+  color: #ff4545 !important;
+  font-size: 13.5px !important;
+}
+.memo-form .header .p2 {
+  color: #000 !important;
+  font-size: 14px !important;
+}
+@media (max-width: 767px) {
+  .memo-form .signup-form::before {
+    display: none !important;
+  }
+}
+.memo-form label {
+  color: #1f1f1f !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  margin-bottom: 2px !important;
+}
+.memo-form .form-control {
+  border-color: #ff7373 !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  padding: 6px 5px !important;
+}
+.memo-form .form-control:disabled {
+  background-color: #ffd5d5;
+}
+.memo-form .form-control:focus {
+  color: #212529 !important;
+  background-color: #fff !important;
+  border-color: #ff4545 !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.25rem #ff454538 !important;
+}
+.memo-form tbody,
+.memo-form td,
+.memo-form tfoot,
+.memo-form th,
+.memo-form thead,
+.memo-form tr {
+  border-color: #ff7373 !important;
+}
+.memo-form th {
+  font-size: 13px !important;
+}
+.memo-form .table > :not(:last-child) > :last-child > * {
+  border-bottom-color: #ff7373 !important;
+}
+.memo-form .card {
+  border: 1px solid #ff7373 !important;
+  border-radius: 10px !important;
+  background: #ffeeee !important;
+}
+.memo-form .btn-danger {
+  background-color: #ff4545 !important;
+  border-color: #ff4545 !important;
+  padding: 1px 11px !important;
+}
+.memo-form .submit {
+  background-color: #ff4545 !important;
+  border-color: #ff4545 !important;
+  padding: 5px 18px !important;
+}
+.memo-form .wb-color {
+  color: #ff4545 !important;
+}
+.memo-form .w-120 {
+  width: 102px !important;
+}
+.memo-form .w-170 {
+  width: 170px !important;
+}
+.memo-form .input-group-text {
+  background-color: #fff !important;
+  border: 1px solid #ff7373 !important;
+  border-radius: 8px !important;
+  font-size: 13.5px !important;
+}
+.memo-form .bdr-bottom {
+  border-bottom: 1px solid #ff7373 !important;
+}
+.memo-form .btn-secondary,
+.memo-form .btn-secondary {
+  color: #ff4545 !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  background-color: #fff !important;
+  border-color: #fff !important;
+  opacity: 1 !important;
+  padding: 3px 19px !important;
+  border-radius: 9px !important;
+  border: 2px solid #fff !important;
+  box-shadow: inset #6f6e6e 7px -12px 34px -22px !important;
+}
+.memo-form .calendar {
+  position: absolute !important;
+  top: 28px !important;
+  right: 19px !important;
+}
+.memo-form .time {
+  position: absolute !important;
+  top: 31px !important;
+  right: 21px !important;
+}
+.memo-form .signature-card {
+  background: #fff !important;
+}
+.memo-form .signature-card .card-body {
+  border: 1px dashed #ccc !important;
+  border-radius: 8px !important;
+  margin: 5px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  padding: 34px 5px !important;
+}
+.memo-form .signature-card .card-body p {
+  color: #8d8d8d !important;
+}
+.input-group:not(.has-validation) > .dropdown-toggle:nth-last-child(n + 3),
+.input-group:not(.has-validation)
+  > .form-floating:not(:last-child)
+  > .form-control,
+.input-group:not(.has-validation)
+  > .form-floating:not(:last-child)
+  > .form-select,
+.input-group:not(.has-validation)
+  > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu):not(
+    .form-floating
+  ) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  height: 32px;
+}
+.input-group
+  > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(
+    .valid-feedback
+  ):not(.invalid-tooltip):not(.invalid-feedback) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  height: 32px;
+}
+
+.memo-form input[type="date"],
+.memo-form input[type="time"] {
+  height: 32px !important;
+  appearance: none;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+}
+input[type="date"]::-webkit-search-cancel-button,
+input[type="date"]::-webkit-clear-button {
+  -webkit-appearance: none;
+  background-image: url("/assets/images/calendar.svg");
+  color: rgba(0, 0, 0, 0.54);
   cursor: pointer;
+  height: 1.5rem;
+  margin-right: 0;
+  width: 1.5rem;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  background-image: url("/assets/images/calendar.svg");
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  border-radius: 50%;
+  margin-left: 0.5rem;
+}
+
+input[type="time"]::-webkit-search-cancel-button,
+input[type="time"]::-webkit-clear-button {
+  -webkit-appearance: none;
+  background-image: url("/assets/images/time.svg");
+  color: rgba(0, 0, 0, 0.54);
+  cursor: pointer;
+  height: 1.5rem;
+  margin-right: 0;
+  width: 1.5rem;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  background-image: url("/assets/images/time.svg");
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  border-radius: 50%;
+  margin-left: 0.5rem;
+}
+
+::-webkit-calendar-picker-indicator:hover {
+  -webkit-box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.04);
+}
+
+.invalid-feedback {
+  text-align: left;
 }

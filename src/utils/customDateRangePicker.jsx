@@ -41,7 +41,7 @@ export default function CustomDateRangePicker({ dateRange, setDateRange }) {
       >
         <i className="ri-calendar-fill" />
         <input
-          className="form-control form-control-sm w-100"
+          className="form-control form-control-sm"
           value={
             dateRange?.Duration_Start &&
             moment(dateRange?.Duration_Start).format("DD/MM/YYYY") +
@@ -58,6 +58,7 @@ export default function CustomDateRangePicker({ dateRange, setDateRange }) {
         onClick={(e) => e.stopPropagation()}
       >
         <DateRange
+          maxDate={new Date()}
           className="card m-0"
           editableDateInputs={true}
           onChange={handleDateRangeChange}
